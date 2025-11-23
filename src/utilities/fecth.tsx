@@ -21,7 +21,7 @@ export class FetchWapper {
     }
 
     public async send(url: string, options: RequestInit = {}, token?: string): Promise<Response> {
-        return this.fetch(url, {
+        const result = await this.fetch(url, {
             ...options,
             headers: {
                 'Content-Type': 'application/json',
@@ -29,6 +29,14 @@ export class FetchWapper {
                 ...options.headers,
             },
         });
+        if (result.status === 401) {
+            this.jwt = null;
+            if (typeof window !== 'undefined') {
+                localStorage.removeItem('token');
+            }
+            this.suscriptors.forEach((suscriptor) => suscriptor(this.jwt));
+        }
+        return result;
     }
 
     public getToken(suscriptor?: (value: string | null) => void): string | null {
