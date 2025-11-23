@@ -22,12 +22,12 @@ export default function LoginForm() {
         loginMutation.mutate(data)
     }
 
-    // const loginGoogleQuery = useLoginGoogle()
+    const loginGoogleQuery = useLoginGoogle({ enabled: false })
 
-    // const handleGoogleLogin = () => {
-    //     // El hook devuelve un UseQueryResult; usamos refetch para iniciar el proceso on demand
-    //     void loginGoogleQuery.refetch()
-    // }
+    const handleGoogleLogin = () => {
+        // El hook devuelve un UseQueryResult; usamos refetch para iniciar el proceso on demand
+        void loginGoogleQuery.refetch()
+    }
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -69,14 +69,14 @@ export default function LoginForm() {
 
             <hr />
 
-            {/* <div>
+            <div>
                 <button type="button" onClick={handleGoogleLogin} disabled={loginGoogleQuery.isFetching}>
                     {loginGoogleQuery.isFetching ? "Redirigiendo..." : "Ingresar con Google"}
                 </button>
                 {loginGoogleQuery.isError && (
                     <p style={{ color: "red" }}>Error Google: {loginGoogleQuery.error?.message}</p>
                 )}
-            </div> */}
+            </div>
         </form>
     )
 }

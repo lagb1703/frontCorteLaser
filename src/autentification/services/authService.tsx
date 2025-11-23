@@ -28,19 +28,16 @@ export class AuthService {
         return true;
     }
     public async loginGoogle(): Promise<void> {
-        const result = await this.fetchWrapper.send('/auth/google', {
-            method: 'GET',
-        });
-        if (result.status !== 200) {
-            return;
+        const url = `${import.meta.env.VITE_API_BASE_URL}/auth/login/google`;
+        if (typeof window !== 'undefined') {
+            window.location.href = url;
         }
-        const token = await result.text();
-        console.log(token);
+        return Promise.resolve();
     }
     public authGoogle(): string {
         return "";
     }
-    public refreshToken(token: string): string {
+    public refreshToken(_token: string): string {
         return "";
     }
 }
