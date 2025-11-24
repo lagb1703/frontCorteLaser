@@ -1,11 +1,9 @@
 
-import { Navigate, Route, Routes } from 'react-router';
+import UserPage from '../userModule/pages/userPage';
 
-export const PrivateRoutes = () => {
-    return (
-        <Routes>
-            <Route path='/privada' element={<h1>Private Route</h1>} />
-            <Route path='*' element={<Navigate to='/' replace />} />
-        </Routes>
-    );
-};
+export const PrivateRoutes = [
+    {
+        path: "/user",
+        element: <UserPage />
+    }
+];

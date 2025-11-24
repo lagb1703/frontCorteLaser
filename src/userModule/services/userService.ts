@@ -1,6 +1,5 @@
 import { FetchWapper } from "@/utilities/fecth";
 import { type User } from "../validators/userValidators";
-import { type UserToken } from "../interfaces/userToken";
 
 export class UserService{
     private static instance: UserService;
@@ -36,14 +35,14 @@ export class UserService{
         }
         return;
     }
-    public async  getUser(): Promise<UserToken>{
+    public async  getUser(): Promise<User>{
         const result = await this.fetchWrapper.send('/user/', {
             method: 'GET',
         });
         if (result.status !== 200) {
             throw new Error('Error fetching user data');
         }
-        const userData: UserToken = await result.json();
+        const userData: User = await result.json();
         return userData;
     }
     public async getAllUser() : Promise<Array<Partial<User>>>{

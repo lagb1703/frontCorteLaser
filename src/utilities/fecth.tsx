@@ -24,6 +24,11 @@ export class FetchWapper {
     }
 
     public async send(url: string, options: RequestInit = {}, token?: string): Promise<Response> {
+        console.log("FetchWapper send called with:", {
+            'Content-Type': 'application/json',
+            ...(this.jwt || token ? { 'Authorization': `Bearer ${this.jwt}` } : {}),
+            ...options.headers,
+        },);
         const result = await fetch(`${this.baseUrl}${url}`, {
             ...options,
             headers: {
@@ -32,14 +37,14 @@ export class FetchWapper {
                 ...options.headers,
             },
         });
-        if(result.status===400){
+        if (result.status === 400) {
             const errorData = await result.json();
             console.error('Bad Request:', errorData);
         }
         if (result.status === 401) {
             this.setToken(null);
         }
-        if(result.status===403){
+        if (result.status === 403) {
             this.setToken(null);
         }
         return result;
@@ -53,7 +58,7 @@ export class FetchWapper {
     }
 
     public setToken(token: string | null): void {
-        this.jwt = token;
+        this.jwt = this.getToken || null;
         if (typeof window !== 'undefined') {
             if (token) {
                 localStorage.setItem('token', token);
