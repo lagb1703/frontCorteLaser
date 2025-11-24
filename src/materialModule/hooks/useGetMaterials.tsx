@@ -1,0 +1,14 @@
+import { MaterialService } from "../services/materialService";
+import { type Material } from "../validators/materialValidators";
+import { useQuery, type UseQueryResult } from "@tanstack/react-query";
+import { useRef } from "react";
+
+export function useGetMaterials(): UseQueryResult<Array<Material>, unknown> {
+    const materialService = useRef<MaterialService>(MaterialService.getInstance());
+    return useQuery<Array<Material>, unknown>({
+        queryKey: ["materials"],
+        queryFn: async () => {
+            return await materialService.current.getAllMaterials();
+        },
+    });
+}
