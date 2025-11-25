@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form"
 import type { Resolver } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { userSchema, type User } from "../validators/userValidators"
-import { z } from "zod"
 
 export function useInfo() {
     const { data, isLoading } = useGetUser();
@@ -17,7 +16,7 @@ export function useInfo() {
     } = useForm<User>({
         // usar un resolver que valide solamente la dirección en este hook
         // para evitar que campos obligatorios no presentes bloqueen el submit
-        resolver: zodResolver(z.object({ address: userSchema.shape.address })) as Resolver<User>,
+        resolver: zodResolver(userSchema) as Resolver<User>,
         mode: "onChange"
     })
     useEffect(() => {
