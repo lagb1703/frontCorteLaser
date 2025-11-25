@@ -8,8 +8,8 @@ interface props {
 
 function MaterialItem({ material }: props) {
     const { register, handleSubmit, formState, status } = useAdminMaterial(material);
-    const { errors, isValid } = formState as { errors?: Partial<Record<keyof Material, { message?: string }>>; isValid?: boolean };
-
+    const { errors } = formState as { errors?: Partial<Record<keyof Material, { message?: string }>>; isValid?: boolean };
+    console.log(errors);
     return (
         <form onSubmit={handleSubmit} noValidate>
             <div>
@@ -24,7 +24,7 @@ function MaterialItem({ material }: props) {
                 {errors?.price && <p style={{ color: "#c53030" }}>{errors.price?.message}</p>}
             </div>
 
-            <button type="submit" disabled={status?.isLoading || !isValid}>
+            <button type="submit" disabled={status?.isLoading}>
                 {status?.isLoading ? (material ? "Guardando..." : "Creando...") : (material ? "Guardar cambios" : "Crear material")}
             </button>
         </form>
@@ -33,6 +33,7 @@ function MaterialItem({ material }: props) {
 
 export default function MaterialsList() {
     const { data: materials, isLoading, refetch } = useGetMaterials();
+    console.log(materials);
     return (
         <div>
             <h2>Materiales</h2>

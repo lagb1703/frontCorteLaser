@@ -3,10 +3,11 @@ import { useMutation, type UseMutationResult } from "@tanstack/react-query";
 import { type Material } from "../validators/materialValidators";
 import { useRef } from "react";
 
-export function useChangeMaterial(): UseMutationResult<void, unknown, { materialId: string; material: Material }> {
+export function useChangeMaterial(): UseMutationResult<void, unknown, { materialId: string | number; material: Material }> {
     const materialService = useRef<MaterialService>(MaterialService.getInstance());
-    return useMutation<void, unknown, { materialId: string; material: Material }>({
-        mutationFn: async ({ materialId, material }: { materialId: string; material: Material }) => {
+    return useMutation<void, unknown, { materialId: string | number; material: Material }>({
+        mutationFn: async ({ materialId, material }: { materialId: string | number; material: Material }) => {
+            console.log("Changing material", materialId, material);
             return await materialService.current.changeMaterial(materialId, material);
         },
         onSuccess: () => {

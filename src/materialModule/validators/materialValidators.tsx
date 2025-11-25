@@ -1,10 +1,10 @@
 import { z } from "zod"
 
 export const materialSchema = z.object({
-    materialId: z.optional(z.string()),
+    materialId: z.number().optional().nullable(),
     name: z.string(),
     price: z.number().int(),
-    lastModification: z.optional(z.date()),
+    lastModification: z.date().optional().nullable(),
 })
 
 export type Material = z.infer<typeof materialSchema>
