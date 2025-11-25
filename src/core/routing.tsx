@@ -5,8 +5,7 @@ import PrivateRoute from "@/core/privateRoute"
 import { PublicRoutes } from "@/core/publicRoutes"
 
 export const AppRouter = () => {
-    const token = useGetToken();
-    console.log("Token in AppRouter:", token, Boolean(token));
+    const { token, initialized } = useGetToken();
     return (
         <BrowserRouter>
             <Routes>
@@ -17,7 +16,7 @@ export const AppRouter = () => {
                                 key={index}
                                 path={route.path}
                                 element={
-                                    <PrivateRoute isAuthenticated={Boolean(token)}>
+                                    <PrivateRoute isAuthenticated={Boolean(token)} isReady={initialized}>
                                         {route.element}
                                     </PrivateRoute>
                                 }

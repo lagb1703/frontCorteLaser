@@ -5,6 +5,15 @@ export class FetchWapper {
     private suscriptors: Array<(value: string | null) => void> = [];
     private baseUrl: string = '';
 
+    private normalizeToken(token: string | null | undefined): string | null {
+        if (!token) return null;
+        const t = token.trim();
+        if ((t.startsWith('"') && t.endsWith('"')) || (t.startsWith("'") && t.endsWith("'"))) {
+            return t.slice(1, -1).trim();
+        }
+        return t;
+    }
+
     public static getInstance(): FetchWapper {
         if (!FetchWapper.instance) {
             FetchWapper.instance = new FetchWapper();
@@ -19,21 +28,17 @@ export class FetchWapper {
         }
         this.baseUrl = baseUrl;
         if (typeof window !== 'undefined') {
-            this.jwt = localStorage.getItem('token');
+            this.jwt = this.normalizeToken(localStorage.getItem('token'));
         }
     }
 
     public async send(url: string, options: RequestInit = {}, token?: string): Promise<Response> {
-        console.log("FetchWapper send called with:", {
-            'Content-Type': 'application/json',
-            ...(this.jwt || token ? { 'Authorization': `Bearer ${this.jwt}` } : {}),
-            ...options.headers,
-        },);
+        const authToken = this.normalizeToken(token ?? this.jwt);
         const result = await fetch(`${this.baseUrl}${url}`, {
             ...options,
             headers: {
                 'Content-Type': 'application/json',
-                ...(this.jwt || token ? { 'Authorization': `Bearer ${this.jwt || token}` } : {}),
+                ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {}),
                 ...options.headers,
             },
         });
@@ -58,10 +63,10 @@ export class FetchWapper {
     }
 
     public setToken(token: string | null): void {
-        this.jwt = this.getToken || null;
+        this.jwt = this.normalizeToken(token);
         if (typeof window !== 'undefined') {
-            if (token) {
-                localStorage.setItem('token', token);
+            if (this.jwt) {
+                localStorage.setItem('token', this.jwt);
             } else {
                 localStorage.removeItem('token');
             }
