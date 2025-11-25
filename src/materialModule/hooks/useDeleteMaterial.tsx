@@ -2,10 +2,10 @@ import { MaterialService } from "../services/materialService";
 import { useMutation, type UseMutationResult } from "@tanstack/react-query";
 import { useRef } from "react";
 
-export function useDeleteMaterial(): UseMutationResult<void, unknown, string> {
+export function useDeleteMaterial(): UseMutationResult<void, unknown, string | number> {
     const materialService = useRef<MaterialService>(MaterialService.getInstance());
-    return useMutation<void, unknown, string>({
-        mutationFn: async (materialId: string) => {
+    return useMutation<void, unknown, string | number>({
+        mutationFn: async (materialId: string | number) => {
             await materialService.current.deleteMaterial(materialId);
         },
         onSuccess: () => {

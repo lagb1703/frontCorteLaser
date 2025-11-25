@@ -39,25 +39,15 @@ export class MaterialService {
         return [];
     }
     public async addNewMaterial(material: Material): Promise<string>{
-        const body = {
-            ...material,
-            lastModification: material.lastModification ? material.lastModification.toISOString() : null,
-        };
-        const result = await this.fetchWrapper.send('/material/materials', {
+        const result = await this.fetchWrapper.send('/material/material', {
             method: 'POST',
-            body: JSON.stringify(body),
+            body: JSON.stringify(material),
         });
         if (result.status !== 201) {
-            const text = await result.text().catch(() => '');
+            const text = await result.json().catch(() => '');
             throw new Error(`Error creating material: ${result.status} ${text}`);
         }
-        // suponer que el API devuelve el id en el body
-        try {
-            const data = await result.json();
-            return data?.id ?? '';
-        } catch {
-            return '';
-        }
+        return await result.text();
     }
     public async addNewThickness(thickness: Thickness, materialId: string): Promise<string>{
         return "";
@@ -73,19 +63,21 @@ export class MaterialService {
         }
         return;
     }
-    public async changeThickness(thicknessId: string, thickness: Thickness): Promise<void>{
+    public async changeThickness(thicknessId: string | number, thickness: Thickness): Promise<void>{
         
     }
-    public async addMaterialThickness(materialId: string, thicknessId: string): Promise<void>{
+    public async addMaterialThickness(materialId: string | number, thicknessId: string | number): Promise<void>{
         
     }
-    public async deleteMaterialThickness(materialId: string, thicknessId: string): Promise<void>{
+    public async deleteMaterialThickness(materialId: string | number, thicknessId: string | number): Promise<void>{
         
     }
-    public async deleteMaterial(materialId: string): Promise<void>{
-        
+    public async deleteMaterial(materialId: string | number): Promise<void>{
+        await this.fetchWrapper.send(`/material/material/${materialId}`, {
+            method: 'DELETE',
+        });
     }
-    public async deleteThickness(thicknessId: string): Promise<void>{
+    public async deleteThickness(thicknessId: string | number): Promise<void>{
         
     }
 }

@@ -1,4 +1,4 @@
-import MaterialsList from "../components/thicknessList";
+import MaterialsList from "../components/materialList";
 
 export default function MaterialPage() {
     return (

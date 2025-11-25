@@ -10,5 +10,6 @@ export function useGetMaterials(): UseQueryResult<Array<Material>, unknown> {
         queryFn: async () => {
             return await materialService.current.getAllMaterials();
         },
+        staleTime: 2 * 60 * 1000,
     });
 }
