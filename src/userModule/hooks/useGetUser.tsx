@@ -3,11 +3,17 @@ import { useQuery, type UseQueryResult } from "@tanstack/react-query";
 import { type User } from "../validators/userValidators";
 import { useRef } from "react";
 
-export function useGetUser(): UseQueryResult<User, Error> {
+export function useGetUser(): UseQueryResult<User | null, Error> {
     const userService = useRef<UserService>(UserService.getInstance());
     return useQuery({
         queryKey: ['getUser'],
-        queryFn: () => userService.current.getUser(),
+        queryFn: () => {
+            try{
+                return userService.current.getUser();
+            }catch (error){
+                return null;
+            }
+        },
         staleTime: 5 * 60 * 1000,
     });
 }

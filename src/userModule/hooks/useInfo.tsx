@@ -14,8 +14,6 @@ export function useInfo() {
         formState,
         setValue
     } = useForm<User>({
-        // usar un resolver que valide solamente la dirección en este hook
-        // para evitar que campos obligatorios no presentes bloqueen el submit
         resolver: zodResolver(userSchema) as Resolver<User>,
         mode: "onChange"
     })
@@ -31,7 +29,6 @@ export function useInfo() {
     const changeAddressMutation = useChangeAddress()
     const onSubmit = useCallback(
         (data: User) => {
-            console.log("Submitting address change to:", data);
             changeAddressMutation.mutate(data.address)
         },
         [changeAddressMutation])

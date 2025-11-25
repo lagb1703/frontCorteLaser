@@ -3,12 +3,30 @@ import { useGetToken } from "@/utilities/hooks"
 import { PrivateRoutes } from "@/core/privateRoutes"
 import PrivateRoute from "@/core/privateRoute"
 import { PublicRoutes } from "@/core/publicRoutes"
+import { adminRoutes } from "@/core/adminRoutes"
+import { useGetUser } from "@/userModule/hooks"
 
 export const AppRouter = () => {
     const { token, initialized } = useGetToken();
+    const { data: user, isLoading } = useGetUser();
     return (
         <BrowserRouter>
             <Routes>
+                {
+                    adminRoutes.map((route, index) => {
+                        return (
+                            <Route
+                                key={index}
+                                path={route.path}
+                                element={
+                                    <PrivateRoute isAuthenticated={Boolean(token && user?.isAdmin)} isReady={!isLoading}>
+                                        {route.element}
+                                    </PrivateRoute>
+                                }
+                            />
+                        )
+                    })
+                }
                 {
                     PrivateRoutes.map((route, index) => {
                         return (
