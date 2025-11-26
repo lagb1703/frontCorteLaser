@@ -42,7 +42,23 @@ export class MaterialService {
         }
     }
     public async getThicknessByMaterial(materialId: string):Promise<Array<Thickness>>{
-        return [];
+        const result = await this.fetchWrapper.send(`/material/thickness?materialId=${materialId}`, {
+            method: 'GET',
+        });
+        if (result.status !== 200) {
+            throw new Error('Error fetching user data');
+        }
+        return await result.json();
+    }
+
+    public async getThicknessNoLinkedToMaterial(materialId: string):Promise<Array<Thickness>>{
+        const result = await this.fetchWrapper.send(`/material/thickness/noLinked?materialId=${materialId}`, {
+            method: 'GET',
+        });
+        if (result.status !== 200) {
+            throw new Error('Error fetching user data');
+        }
+        return await result.json();
     }
     public async addNewMaterial(material: Material): Promise<string>{
         const result = await this.fetchWrapper.send('/material/material', {

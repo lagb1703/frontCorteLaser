@@ -10,3 +10,4 @@ export * from "./useDeleteMaterial";
 export * from "./useDeleteThickness";
 export * from "./useDeleteMaterialThickness";
 export * from "./useAddMaterialThickness";
+export * from "./useGetThicknessNoLinkedToMaterialId";
