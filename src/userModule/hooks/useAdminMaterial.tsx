@@ -25,9 +25,6 @@ export function useAdminMaterial(material: Material | null, refect?: () => void)
     const onDelete = useCallback(() => {
         if (material) {
             deleteMaterialMutation.mutate(material.materialId!);
-            if (refect) {
-                refect();
-            }
             setTimeout(() => {
                 if (refect) {
                     refect();

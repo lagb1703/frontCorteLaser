@@ -26,7 +26,13 @@ export class MaterialService {
         return await result.json();
     }
     public async getAllThickness(): Promise<Array<Thickness>>{
-        return [];
+        const result = await this.fetchWrapper.send('/material/thickness/all', {
+            method: 'GET',
+        });
+        if (result.status !== 200) {
+            throw new Error('Error fetching user data');
+        }
+        return await result.json();
     }
     public async getMaterialById(materialId: string): Promise<Material>{
         return {
@@ -49,8 +55,16 @@ export class MaterialService {
         }
         return await result.text();
     }
-    public async addNewThickness(thickness: Thickness, materialId: string): Promise<string>{
-        return "";
+    public async addNewThickness(thickness: Thickness): Promise<string>{
+        const result = await this.fetchWrapper.send(`/material/thickness`, {
+            method: 'POST',
+            body: JSON.stringify(thickness),
+        });
+        if (result.status !== 201) {
+            const text = await result.json().catch(() => '');
+            throw new Error(`Error creating material: ${result.status} ${text}`);
+        }
+        return await result.text();
     }
     public async changeMaterial(materialId: string | number, material: Material): Promise<void>{
         const result = await this.fetchWrapper.send(`/material/material/${materialId}`, {
@@ -64,7 +78,15 @@ export class MaterialService {
         return;
     }
     public async changeThickness(thicknessId: string | number, thickness: Thickness): Promise<void>{
-        
+        const result = await this.fetchWrapper.send(`/material/thickness/${thicknessId}`, {
+            method: 'PUT',
+            body: JSON.stringify(thickness),
+        });
+        if (result.status !== 200 && result.status !== 204) {
+            const text = await result.text().catch(() => '');
+            throw new Error(`Error updating material: ${result.status} ${text}`);
+        }
+        return;
     }
     public async addMaterialThickness(materialId: string | number, thicknessId: string | number): Promise<void>{
         
@@ -78,7 +100,9 @@ export class MaterialService {
         });
     }
     public async deleteThickness(thicknessId: string | number): Promise<void>{
-        
+        await this.fetchWrapper.send(`/material/thickness/${thicknessId}`, {
+            method: 'DELETE',
+        });
     }
 }
     
