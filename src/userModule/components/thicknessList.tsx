@@ -6,11 +6,10 @@ import type { QueryObserverResult, RefetchOptions } from "@tanstack/react-query"
 
 interface props {
     thickness: Thickness | null;
-    materials: Material[];
     refetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<Thickness[], unknown>>
 }
 
-function ThicknessItem({ thickness, materials, refetch }: props) {
+function ThicknessItem({ thickness, refetch }: props) {
     const { register, handleSubmit, formState, status, onDelete } = useAdminThickness(thickness, refetch);
     const { errors } = formState as { errors?: Partial<Record<keyof Thickness, { message?: string }>>; isValid?: boolean };
     return (
@@ -40,22 +39,21 @@ function ThicknessItem({ thickness, materials, refetch }: props) {
 
 export default function ThicknessList() {
     const { data: thicknesses, isLoading, refetch } = useGetThickness();
-    const { data: materials, isLoading: isLoadingMaterials } = useGetMaterials();
     return (
         <div>
             <h2>Grosor</h2>
-            {(isLoading && isLoadingMaterials) ? (
+            {isLoading ? (
                 <p>Cargando grosores...</p>
             ) : (
                 thicknesses?.map((thickness) => (
                     <div key={thickness.thicknessId} style={{ border: "1px solid #ccc", padding: "10px", marginBottom: "10px" }}>
-                        <ThicknessItem thickness={thickness} materials={materials ?? []} refetch={refetch} />
+                        <ThicknessItem thickness={thickness} refetch={refetch} />
                     </div>
                 ))
             )}
             <div style={{ border: "1px solid #ccc", padding: "10px", marginBottom: "10px" }}>
                 <h3>Crear nuevo grosor</h3>
-                <ThicknessItem thickness={null} materials={materials ?? []} refetch={refetch} />
+                <ThicknessItem thickness={null} refetch={refetch} />
             </div>
         </div>
     );
