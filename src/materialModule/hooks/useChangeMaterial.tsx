@@ -7,7 +7,6 @@ export function useChangeMaterial(): UseMutationResult<void, unknown, { material
     const materialService = useRef<MaterialService>(MaterialService.getInstance());
     return useMutation<void, unknown, { materialId: string | number; material: Material }>({
         mutationFn: async ({ materialId, material }: { materialId: string | number; material: Material }) => {
-            console.log("Changing material", materialId, material);
             return await materialService.current.changeMaterial(materialId, material);
         },
         onSuccess: () => {

@@ -13,8 +13,6 @@ interface props {
 function ThicknessItem({ thickness, materials, refetch }: props) {
     const { register, handleSubmit, formState, status, onDelete } = useAdminThickness(thickness, refetch);
     const { errors } = formState as { errors?: Partial<Record<keyof Thickness, { message?: string }>>; isValid?: boolean };
-    const material = materials.find((mat) => mat.materialId === thickness?.materialId);
-    console.log(errors)
     return (
         <form onSubmit={handleSubmit} noValidate>
             <div>
@@ -43,7 +41,6 @@ function ThicknessItem({ thickness, materials, refetch }: props) {
 export default function ThicknessList() {
     const { data: thicknesses, isLoading, refetch } = useGetThickness();
     const { data: materials, isLoading: isLoadingMaterials } = useGetMaterials();
-    console.log(thicknesses);
     return (
         <div>
             <h2>Grosor</h2>

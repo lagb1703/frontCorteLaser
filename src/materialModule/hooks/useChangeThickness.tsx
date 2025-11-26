@@ -7,7 +7,6 @@ export function useChangeThickness(): UseMutationResult<void, unknown, { thickne
     const materialService = useRef<MaterialService>(MaterialService.getInstance());
     return useMutation<void, unknown, { thicknessId: string | number; thickness: Thickness }>({
         mutationFn: async ({ thicknessId, thickness }: { thicknessId: string | number; thickness: Thickness }) => {
-            console.log("Changing thickness:", thicknessId, thickness);
             return await materialService.current.changeThickness(thicknessId, thickness);
         },
         onSuccess: () => {

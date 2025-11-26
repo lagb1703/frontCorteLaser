@@ -43,7 +43,6 @@ function MaterialItem({ material, refetch }: props) {
 
 export default function MaterialsList() {
     const { data: materials, isLoading, refetch } = useGetMaterials();
-    console.log(materials);
     return (
         <div>
             <h2>Materiales</h2>
