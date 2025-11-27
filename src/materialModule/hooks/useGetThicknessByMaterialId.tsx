@@ -7,11 +7,15 @@ export function useGetThicknessByMaterialId(id: string | number | null): UseQuer
     const materialService = useRef<MaterialService>(MaterialService.getInstance());
     return useQuery<Array<Thickness>, unknown>({
         queryKey: ["thickness", id],
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        refetchOnReconnect: false,
         queryFn: async () => {
             if (id === null) {
                 return [];
             }
             return await materialService.current.getThicknessByMaterial(id);
         },
+        staleTime: 2 * 60 * 1000,
     });
 }

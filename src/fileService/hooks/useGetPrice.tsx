@@ -7,6 +7,10 @@ export function useGetPrice(id: string | number, materialId: string | number | n
     const fileService = useRef<FileService>(FileService.getInstance());
     return useQuery<PriceResponse, Error>({
         queryKey: ["file", id, "price", materialId, thicknessId],
+        enabled: false,
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        refetchOnReconnect: false,
         queryFn: async () => {
             if (materialId === null || thicknessId === null) {
                 return { price: 0, quoteId: 0 };

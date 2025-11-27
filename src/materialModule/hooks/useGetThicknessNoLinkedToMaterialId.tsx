@@ -7,8 +7,12 @@ export function useGetThicknessNoLinkedToMaterialId(id: string | number): UseQue
     const materialService = useRef<MaterialService>(MaterialService.getInstance());
     return useQuery<Array<Thickness>, unknown>({
         queryKey: ["noLinked", "thickness", id],
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        refetchOnReconnect: false,
         queryFn: async () => {
             return await materialService.current.getThicknessNoLinkedToMaterial(id);
         },
+        staleTime: 2 * 60 * 1000,
     });
 }

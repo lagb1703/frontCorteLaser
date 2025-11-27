@@ -7,6 +7,9 @@ export function useGetMaterials(): UseQueryResult<Array<Material>, unknown> {
     const materialService = useRef<MaterialService>(MaterialService.getInstance());
     return useQuery<Array<Material>, unknown>({
         queryKey: ["materials"],
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        refetchOnReconnect: false,
         queryFn: async () => {
             return await materialService.current.getAllMaterials();
         },

@@ -6,6 +6,9 @@ export function useGetImage(fileId: string | number): UseQueryResult<Blob, unkno
     const fileService = useRef<FileService>(FileService.getInstance());
     return useQuery<Blob, unknown>({
         queryKey: ["file", fileId, "image"],
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        refetchOnReconnect: false,
         queryFn: async () => {
             return await fileService.current.getImage(fileId);
         },

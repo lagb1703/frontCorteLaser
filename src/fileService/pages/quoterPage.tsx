@@ -4,28 +4,53 @@ import Quoter from "../components/quoter";
 import Resume from "../components/resume";
 import ImageVisualizer from "../components/imageVisualizer";
 import {
-    useGetMaterials,
-    useGetThicknessByMaterialId
+  useGetMaterials,
+  useGetThicknessByMaterialId
 } from "@/materialModule/hooks";
+import { useEffect, useCallback } from "react";
+import { useNavigate } from "react-router";
+import { Button } from "@/components/ui/button";
 
 export default function QuoterPage() {
+  const navigate = useNavigate();
+  const handleNavigate = useCallback(() => {
+    navigate("/some-path");
+  }, [navigate]);
+
   const { fileId } = useParams<{ fileId: string }>();
   const { data: imageData } = useGetImage(fileId!);
   const { materialId, thicknessId, setMaterialId, setThicknessId } = useQuoter();
-  const { data: priceData } = useGetPrice(
+  const { data: priceData, refetch } = useGetPrice(
     fileId!,
     materialId,
     thicknessId
   );
   const { data: materials } = useGetMaterials();
   const { data: thicknesses } = useGetThicknessByMaterialId(materialId);
+  useEffect(() => {
+    if (materialId === null || thicknessId === null) {
+      setThicknessId(null);
+      return;
+    }
+    if (!thicknesses) {
+      return;
+    }
+    if (thicknesses.findIndex((t) => t.thicknessId == thicknessId) === -1) {
+      setThicknessId(null);
+      return;
+    }
+    console.log("Refetching price...");
+    refetch();
+  }, [materialId, thicknessId, refetch, thicknesses]);
   return (
     <div>
       {imageData && <ImageVisualizer image={imageData} />}
       <Quoter
         materials={materials || []}
+        materialId={materialId!}
         setMaterialId={setMaterialId}
         thicknesses={thicknesses || []}
+        thicknessId={thicknessId!}
         setThicknessId={setThicknessId}
       />
       {priceData && (
@@ -37,6 +62,7 @@ export default function QuoterPage() {
           price={priceData.price}
         />
       )}
+      <Button onClick={handleNavigate}>Pay</Button>
     </div>
   );
 }

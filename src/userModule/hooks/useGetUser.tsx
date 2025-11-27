@@ -7,6 +7,9 @@ export function useGetUser(): UseQueryResult<User | null, Error> {
     const userService = useRef<UserService>(UserService.getInstance());
     return useQuery({
         queryKey: ['getUser'],
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        refetchOnReconnect: false,
         queryFn: () => {
             try{
                 return userService.current.getUser();

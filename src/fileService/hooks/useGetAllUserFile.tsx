@@ -7,8 +7,12 @@ export function useGetAllUserFile(): UseQueryResult<Array<FileDb>, Error> {
     const fileService = useRef<FileService>(FileService.getInstance());
     return useQuery<Array<FileDb>, Error>({
         queryKey: ["userFiles"],
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        refetchOnReconnect: false,
         queryFn: async () => {
             return await fileService.current.getAllUserInfoFiles();
         },
+        staleTime: 600000,
     });
 }

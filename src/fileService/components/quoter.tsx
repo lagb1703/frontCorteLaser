@@ -3,12 +3,14 @@ import { type Thickness } from "@/materialModule/validators/thicknessValidators"
 import { useCallback } from "react";
 interface props {
     materials: Array<Material>;
+    materialId: string | number | null;
     setMaterialId: (id: string | number) => void;
     thicknesses: Array<Thickness>;
+    thicknessId: string | number | null;
     setThicknessId: (id: string | number) => void;
 }
 
-export default function Quoter({ materials, setMaterialId, thicknesses, setThicknessId }: props) {
+export default function Quoter({ materials, materialId, setMaterialId, thicknesses, thicknessId, setThicknessId }: props) {
     const handleMaterialChange = useCallback((id: string | number) => {
         console.log("Material ID selected:", id);
         setMaterialId(id);
@@ -18,11 +20,12 @@ export default function Quoter({ materials, setMaterialId, thicknesses, setThick
         console.log("Thickness ID selected:", id);
         setThicknessId(id);
     }, [setThicknessId]);
+    console.log("Current materialId:", materialId, "Current thicknessId:", thicknessId);
 
     return (
         <div>
             <select
-                defaultValue=""
+                defaultValue={materialId ?? ""}
                 onChange={(e) => handleMaterialChange(e.target.value)}
             >
                 <option value="" hidden>Select Material</option>
@@ -33,10 +36,10 @@ export default function Quoter({ materials, setMaterialId, thicknesses, setThick
                 ))}
             </select>
             <select
-                defaultValue=""
+                defaultValue={thicknessId ?? "p"}
                 onChange={(e) => handleThicknessChange(e.target.value)}
             >
-                <option value="" hidden>Select Thickness</option>
+                <option value="p" hidden>Select Thickness</option>
                 {thicknesses?.map((thickness) => (
                     <option key={thickness.thicknessId} value={thickness.thicknessId!}>
                         {thickness.name}
