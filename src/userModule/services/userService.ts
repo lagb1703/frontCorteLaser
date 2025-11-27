@@ -20,6 +20,9 @@ export class UserService{
         const result = await this.fetchWrapper.send('/user/register', {
             method: 'POST',
             body: JSON.stringify(user),
+            headers: {
+                'Content-Type': 'application/json',
+            },
         });
         if (result.status !== 201) {
             return false;

@@ -19,6 +19,9 @@ export class AuthService {
         const result = await this.fetchWrapper.send('/auth/login', {
             method: 'POST',
             body: JSON.stringify({ email: user, password: password }),
+            headers: {
+                'Content-Type': 'application/json',
+            },
         });
         if (result.status !== 200) {
             return false;

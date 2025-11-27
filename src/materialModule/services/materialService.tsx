@@ -64,6 +64,9 @@ export class MaterialService {
         const result = await this.fetchWrapper.send('/material/material', {
             method: 'POST',
             body: JSON.stringify(material),
+            headers: {
+                'Content-Type': 'application/json',
+            },
         });
         if (result.status !== 201) {
             const text = await result.json().catch(() => '');
@@ -75,6 +78,9 @@ export class MaterialService {
         const result = await this.fetchWrapper.send(`/material/thickness`, {
             method: 'POST',
             body: JSON.stringify(thickness),
+            headers: {
+                'Content-Type': 'application/json',
+            },
         });
         if (result.status !== 201) {
             const text = await result.json().catch(() => '');
@@ -86,6 +92,9 @@ export class MaterialService {
         const result = await this.fetchWrapper.send(`/material/material/${materialId}`, {
             method: 'PUT',
             body: JSON.stringify(material),
+            headers: {
+                'Content-Type': 'application/json',
+            },
         });
         if (result.status !== 200 && result.status !== 204) {
             const text = await result.text().catch(() => '');
@@ -97,6 +106,9 @@ export class MaterialService {
         const result = await this.fetchWrapper.send(`/material/thickness/${thicknessId}`, {
             method: 'PUT',
             body: JSON.stringify(thickness),
+            headers: {
+                'Content-Type': 'application/json',
+            },
         });
         if (result.status !== 200 && result.status !== 204) {
             const text = await result.text().catch(() => '');
