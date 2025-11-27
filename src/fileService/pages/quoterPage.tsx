@@ -8,7 +8,7 @@ import {
     useGetThicknessByMaterialId
 } from "@/materialModule/hooks";
 
-export function QuoterPage() {
+export default function QuoterPage() {
   const { fileId } = useParams<{ fileId: string }>();
   const { data: imageData } = useGetImage(fileId!);
   const { materialId, thicknessId, setMaterialId, setThicknessId } = useQuoter();

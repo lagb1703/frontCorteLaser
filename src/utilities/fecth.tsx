@@ -37,7 +37,6 @@ export class FetchWapper {
         const result = await fetch(`${this.baseUrl}${url}`, {
             ...options,
             headers: {
-                'Content-Type': 'application/json',
                 ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {}),
                 ...options.headers,
             },

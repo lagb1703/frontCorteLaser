@@ -27,13 +27,13 @@ export class FileService {
         }
         return await result.json();
     }
-    public async saveFile(file: Blob): Promise<string | number> {
+    public async saveFile(formData: FormData): Promise<string | number> {
         const result = await this.fetchWrapper.send(`/file/save`, {
-            method: "POST",
-            body: file
-        })
+            method: 'POST',
+            body: formData,
+        });
         if (result.status !== 200) {
-            throw new Error("Error al subir el archivo");
+            throw new Error('Error al subir el archivo');
         }
         return await result.text();
     }
