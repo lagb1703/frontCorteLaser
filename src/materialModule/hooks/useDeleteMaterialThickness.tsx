@@ -2,10 +2,10 @@ import { MaterialService } from "../services/materialService";
 import { useMutation, type UseMutationResult } from "@tanstack/react-query";
 import { useRef } from "react";
 
-export function useDeleteMaterialThickness(): UseMutationResult<void, unknown, { materialId: string; thicknessId: string }> {
+export function useDeleteMaterialThickness(): UseMutationResult<void, unknown, { materialId: string | number; thicknessId: string | number }> {
     const materialService = useRef<MaterialService>(MaterialService.getInstance());
-    return useMutation<void, unknown, { materialId: string; thicknessId: string }>({
-        mutationFn: async ({ materialId, thicknessId }: { materialId: string; thicknessId: string }) => {
+    return useMutation<void, unknown, { materialId: string | number; thicknessId: string | number }>({
+        mutationFn: async ({ materialId, thicknessId }: { materialId: string | number; thicknessId: string | number }) => {
             return await materialService.current.deleteMaterialThickness(materialId, thicknessId);
         },
         onSuccess: () => {

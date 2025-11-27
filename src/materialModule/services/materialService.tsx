@@ -41,7 +41,7 @@ export class MaterialService {
             lastModification: new Date(),
         }
     }
-    public async getThicknessByMaterial(materialId: string):Promise<Array<Thickness>>{
+    public async getThicknessByMaterial(materialId: string | number):Promise<Array<Thickness>>{
         const result = await this.fetchWrapper.send(`/material/thickness?materialId=${materialId}`, {
             method: 'GET',
         });
@@ -51,7 +51,7 @@ export class MaterialService {
         return await result.json();
     }
 
-    public async getThicknessNoLinkedToMaterial(materialId: string):Promise<Array<Thickness>>{
+    public async getThicknessNoLinkedToMaterial(materialId: string| number):Promise<Array<Thickness>>{
         const result = await this.fetchWrapper.send(`/material/thickness/noLinked?materialId=${materialId}`, {
             method: 'GET',
         });
@@ -105,10 +105,24 @@ export class MaterialService {
         return;
     }
     public async addMaterialThickness(materialId: string | number, thicknessId: string | number): Promise<void>{
-        
+        const result = await this.fetchWrapper.send(`/material/mt/${materialId}/${thicknessId}`, {
+            method: 'POST'
+        });
+        if (result.status !== 201) {
+            const text = await result.json().catch(() => '');
+            throw new Error(`Error creating material-thickness link: ${result.status} ${text}`);
+        }
+        return;
     }
     public async deleteMaterialThickness(materialId: string | number, thicknessId: string | number): Promise<void>{
-        
+        const result = await this.fetchWrapper.send(`/material/mt/${materialId}/${thicknessId}`, {
+            method: 'DELETE'
+        });
+        if (result.status !== 204) {
+            const text = await result.json().catch(() => '');
+            throw new Error(`Error deleting material-thickness link: ${result.status} ${text}`);
+        }
+        return;
     }
     public async deleteMaterial(materialId: string | number): Promise<void>{
         await this.fetchWrapper.send(`/material/material/${materialId}`, {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     DndContext,
     KeyboardSensor,
@@ -19,23 +19,20 @@ import {
 } from "@dnd-kit/sortable";
 import { arrayMove } from "@dnd-kit/sortable";
 import { type Material } from "@/materialModule/validators/materialValidators";
-import {type Thickness} from "@/materialModule/validators/thicknessValidators";
+import { type Thickness } from "@/materialModule/validators/thicknessValidators";
+import { Card, CardHeader } from "@/components/ui/card";
+import { useGetMaterials } from "@/materialModule/hooks";
+import { useAdminMaterialThickness } from "../hooks/useAdminMaterialThickness";
 
 function Item(props: { id: string | number }) {
     const { id } = props;
     const thickness = JSON.parse(id as string) as Thickness;
-    const style: React.CSSProperties = {
-        width: "100%",
-        height: 50,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        border: "1px solid black",
-        margin: "10px 0",
-        background: "white"
-    };
 
-    return <div style={style}>{thickness.name}</div>;
+    return <Card >
+        <CardHeader className="text-center w-full">
+            {thickness.name}
+        </CardHeader>
+    </Card>;
 }
 
 function SortableItem(props: { id: string }) {
@@ -59,12 +56,6 @@ function SortableItem(props: { id: string }) {
     );
 }
 
-const containerStyle: React.CSSProperties = {
-    background: "#dadada",
-    padding: 10,
-    margin: 10,
-    flex: 1
-};
 
 function Container(props: { id: string; items: string[] }) {
     const { id, items } = props;
@@ -79,7 +70,7 @@ function Container(props: { id: string; items: string[] }) {
             items={items}
             strategy={verticalListSortingStrategy}
         >
-            <div ref={setNodeRef} style={containerStyle}>
+            <div ref={setNodeRef} className="bg-[#dadada] p-2.5 m-2.5 flex-1">
                 {items.map((itemId) => (
                     <SortableItem key={itemId} id={itemId} />
                 ))}
@@ -88,16 +79,26 @@ function Container(props: { id: string; items: string[] }) {
     );
 }
 
-const wrapperStyle: React.CSSProperties = {
-    display: "flex",
-    flexDirection: "row"
-};
-
 export default function ThicknessMaterialList() {
     const [items, setItems] = useState<Record<string, string[]>>({
-        mt: ['{"thicknessId":1, "name":"pepe", "lastModification":""}'],
+        mt: [],
         thickness: [],
     });
+    const { data: materials } = useGetMaterials();
+    const {
+        materialId,
+        setMaterialId,
+        linkedThicknesses,
+        unlinkedThicknesses,
+        handleAddThickness,
+        handleDeleteThickness
+    } = useAdminMaterialThickness();
+    useEffect(()=>{
+        setItems({
+            mt: linkedThicknesses,
+            thickness: unlinkedThicknesses,
+        });
+    }, [linkedThicknesses, unlinkedThicknesses]);
     const [activeId, setActiveId] = useState<string | null>(null);
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -106,7 +107,7 @@ export default function ThicknessMaterialList() {
         })
     );
     return (
-        <div style={wrapperStyle}>
+        <div className="flex flex-row">
             <DndContext
                 sensors={sensors}
                 collisionDetection={closestCorners}
@@ -114,6 +115,18 @@ export default function ThicknessMaterialList() {
                 onDragOver={handleDragOver}
                 onDragEnd={handleDragEnd}
             >
+                <div>
+                    {materials?.map((material: Material) => (
+                        <div 
+                            onClick={() => {
+                                setMaterialId(material.materialId!);
+                            }} 
+                            className={"p-2 m-2 bg-blue-300 cursor-pointer" + (materialId === material.materialId ? " border-4 border-blue-800" : "")}
+                            key={material.materialId}>
+                                {material.name}
+                            </div>
+                    ))}
+                </div>
                 {
                     Object.keys(items).map((containerId) => (
                         <Container
@@ -140,7 +153,6 @@ export default function ThicknessMaterialList() {
     function handleDragStart(event: DragStartEvent) {
         const { active } = event;
         const id = active.id as string | null;
-        console.log("Drag Start Event:", active);
         setActiveId(id);
     }
 
@@ -149,7 +161,6 @@ export default function ThicknessMaterialList() {
         const draggingRect = (event as any).draggingRect as { top?: number } | undefined;
         const id = active.id as string;
         const overId = over?.id as string | undefined;
-        console.log("Drag Over Event:", active, over);
 
         // Find the containers
         const activeContainer = findContainer(id);
@@ -170,7 +181,6 @@ export default function ThicknessMaterialList() {
             // Find the indexes for the items
             const activeIndex = activeItems.indexOf(id);
             const overIndex = overItems.indexOf(overId as string);
-
             let newIndex: number;
             if (overId && overId in prev) {
                 // We're at the root droppable of a container
@@ -186,7 +196,6 @@ export default function ThicknessMaterialList() {
 
                 newIndex = overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
             }
-
             return {
                 ...prev,
                 [activeContainer]: [
@@ -203,13 +212,12 @@ export default function ThicknessMaterialList() {
 
     function handleDragEnd(event: DragEndEvent) {
         const { active, over } = event;
-        console.log("Drag End Event:", active, over);
         const id = active.id as string;
         const overId = over?.id as string | undefined;
 
         const activeContainer = findContainer(id);
         const overContainer = findContainer(overId);
-
+        console.log({ activeContainer, overContainer }, activeContainer !== overContainer);
         if (
             !activeContainer ||
             !overContainer ||
@@ -221,7 +229,15 @@ export default function ThicknessMaterialList() {
 
         const activeIndex = items[activeContainer].indexOf(id);
         const overIndex = items[overContainer].indexOf(overId as string);
-
+        console.log(activeContainer);
+        if(activeContainer === "mt"){
+            console.log("add thickness");
+            handleAddThickness(JSON.parse(id));
+        }
+        else{
+            console.log("delete thickness");
+            handleDeleteThickness(JSON.parse(id));
+        }
         if (activeIndex !== overIndex) {
             setItems((items) => ({
                 ...items,
