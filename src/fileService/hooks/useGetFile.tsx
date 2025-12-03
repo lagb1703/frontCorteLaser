@@ -13,5 +13,6 @@ export function useGetFile(id: string | number): UseQueryResult<Blob, Error> {
             return await fileService.current.getFile(id);
         },
         staleTime: Infinity,
+        enabled: false,
     });
 }

@@ -38,7 +38,7 @@ export class FileService {
         return await result.text();
     }
     public async getFile(id: string | number): Promise<Blob> {
-        const result = await this.fetchWrapper.send(`/file/donwload?id=1${id}`, {
+        const result = await this.fetchWrapper.send(`/file/donwload?id=${id}`, {
             method: "GET",
         })
         if (result.status !== 200) {
