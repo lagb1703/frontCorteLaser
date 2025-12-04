@@ -21,8 +21,7 @@ export default function UpdateFile() {
                 navigate(`/quoter/${fileResponse}`);
             }, 600);
         } catch (error: any) {
-            console.error('Upload failed:', error);
-            toast.error(error?.message || "Failed to upload file", { id: toastId });
+            toast.error(error.message || "Failed to upload file", { id: toastId });
         }
     }, [saveFile, navigate]);
 

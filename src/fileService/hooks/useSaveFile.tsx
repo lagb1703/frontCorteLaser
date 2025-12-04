@@ -9,7 +9,8 @@ export function useSaveFile(): UseMutationResult<string | number, Error, FormDat
             return await fileService.current.saveFile(formData);
         },
         onError: (error: Error) => {
-            console.error('Error saving file:', error);
+            console.error(error);
+            throw error;
         }
     });
 }

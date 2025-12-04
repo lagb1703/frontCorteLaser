@@ -32,9 +32,6 @@ export class FileService {
             method: 'POST',
             body: formData,
         });
-        if (result.status !== 200) {
-            throw new Error('Error al subir el archivo');
-        }
         return await result.text();
     }
     public async getFile(id: string | number): Promise<Blob> {

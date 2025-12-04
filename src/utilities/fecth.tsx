@@ -41,9 +41,14 @@ export class FetchWapper {
                 ...options.headers,
             },
         });
+        console.log("pepe el mago")
+        if(result.status === 409){
+            const errorData = await result.json();
+            throw new Error(errorData.detail || 'Internal Server Error');
+        }
         if (result.status === 400) {
             const errorData = await result.json();
-            console.error('Bad Request:', errorData);
+            throw new Error(errorData.detail || 'Bad Request');
         }
         if (result.status === 401) {
             this.setToken(null);
