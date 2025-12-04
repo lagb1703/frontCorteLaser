@@ -1,10 +1,11 @@
-import { useGetAcceptanceTokens, useGetVerifyInf, usePostPayment, useGetPaymentMethods } from "./"
+import { useGetAcceptanceTokens, usePostPayment, useGetPaymentMethods } from "./"
 import { paymentTypeSchema } from "../validators/paymentValidators"
 import type { PaymentType } from "../validators/paymentValidators"
 import { useCallback } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { useEffect } from "react"
+import { useNavigate } from "react-router"
 
 interface InputData {
     fileId: string | number
@@ -14,6 +15,7 @@ interface InputData {
 }
 
 export function useManageData({ fileId, materialId, thicknessId, onClose }: InputData) {
+    const navigate = useNavigate();
     const {
         data: paymentMethods, 
         isLoading: isLoadingPaymentMethods
@@ -87,6 +89,7 @@ export function useManageData({ fileId, materialId, thicknessId, onClose }: Inpu
                 ...data
             });
             onClose();
+            navigate("/payments");
         } catch (error) {
             console.error("Payment submission error:", error);
         }finally {
