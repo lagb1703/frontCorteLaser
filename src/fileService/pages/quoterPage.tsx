@@ -7,15 +7,12 @@ import {
   useGetMaterials,
   useGetThicknessByMaterialId
 } from "@/materialModule/hooks";
-import { useEffect, useCallback } from "react";
-import { useNavigate } from "react-router";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import PaymentDialog from "@/paymentModule/components/paymentDialog";
 
 export default function QuoterPage() {
-  const navigate = useNavigate();
-  const handleNavigate = useCallback(() => {
-    navigate("/some-path");
-  }, [navigate]);
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
 
   const { fileId } = useParams<{ fileId: string }>();
   const { data: imageData } = useGetImage(fileId!);
@@ -62,7 +59,19 @@ export default function QuoterPage() {
           price={priceData.price}
         />
       )}
-      <Button onClick={handleNavigate}>Pay</Button>
+      <Button 
+        onClick={() => setIsPaymentOpen(true)}
+        disabled={!priceData}>
+          Pay
+      </Button>
+      {priceData && (
+        <PaymentDialog
+          isOpen={isPaymentOpen}
+          onClose={() => setIsPaymentOpen(false)}
+          fileId={fileId!}
+          materialId={materialId!}
+          thicknessId={thicknessId!}
+        />)}
     </div>
   );
 }

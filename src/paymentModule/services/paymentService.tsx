@@ -1,7 +1,7 @@
 import { FetchWapper } from "@/utilities/fecth";
 import type { PaymentMethodType, PaymentType, DbPaymentType } from "../validators/paymentValidators";
 import type { AcceptanceTokens } from "../validators/tokenValidators";
-class PaymentService {
+export class PaymentService {
     private fetchWrapper: FetchWapper;
     private static instance: PaymentService;
 
@@ -44,7 +44,7 @@ class PaymentService {
         const data = await result.text();
         return data;
     }
-    public async untilNotGetPending(id: string): Promise<string> {
+    public async untilNotGetPending(id: string | number): Promise<string> {
         const result = await this.fetchWrapper.send(`/payment/verify/APROVED?id=${id}`);
         if(!result.ok) throw new Error("Error verifying payment");
         const data = await result.text();
