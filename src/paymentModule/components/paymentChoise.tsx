@@ -1,4 +1,4 @@
-import type { UseFormRegister, FormState, Control, UseFormSetValue } from "react-hook-form"
+import type { UseFormRegister, FormState, Control, UseFormSetValue, UseFormReset } from "react-hook-form"
 import { useWatch } from "react-hook-form"
 import type { PaymentType, PaymentMethodType } from "../validators/paymentValidators"
 import {
@@ -15,8 +15,7 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@radix-ui/react-label"
 interface Props {
-  register: UseFormRegister<PaymentType>
-  formState: FormState<PaymentType>
+  reset: UseFormReset<PaymentType>
   control: Control<PaymentType>
   setValue: UseFormSetValue<PaymentType>
   paymentMethods: Array<PaymentMethodType> | undefined
@@ -25,8 +24,7 @@ interface Props {
 
 export default function PaymentChoice(
   {
-    register,
-    formState,
+    reset,
     control,
     setValue,
     paymentMethods,
@@ -56,8 +54,11 @@ export default function PaymentChoice(
                     variant={field.value === method.name ? "default" : "outline"}
                     className="justify-start"
                     onClick={() => {
-                      field.onChange(method.name);
-                      setValue("paymentMethodId", method.id!);
+                      reset();
+                      setTimeout(() => {
+                        field.onChange(method.name);
+                        setValue("paymentMethodId", method.id!);
+                      }, 100);
                     }}
                   >
                     {method.name}

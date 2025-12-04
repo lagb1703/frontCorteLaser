@@ -53,8 +53,7 @@ export default function PaymentDialog({ isOpen, onClose, fileId, materialId, thi
                 </DialogHeader>
                 <Form {...form}>
                     <PaymentChoice
-                        register={register}
-                        formState={formState}
+                        reset={form.reset}
                         control={control}
                         setValue={setValue}
                         paymentMethods={paymentMethods}

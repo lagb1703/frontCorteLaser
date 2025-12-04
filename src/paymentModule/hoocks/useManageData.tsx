@@ -18,6 +18,7 @@ export function useManageData({ fileId, materialId, thicknessId, onClose }: Inpu
         data: paymentMethods, 
         isLoading: isLoadingPaymentMethods
     } = useGetPaymentMethods();
+    console.log("Payment Methods:", paymentMethods);
     const {
         data: acceptancesTokens, 
         isLoading: isLoadingAcceptanceTokens,
@@ -30,9 +31,9 @@ export function useManageData({ fileId, materialId, thicknessId, onClose }: Inpu
             acceptance_token: "",
             accept_personal_auth: "",
             amount_in_cents: undefined,
-            paymentMethodId: paymentMethods ? paymentMethods[0].id! : "CARD",
+            paymentMethodId: paymentMethods ? paymentMethods[0].id! : 1,
             payment_method: {
-                type: paymentMethods ? paymentMethods[0].name : "CARD",
+                type: paymentMethods ? paymentMethods[0].name : "NEQUI",
                 phone_number: "",
                 installments: 1,
             },
@@ -47,7 +48,7 @@ export function useManageData({ fileId, materialId, thicknessId, onClose }: Inpu
         },
     })
 
-    const { register, handleSubmit, formState, setValue, clearErrors, control } = form
+    const { register, formState, setValue, clearErrors, control } = form
     useEffect(() => {
         setValue("reference", `${fileId}-${materialId}-${thicknessId}@${crypto.randomUUID()}`)
         clearErrors("reference")
@@ -57,10 +58,10 @@ export function useManageData({ fileId, materialId, thicknessId, onClose }: Inpu
         if(!acceptancesTokens)
             return;
         if(value) {
-            setValue("acceptance_token", acceptancesTokens.presigned_acceptance.acceptance_token)
+            setValue("acceptance_token", acceptancesTokens.presigned_acceptance.acceptance_token, { shouldValidate: true, shouldDirty: true })
             return;
         }
-        setValue("acceptance_token", "");
+        setValue("acceptance_token", "", { shouldValidate: true, shouldDirty: true });
         clearErrors("acceptance_token")
     }, [acceptancesTokens]);
 
@@ -68,10 +69,10 @@ export function useManageData({ fileId, materialId, thicknessId, onClose }: Inpu
         if(!acceptancesTokens)
             return;
         if(value) {
-            setValue("accept_personal_auth", acceptancesTokens.presigned_personal_data_auth.acceptance_token)
+            setValue("accept_personal_auth", acceptancesTokens.presigned_personal_data_auth.acceptance_token, { shouldValidate: true, shouldDirty: true })
             return;
         }
-        setValue("accept_personal_auth", "");
+        setValue("accept_personal_auth", "", { shouldValidate: true, shouldDirty: true });
         clearErrors("accept_personal_auth")
     }, [acceptancesTokens]);
     
@@ -90,10 +91,17 @@ export function useManageData({ fileId, materialId, thicknessId, onClose }: Inpu
             console.error("Payment submission error:", error);
         }finally {
             refetchAcceptanceTokens();
-            setValue("acceptance_token", "");
-            setValue("accept_personal_auth", "");
+            setValue("acceptance_token", "", { shouldValidate: true, shouldDirty: true });
+            setValue("accept_personal_auth", "", { shouldValidate: true, shouldDirty: true });
         }
     }, [paymentMutation, onClose, refetchAcceptanceTokens]);
+
+    useEffect(() => {
+        if (!paymentMethods || paymentMethods.length === 0) return;
+        const first = paymentMethods[0];
+        setValue("paymentMethodId", first.id ?? 1, { shouldValidate: true, shouldDirty: true });
+        setValue("payment_method.type", first.name ?? "NEQUI", { shouldValidate: true, shouldDirty: true });
+    }, [paymentMethods, setValue]);
 
     return {
         form,

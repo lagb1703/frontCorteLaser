@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 export default function UpdateFile() {
     const navigate = useNavigate();
     const saveFile = useSaveFile();
-    const updateFile = useCallback(async (e) => {
+    const updateFile = useCallback(async (e: any) => {
         const file = e.target?.files?.[0];
         if (!file) return;
         const formData = new FormData();
