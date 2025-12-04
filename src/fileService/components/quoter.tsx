@@ -1,6 +1,16 @@
 import { type Material } from "@/materialModule/validators/materialValidators";
 import { type Thickness } from "@/materialModule/validators/thicknessValidators";
 import { useCallback } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
 interface props {
     materials: Array<Material>;
     materialId: string | number | null;
@@ -20,29 +30,45 @@ export default function Quoter({ materials, materialId, setMaterialId, thickness
     }, [setThicknessId]);
 
     return (
-        <div>
-            <select
-                defaultValue={materialId ?? ""}
-                onChange={(e) => handleMaterialChange(e.target.value)}
+        <div
+            className="flex gap-10 justify-between">
+            <Select
+                value={materialId != null ? String(materialId) : ""}
+                onValueChange={(val) => handleMaterialChange(val)}
             >
-                <option value="" hidden>Select Material</option>
-                {materials?.map((material) => (
-                    <option key={material.materialId} value={material.materialId!}>
-                        {material.name}
-                    </option>
-                ))}
-            </select>
-            <select
-                defaultValue={thicknessId ?? "p"}
-                onChange={(e) => handleThicknessChange(e.target.value)}
+                <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Material" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                        <SelectLabel>Materials</SelectLabel>
+                        {materials?.map((material) => (
+                            <SelectItem key={material.materialId} value={String(material.materialId!)}>
+                                {material.name}
+                            </SelectItem>
+                        ))}
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
+
+            <Select
+                value={thicknessId != null ? String(thicknessId) : ""}
+                onValueChange={(val) => handleThicknessChange(val)}
             >
-                <option value="p" hidden>Select Thickness</option>
-                {thicknesses?.map((thickness) => (
-                    <option key={thickness.thicknessId} value={thickness.thicknessId!}>
-                        {thickness.name}
-                    </option>
-                ))}
-            </select>
+                <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Thickness" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                        <SelectLabel>Thicknesses</SelectLabel>
+                        {thicknesses?.map((thickness) => (
+                            <SelectItem key={thickness.thicknessId} value={String(thickness.thicknessId!)}>
+                                {thickness.name}
+                            </SelectItem>
+                        ))}
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
         </div>
     );
 }
