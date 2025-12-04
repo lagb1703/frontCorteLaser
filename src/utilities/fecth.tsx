@@ -41,7 +41,6 @@ export class FetchWapper {
                 ...options.headers,
             },
         });
-        console.log("pepe el mago")
         if(result.status === 409){
             const errorData = await result.json();
             throw new Error(errorData.detail || 'Internal Server Error');

@@ -13,8 +13,11 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { toast } from "sonner"
+import { useNavigate } from "react-router"
 
 export default function LoginForm() {
+    const navigate = useNavigate()
     const form = useForm<LoginInput>({
         resolver: zodResolver(loginSchema),
         mode: "onChange",
@@ -26,14 +29,22 @@ export default function LoginForm() {
 
     const loginMutation = useLogin()
 
-    const onSubmit = (data: LoginInput) => {
-        loginMutation.mutate(data)
+    const onSubmit = async (data: LoginInput) => {
+        const toastId = toast.loading("Accediendo...");
+        try{
+            await loginMutation.mutateAsync(data);
+            toast.success("Acceso exitoso", { id: toastId });
+            setTimeout(() => {
+                navigate("/")
+            }, 1000)
+        }catch (error: any) {
+            toast.error(error.message || "Error al iniciar sesión", { id: toastId });
+        }
     }
 
     const loginGoogleQuery = useLoginGoogle({ enabled: false })
 
     const handleGoogleLogin = () => {
-        // El hook devuelve un UseQueryResult; usamos refetch para iniciar el proceso on demand
         void loginGoogleQuery.refetch()
     }
 
@@ -74,10 +85,6 @@ export default function LoginForm() {
                         {loginMutation.status === 'pending' ? "Ingresando..." : "Ingresar"}
                     </Button>
                 </div>
-
-                {loginMutation.isError && (
-                    <p style={{ color: "red" }}>Error: {String(loginMutation.error?.message)}</p>
-                )}
 
                 <hr className="my-3" />
 

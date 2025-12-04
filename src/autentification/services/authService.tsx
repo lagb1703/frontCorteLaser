@@ -23,6 +23,10 @@ export class AuthService {
                 'Content-Type': 'application/json',
             },
         });
+        if(result.status === 401){
+            const errorData = await result.json();
+            throw new Error(errorData.detail || 'Unauthorized');
+        }
         if (result.status !== 200) {
             return false;
         }
