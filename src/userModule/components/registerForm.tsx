@@ -3,16 +3,28 @@ import type { Resolver } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRegister } from "../hooks/useRegister"
 import { userSchema, type User } from "../validators/userValidators"
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 
 export default function RegisterForm() {
-    const {
-        register,
-        handleSubmit,
-        formState: { errors, isValid },
-    } = useForm<User>({
+    const form = useForm<User>({
         resolver: zodResolver(userSchema) as Resolver<User>,
         mode: "onChange",
         defaultValues: {
+            names: "",
+            lastNames: "",
+            email: "",
+            address: "",
+            phone: "",
+            password: "",
             isAdmin: false,
         },
     })
@@ -20,52 +32,102 @@ export default function RegisterForm() {
     const registerMutation = useRegister()
 
     const onSubmit = (data: User) => {
-        registerMutation.mutate(data)
+        // registerMutation.mutate(data)
     }
-    
+
     return (
-        <form onSubmit={handleSubmit(onSubmit)} noValidate>
-            <div>
-                <label htmlFor="names">Nombres</label>
-                <input id="names" {...register("names")} aria-invalid={errors.names ? "true" : "false"} />
-                {errors.names && <span role="alert">{String(errors.names.message)}</span>}
-            </div>
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} noValidate className="space-y-2">
+                <FormField
+                    control={form.control}
+                    name="names"
+                    render={({ field }) => (
+                        <FormItem className="mb-1">
+                            <FormLabel className="text-sm">Nombres</FormLabel>
+                            <FormControl>
+                                <Input id="names" placeholder="Nombres" autoComplete="given-name" className="h-8 text-sm" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
 
-            <div>
-                <label htmlFor="lastNames">Apellidos</label>
-                <input id="lastNames" {...register("lastNames")} aria-invalid={errors.lastNames ? "true" : "false"} />
-                {errors.lastNames && <span role="alert">{String(errors.lastNames.message)}</span>}
-            </div>
+                <FormField
+                    control={form.control}
+                    name="lastNames"
+                    render={({ field }) => (
+                        <FormItem className="mb-1">
+                            <FormLabel className="text-sm">Apellidos</FormLabel>
+                            <FormControl>
+                                <Input id="lastNames" placeholder="Apellidos" autoComplete="family-name" className="h-8 text-sm" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
 
-            <div>
-                <label htmlFor="email">Correo</label>
-                <input id="email" type="email" {...register("email")} aria-invalid={errors.email ? "true" : "false"} />
-                {errors.email && <span role="alert">{String(errors.email.message)}</span>}
-            </div>
+                <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                        <FormItem className="mb-1">
+                            <FormLabel className="text-sm">Correo</FormLabel>
+                            <FormControl>
+                                <Input id="email" type="email" placeholder="correo@ejemplo.com" autoComplete="email" className="h-8 text-sm" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
 
-            <div>
-                <label htmlFor="address">Dirección</label>
-                <input id="address" {...register("address")} aria-invalid={errors.address ? "true" : "false"} />
-                {errors.address && <span role="alert">{String(errors.address.message)}</span>}
-            </div>
+                <FormField
+                    control={form.control}
+                    name="address"
+                    render={({ field }) => (
+                        <FormItem className="mb-1">
+                            <FormLabel className="text-sm">Dirección</FormLabel>
+                            <FormControl>
+                                <Input id="address" placeholder="Dirección" autoComplete="street-address" className="h-8 text-sm" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
 
-            <div>
-                <label htmlFor="phone">Teléfono</label>
-                <input id="phone" type="tel" {...register("phone")} aria-invalid={errors.phone ? "true" : "false"} />
-                {errors.phone && <span role="alert">{String(errors.phone.message)}</span>}
-            </div>
+                <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                        <FormItem className="mb-1">
+                            <FormLabel className="text-sm">Teléfono</FormLabel>
+                            <FormControl>
+                                <Input id="phone" type="tel" placeholder="Teléfono" autoComplete="tel" className="h-8 text-sm" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
 
-            <div>
-                <label htmlFor="password">Contraseña</label>
-                <input id="password" type="password" {...register("password")} aria-invalid={errors.password ? "true" : "false"} />
-                {errors.password && <span role="alert">{String(errors.password.message)}</span>}
-            </div>
+                <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                        <FormItem className="mb-1">
+                            <FormLabel className="text-sm">Contraseña</FormLabel>
+                            <FormControl>
+                                <Input id="password" type="password" placeholder="Contraseña" autoComplete="current-password" className="h-8 text-sm" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
 
-            <div>
-                <button type="submit" disabled={registerMutation.status === "pending" || !isValid}>
-                    {registerMutation.status === "pending" ? "Creando..." : "Crear usuario"}
-                </button>
-            </div>
-        </form>
-    );
+                <div className="mt-3">
+                    <Button type="submit" className="h-8 px-3 text-sm" disabled={registerMutation.status === "pending" || !form.formState.isValid}>
+                        {registerMutation.status === "pending" ? "Creando..." : "Crear usuario"}
+                    </Button>
+                </div>
+            </form>
+        </Form>
+    )
 }
