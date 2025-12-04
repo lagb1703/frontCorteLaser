@@ -51,7 +51,7 @@ export function useManageData({ fileId, materialId, thicknessId, onClose }: Inpu
         },
     })
 
-    const { register, formState, setValue, clearErrors, control } = form
+    const { setValue, clearErrors, control } = form
     useEffect(() => {
         setValue("reference", `${fileId}-${materialId}-${thicknessId}@${crypto.randomUUID()}`)
         clearErrors("reference")
