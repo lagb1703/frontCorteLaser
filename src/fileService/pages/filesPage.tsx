@@ -4,13 +4,12 @@ import FileList from "../components/fileList";
 
 
 export default function FilesPage() {
-    const { files, choiseFile, file, handleDeleteFile, downloadFile } = useChoiseFile();
+    const { files, choiseFile, isLoadingFiles, file, handleDeleteFile, downloadFile } = useChoiseFile();
 
     return (
         <div>
-            <FileList files={files || []} setFileId={choiseFile} deleteFile={handleDeleteFile} />
-            <FileViwer file={file} />
-            <button onClick={downloadFile}>Download File</button>
+            <FileList files={files || []} isLoading={isLoadingFiles} setFileId={choiseFile} deleteFile={handleDeleteFile} />
+            <FileViwer file={file} downloadFile={downloadFile} />
         </div>
     );
 }

@@ -6,8 +6,8 @@ import {
     CardContent,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2Icon } from "lucide-react";
 // import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton"
 
 export default function Payments() {
     const { data, isLoading, error } = useGetPayemnts();
@@ -22,13 +22,28 @@ export default function Payments() {
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center py-8">
-                <Loader2Icon className="size-5 animate-spin mr-2" />
-                <span>Cargando pagos...</span>
-            </div>
+            <Card className="w-full">
+                <CardHeader>
+                    <CardTitle>Pagos</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex flex-col gap-3">
+                        {[1, 2, 3, 4].map((i) => (
+                            <div key={i} className="flex items-center justify-between py-3">
+                                <div className="flex-1">
+                                    <Skeleton className="h-4 w-3/4 mb-2" />
+                                    <Skeleton className="h-3 w-1/2" />
+                                </div>
+                                <div className="w-28 flex items-center justify-end">
+                                    <Skeleton className="h-6 w-20" />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </CardContent>
+            </Card>
         );
     }
-
     if (error) {
         return (
             <Card>
@@ -41,7 +56,6 @@ export default function Payments() {
             </Card>
         );
     }
-
     return (
         <Card className="w-full">
             <CardHeader>
