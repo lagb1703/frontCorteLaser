@@ -13,7 +13,6 @@ export function useChoiseFile(){
     const deleteMutation = useDeleteFile();
     const handleDeleteFile = useCallback(async (fileId: string | number | null) => {
         if(fileId === null) return;
-        console.log("Deleting file with ID:", fileId, file);
         if(file?.id == fileId){
             setFileId(null);
         }
@@ -34,7 +33,6 @@ export function useChoiseFile(){
         a.remove();
         window.URL.revokeObjectURL(url);
     }, [fileId, refetch, files]);
-    console.log("Selected file:", file);
     return {
         files,
         choiseFile,

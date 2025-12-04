@@ -12,15 +12,12 @@ interface props {
 
 export default function Quoter({ materials, materialId, setMaterialId, thicknesses, thicknessId, setThicknessId }: props) {
     const handleMaterialChange = useCallback((id: string | number) => {
-        console.log("Material ID selected:", id);
         setMaterialId(id);
     }, [setMaterialId]);
 
     const handleThicknessChange = useCallback((id: string | number) => {
-        console.log("Thickness ID selected:", id);
         setThicknessId(id);
     }, [setThicknessId]);
-    console.log("Current materialId:", materialId, "Current thicknessId:", thicknessId);
 
     return (
         <div>

@@ -23,7 +23,6 @@ export default function FileList({ files, setFileId, deleteFile }: Props) {
                     <button
                         onClick={(e) => {
                             e.preventDefault();
-                            console.log("Deleting file with ID: ", file.id);
                             deleteFile(file.id);
                         }}
                     >

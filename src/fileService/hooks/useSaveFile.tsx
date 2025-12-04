@@ -6,7 +6,6 @@ export function useSaveFile(): UseMutationResult<string | number, Error, FormDat
     const fileService = useRef<FileService>(FileService.getInstance());
     return useMutation<string | number, Error, FormData>({
         mutationFn: async (formData: FormData) => {
-            console.log('Saving file with formData:', formData);
             return await fileService.current.saveFile(formData);
         },
         onError: (error: Error) => {

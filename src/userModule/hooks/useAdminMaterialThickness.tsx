@@ -16,7 +16,6 @@ export function useAdminMaterialThickness() {
     const { data: thicknessesLinked, refetch: refetchLinked } = useGetThicknessByMaterialId(materialId ?? 0);
     const { data: thicknessesUnlinked, refetch: refetchUnlinked } = useGetThicknessNoLinkedToMaterialId(materialId ?? 0);
     useEffect(() => {
-        console.log("Material ID changed:", materialId);
         if (thicknessesLinked) {
             const linked = thicknessesLinked.map(thickness => JSON.stringify(thickness));
             setLinkedThicknesses(linked);

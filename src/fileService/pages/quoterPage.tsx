@@ -36,7 +36,6 @@ export default function QuoterPage() {
       setThicknessId(null);
       return;
     }
-    console.log("Refetching price...");
     refetch();
   }, [materialId, thicknessId, refetch, thicknesses]);
   return (

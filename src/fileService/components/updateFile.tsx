@@ -11,7 +11,6 @@ export default function UpdateFile() {
         const formData = new FormData();
         formData.append('file', file, file.name);
         const fileResponse = await saveFile.mutateAsync(formData);
-        console.log(fileResponse);
         navigate(`/quoter/${fileResponse}`);
     }, [saveFile, navigate]);
 

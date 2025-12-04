@@ -217,7 +217,6 @@ export default function ThicknessMaterialList() {
 
         const activeContainer = findContainer(id);
         const overContainer = findContainer(overId);
-        console.log({ activeContainer, overContainer }, activeContainer !== overContainer);
         if (
             !activeContainer ||
             !overContainer ||
@@ -229,13 +228,10 @@ export default function ThicknessMaterialList() {
 
         const activeIndex = items[activeContainer].indexOf(id);
         const overIndex = items[overContainer].indexOf(overId as string);
-        console.log(activeContainer);
         if(activeContainer === "mt"){
-            console.log("add thickness");
             handleAddThickness(JSON.parse(id));
         }
         else{
-            console.log("delete thickness");
             handleDeleteThickness(JSON.parse(id));
         }
         if (activeIndex !== overIndex) {
