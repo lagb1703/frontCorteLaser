@@ -13,6 +13,9 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { toast } from "sonner"
+import { useCallback } from "react"
+import { useNavigate } from "react-router"
 
 export default function RegisterForm() {
     const form = useForm<User>({
@@ -29,11 +32,22 @@ export default function RegisterForm() {
         },
     })
 
+    const navigate = useNavigate()
+
     const registerMutation = useRegister()
 
-    const onSubmit = (data: User) => {
-        // registerMutation.mutate(data)
-    }
+    const onSubmit = useCallback(async (data: User) => {
+        const toastId = toast.loading("Creando usuario...");
+        try {
+            await registerMutation.mutateAsync(data);
+            toast.success("Usuario creado exitosamente", { id: toastId });
+            setTimeout(() => {
+                navigate("/login")
+            }, 1000)
+        } catch (error: any) {
+            toast.error(error.message || "Error al crear el usuario", { id: toastId });
+        }
+    }, [registerMutation, form]);
 
     return (
         <Form {...form}>
