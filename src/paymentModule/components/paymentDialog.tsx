@@ -28,8 +28,6 @@ type PaymentDialogProps = {
 export default function PaymentDialog({ isOpen, onClose, fileId, materialId, thicknessId }: PaymentDialogProps) {
     const {
         form,
-        register,
-        formState,
         control,
         setValue,
         acceptancesTokens,

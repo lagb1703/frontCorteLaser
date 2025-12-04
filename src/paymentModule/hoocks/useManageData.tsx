@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { useEffect } from "react"
 import { useNavigate } from "react-router"
+import { toast } from "sonner"
 
 interface InputData {
     fileId: string | number
@@ -84,12 +85,18 @@ export function useManageData({ fileId, materialId, thicknessId, onClose }: Inpu
         try {
             if(!data.payment_method?.installments)
                 data.payment_method.installments = 1;
-            console.log("Submitting payment data:", data);
-            await paymentMutation.mutateAsync({
-                ...data
-            });
-            onClose();
-            navigate("/payments");
+            const toastId = toast.loading("Procesando el pago...");
+            try{
+                await paymentMutation.mutateAsync({
+                    ...data
+                });
+                toast.success("Pago realizado con éxito", { id: toastId });
+                onClose();
+                navigate("/payments");
+            }catch(e){
+                console.error("Payment error:", e);
+                toast.error("Error al procesar el pago", { id: toastId });
+            }
         } catch (error) {
             console.error("Payment submission error:", error);
         }finally {
@@ -108,10 +115,8 @@ export function useManageData({ fileId, materialId, thicknessId, onClose }: Inpu
 
     return {
         form,
-        register,
         control,
         setValue,
-        formState,
         acceptancesTokens,
         isLoadingAcceptanceTokens,
         setAcceptUserPolicy,
