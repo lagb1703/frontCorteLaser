@@ -46,9 +46,9 @@ export default function PaymentDialog({ isOpen, onClose, fileId, materialId, thi
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Payment Information</DialogTitle>
+                    <DialogTitle>Información de pago</DialogTitle>
                     <DialogDescription>
-                        Please enter your payment details below.
+                        Por favor, ingresa tus datos de pago a continuación.
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -72,7 +72,7 @@ export default function PaymentDialog({ isOpen, onClose, fileId, materialId, thi
                             />
                             <Label htmlFor="accept-user-policy" className="text-sm">
                                 <a href={acceptancesTokens?.presigned_acceptance.permalink} target="_blank" rel="noopener noreferrer">
-                                    I accept the user policy
+                                    Acepto la política de usuario
                                 </a>
                             </Label>
                         </div>
@@ -86,7 +86,7 @@ export default function PaymentDialog({ isOpen, onClose, fileId, materialId, thi
                             />
                             <Label htmlFor="accept-personal-auth" className="text-sm">
                                 <a href={acceptancesTokens?.presigned_personal_data_auth.permalink} target="_blank" rel="noopener noreferrer">
-                                    I accept the personal data authorization
+                                    Acepto la autorización de datos personales
                                 </a>
                             </Label>
                         </div>
@@ -97,11 +97,11 @@ export default function PaymentDialog({ isOpen, onClose, fileId, materialId, thi
                             onClick={form.handleSubmit(submitHandler)}
                             disabled={!form.formState.isValid || form.formState.isSubmitting}
                         >
-                            Submit
+                            Enviar pago
                         </Button>
                         <DialogClose asChild>
                             <Button variant="outline" onClick={onClose}>
-                                Cancel
+                                Cancelar
                             </Button>
                         </DialogClose>
                     </DialogFooter>

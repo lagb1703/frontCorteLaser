@@ -34,7 +34,7 @@ export default function PaymentChoice(
   const [isCreditCard, setIsCreditCard] = useState<boolean>(false) // null = unknown
   const selectedType = useWatch({ control, name: "payment_method.type" }) as string | undefined
   if (isLoadingPaymentMethods) {
-    return <div>Loading payment methods...</div>
+    return <div>Cargando métodos de pago...</div>
   }
   const paymentMethodsList = paymentMethods || []
 
@@ -44,8 +44,8 @@ export default function PaymentChoice(
         control={control}
         name="payment_method.type"
         render={({ field }) => (
-          <FormItem className="space-y-3">
-            <FormLabel>Select Payment Method</FormLabel>
+            <FormItem className="space-y-3">
+            <FormLabel>Seleccionar método de pago</FormLabel>
             <FormControl>
               <div className="flex gap-2">
                 {paymentMethodsList.map((method: PaymentMethodType) => (
@@ -78,7 +78,7 @@ export default function PaymentChoice(
           name="payment_method.phone_number"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Phone number (Nequi)</FormLabel>
+              <FormLabel>Número de teléfono (Nequi)</FormLabel>
               <FormControl>
                 <Input {...field} value={field.value ?? ""} />
               </FormControl>
@@ -94,7 +94,7 @@ export default function PaymentChoice(
             name="card.number"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Card number</FormLabel>
+                <FormLabel>Número de tarjeta</FormLabel>
                 <FormControl>
                   <Input {...field} value={field.value ?? ""} />
                 </FormControl>
@@ -108,7 +108,7 @@ export default function PaymentChoice(
               name="card.exp_month"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Exp. Month</FormLabel>
+                  <FormLabel>Mes de vencimiento</FormLabel>
                   <FormControl>
                     <Input {...field} value={field.value ?? ""} />
                   </FormControl>
@@ -121,7 +121,7 @@ export default function PaymentChoice(
               name="card.exp_year"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Exp. Year</FormLabel>
+                  <FormLabel>Año de vencimiento</FormLabel>
                   <FormControl>
                     <Input {...field} value={field.value ?? ""} />
                   </FormControl>
@@ -148,7 +148,7 @@ export default function PaymentChoice(
             name="card.card_holder"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Card holder</FormLabel>
+                <FormLabel>Titular de la tarjeta</FormLabel>
                 <FormControl>
                   <Input {...field} value={field.value ?? ""} />
                 </FormControl>
@@ -173,7 +173,7 @@ export default function PaymentChoice(
                 htmlFor="checkbox-credit-card"
                 className="ml-2 select-none"
               >
-                Enable Installments
+                Habilitar cuotas
               </Label>
             </div>
             <FormField
@@ -182,7 +182,7 @@ export default function PaymentChoice(
               disabled={!isCreditCard}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Installments</FormLabel>
+                  <FormLabel>Cuotas</FormLabel>
                   <FormControl>
                     <Input
                       {...field}

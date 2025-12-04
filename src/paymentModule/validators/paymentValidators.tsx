@@ -49,8 +49,8 @@ export const wompiTokenizerSchema = z.object({
 export type WompiTokenizerType = z.infer<typeof wompiTokenizerSchema>
 
 export const paymentTypeSchema = z.object({
-    acceptance_token: z.string().min(1, "You must accept the terms and conditions"),
-    accept_personal_auth: z.string().min(1, "You must accept the terms and conditions"),
+    acceptance_token: z.string().min(1, "Debes aceptar los términos y condiciones"),
+    accept_personal_auth: z.string().min(1, "Debes aceptar los términos y condiciones"),
     paymentMethodId: z.union([z.string(), z.number()]),
     amount_in_cents: z.number().optional().nullable(),
     payment_method: paymentMethodWompiSchemaValidated,
