@@ -3,3 +3,4 @@ export * from "./usePostPayment";
 export * from "./useGetVerifyInf";
 export * from "./useGetPaymentMethods";
 export * from "./useManageData";
+export * from "./useGetPayments";
