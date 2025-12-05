@@ -35,7 +35,7 @@ function DropDownMenuHeader({ user, token }: DropDownMenuHeaderProps) {
                     </DropdownMenuItem>
                 </Link>
                 {(user?.isAdmin && token) && adminRoutes.map((r) => (
-                    <Link key={r.path} to={r.path} onClick={close}>
+                    <Link key={r.path} to={r.path}>
                         <DropdownMenuItem>
                             {r.path.replace('/', '') || 'admin'}
                         </DropdownMenuItem>
