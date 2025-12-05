@@ -60,7 +60,7 @@ export default function FileViwer({ file, downloadFile }: Props){
             <CardContent>
                 <div className="mb-4">
                     <Link to={`/quoter/${file?.id}`}>
-                        <div className="max-h-[420px] overflow-hidden rounded-md">
+                        <div className="h-full w-full rounded-md">
                             <ImageVisualizer image={image!} />
                         </div>
                     </Link>

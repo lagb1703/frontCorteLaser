@@ -41,6 +41,7 @@ export function useChoiseFile() {
         }
     }, [fileId, refetch, files]);
     return {
+        fileId,
         files,
         choiseFile,
         file,

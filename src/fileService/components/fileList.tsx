@@ -12,11 +12,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 interface Props {
     files: FileDb[];
     isLoading: boolean;
+    fileId: string | number | null;
     setFileId: (id: string | number) => void;
     deleteFile: (id: string | number) => void;
 }
 
-export default function FileList({ files, isLoading, setFileId, deleteFile }: Props) {
+export default function FileList({ files, isLoading, fileId, setFileId, deleteFile }: Props) {
     return (
         <Card className="w-full">
             <CardHeader>
@@ -41,14 +42,15 @@ export default function FileList({ files, isLoading, setFileId, deleteFile }: Pr
                 ) : files.length ? (
                     <ul className="flex flex-col divide-y">
                         {files.map((file) => (
-                            <li key={file.id} className="flex items-center justify-between py-2">
-                                <button
+                            <li key={file.id} className={`flex items-center justify-between rounded-lg p-2 ${file.id === fileId ? 'bg-accent' : ''}`}>
+                                <Button
+                                    variant="ghost"
                                     onClick={() => setFileId(file.id)}
-                                    className="text-left flex-1 text-sm hover:underline"
+                                    className="h-auto min-h-8 flex-1 justify-start whitespace-normal p-0 text-left text-sm font-normal hover:underline"
                                     aria-label={`Ver ${file.name}`}
                                 >
                                     {file.name}
-                                </button>
+                                </Button>
 
                                 <div className="ml-4 flex items-center gap-2">
                                     <Button size="sm" variant="ghost" onClick={() => setFileId(file.id)}>
