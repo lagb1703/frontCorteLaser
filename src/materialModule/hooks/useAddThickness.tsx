@@ -13,7 +13,7 @@ export function useAddThickness(): UseMutationResult<string, unknown, { thicknes
             // Aquí puedes agregar lógica adicional después de eliminar el material, como invalidar cachés o mostrar notificaciones.
         },
         onError: (error) => {
-            console.error("Error al eliminar el material:", error);
+            throw error;
         },
     });
 }

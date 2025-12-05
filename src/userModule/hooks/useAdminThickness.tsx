@@ -22,23 +22,26 @@ export function useAdminThickness(thickness: Thickness | null, refect?: () => vo
     const changeThicknessMutation = useChangeThickness();
     const deleteThicknessMutation = useDeleteThickness();
 
-    const onDelete = useCallback(() => {
+    const onDelete = useCallback(async () => {
         if (thickness) {
-            deleteThicknessMutation.mutate(thickness.thicknessId!);
-            setTimeout(() => {
-                if (refect) {
-                    refect();
-                }
-            }, refectTimeout);
+            try {
+                await deleteThicknessMutation.mutateAsync(thickness.thicknessId!);
+            } finally {
+                setTimeout(() => {
+                    if (refect) {
+                        refect();
+                    }
+                }, refectTimeout);
+            }
         }
     }, [thickness, deleteThicknessMutation, refect]);
 
-    const onSubmit = useCallback((data: Thickness) => {
+    const onSubmit = useCallback(async (data: Thickness) => {
         delete data.lastModification;
         if (thickness) {
-            changeThicknessMutation.mutate({ thicknessId: thickness.thicknessId!, thickness: data });
+            await changeThicknessMutation.mutateAsync({ thicknessId: thickness.thicknessId!, thickness: data });
         } else {
-            addThicknessMutation.mutate({ thickness: data });
+            await addThicknessMutation.mutateAsync({ thickness: data });
             reset();
             setTimeout(() => {
                 if (refect) {

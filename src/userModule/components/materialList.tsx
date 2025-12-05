@@ -7,13 +7,13 @@ import {
     CardHeader,
     CardTitle,
     CardContent,
-    CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState } from "react";
+import { toast } from "sonner";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -67,20 +67,24 @@ function DeleteAlertDialog({ openAlertDialog, setOpenAlertDialog, onDelete, stat
                     <AlertDialogCancel asChild>
                         <Button variant="outline">Cancelar</Button>
                     </AlertDialogCancel>
-                    <AlertDialogAction asChild>
-                        <Button
-                            variant="destructive"
-                            onClick={async () => {
-                                try {
-                                    await onDelete();
-                                } finally {
-                                    setOpenAlertDialog(false);
-                                }
-                            }}
-                        >
-                            Eliminar
-                        </Button>
-                    </AlertDialogAction>
+                                <AlertDialogAction asChild>
+                                    <Button
+                                        variant="destructive"
+                                        onClick={async () => {
+                                            const toastId = toast.loading("Eliminando material...");
+                                            try {
+                                                await onDelete();
+                                                toast.success("Material eliminado", { id: toastId });
+                                            } catch (error: any) {
+                                                toast.error(error?.message || "Error al eliminar material", { id: toastId });
+                                            } finally {
+                                                setOpenAlertDialog(false);
+                                            }
+                                        }}
+                                    >
+                                        Eliminar
+                                    </Button>
+                                </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
@@ -106,20 +110,24 @@ function SaveAlertDialog({ openSaveDialog, setOpenSaveDialog, onConfirm, status 
                     <AlertDialogCancel asChild>
                         <Button variant="outline">Cancelar</Button>
                     </AlertDialogCancel>
-                    <AlertDialogAction asChild>
-                        <Button
-                            onClick={async () => {
-                                try {
-                                    await onConfirm();
-                                } finally {
-                                    setOpenSaveDialog(false);
-                                }
-                            }}
-                            disabled={status?.isLoading}
-                        >
-                            Guardar cambios
-                        </Button>
-                    </AlertDialogAction>
+                        <AlertDialogAction asChild>
+                            <Button
+                                onClick={async () => {
+                                    const toastId = toast.loading("Guardando material...");
+                                    try {
+                                        await onConfirm();
+                                        toast.success("Material guardado", { id: toastId });
+                                    } catch (error: any) {
+                                        toast.error(error?.message || "Error al guardar material", { id: toastId });
+                                    } finally {
+                                        setOpenSaveDialog(false);
+                                    }
+                                }}
+                                disabled={status?.isLoading}
+                            >
+                                Guardar cambios
+                            </Button>
+                        </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
@@ -141,7 +149,14 @@ function MaterialItem({ material, refetch }: props) {
 
             <div>
                 <Label htmlFor="price">Precio</Label>
-                <Input id="price" type="number" step={1} {...register("price", { valueAsNumber: true })} />
+                <Input
+                    id="price"
+                    type="number"
+                    step={1}
+                    {...register("price", {
+                        setValueAs: (v) => (v === "" || v == null ? undefined : Number(v)),
+                    })}
+                />
                 {errors?.price && <p className="text-sm text-destructive mt-1">{errors.price?.message}</p>}
             </div>
 
@@ -191,13 +206,9 @@ export default function MaterialsList() {
                 <div className="grid gap-4">
                     {materials?.map((material) => (
                         <Card key={material.materialId}>
-                            <CardHeader>
-                                <CardTitle>{material.name}</CardTitle>
-                            </CardHeader>
                             <CardContent>
                                 <MaterialItem material={material} refetch={refetch} />
                             </CardContent>
-                            <CardFooter className="text-sm text-muted-foreground">Precio: {material.price}</CardFooter>
                         </Card>
                     ))}
                 </div>

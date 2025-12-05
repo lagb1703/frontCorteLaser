@@ -22,22 +22,25 @@ export function useAdminMaterial(material: Material | null, refect?: () => void)
     const changeMaterialMutation = useChangeMaterial();
     const deleteMaterialMutation = useDeleteMaterial();
 
-    const onDelete = useCallback(() => {
+    const onDelete = useCallback(async () => {
         if (material) {
-            deleteMaterialMutation.mutate(material.materialId!);
-            setTimeout(() => {
-                if (refect) {
-                    refect();
-                }
-            }, refectTimeout);
+            try {
+                await deleteMaterialMutation.mutateAsync(material.materialId!);
+            } finally {
+                setTimeout(() => {
+                    if (refect) {
+                        refect();
+                    }
+                }, refectTimeout);
+            }
         }
     }, [material, deleteMaterialMutation, refect]);
 
-    const onSubmit = useCallback((data: Material) => {
+    const onSubmit = useCallback(async (data: Material) => {
         if (material) {
-            changeMaterialMutation.mutate({ materialId: material.materialId!, material: data });
+            await changeMaterialMutation.mutateAsync({ materialId: material.materialId!, material: data });
         } else {
-            addMaterialMutation.mutate(data);
+            await addMaterialMutation.mutateAsync(data);
             reset();
             setTimeout(() => {
                 if (refect) {
