@@ -1,10 +1,11 @@
 import LoginPage from '../autentification/pages/loginPage';
 import RegisterPage from '../userModule/pages/registerPage';
+import HomePage from '@/utilities/pages/homePage';
 
 export const PublicRoutes = [
     {
         path: "/",
-        element: <h1>home</h1>
+        element: <HomePage />
     },
     {
         path: "/login",

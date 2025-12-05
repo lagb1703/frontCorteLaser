@@ -5,6 +5,7 @@ import {
 } from '@tanstack/react-query'
 import { ThemeProvider } from 'next-themes'
 import { Toaster } from '@/components/ui/sonner'
+import BackgroundParticles from "./utilities/components/backgroundParticles";
 
 const queryClient = new QueryClient()
 
@@ -15,6 +16,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <AppRouter />
         <Toaster />
+        <BackgroundParticles />
       </QueryClientProvider>
     </ThemeProvider>
   )
