@@ -1,76 +1,104 @@
 import { useInfo } from "../hooks";
 import { type User } from "../validators/userValidators";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface props {
     disable?: boolean;
 }
 
 export default function UserReview({ disable = false }: props) {
-    const { register, handleSummit, formState, changeStatus } = useInfo();
-    const { errors } = formState as { errors?: Partial<Record<keyof User, { message?: string }>> };
-
+    const { form, handleSummit, changeStatus } = useInfo();
+    console.log(form.formState.errors);
     return (
-        <form onSubmit={handleSummit} noValidate>
-            <h2>Editar Usuario</h2>
-            <div>
-                <label htmlFor="names">Nombres</label>
-                <input
-                    id="names"
-                    {...register("names")}
-                    disabled={disable || true}
-                    aria-invalid={errors?.names ? "true" : "false"}
+        <Form {...form}>
+            <form noValidate>
+                <h2>Editar Usuario</h2>
+
+                <FormField
+                    control={form.control}
+                    name="names"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Nombres</FormLabel>
+                            <FormControl>
+                                <Input id="names" {...field} disabled={disable} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
                 />
-                {errors?.names && <span role="alert">{String(errors.names?.message)}</span>}
-            </div>
-            <div>
-                <label htmlFor="lastNames">Apellidos</label>
-                <input
-                    id="lastNames"
-                    {...register("lastNames")}
-                    disabled={disable || true}
-                    aria-invalid={errors?.lastNames ? "true" : "false"}
+
+                <FormField
+                    control={form.control}
+                    name="lastNames"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Apellidos</FormLabel>
+                            <FormControl>
+                                <Input id="lastNames" {...field} disabled={disable} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
                 />
-                {errors?.lastNames && <span role="alert">{String(errors.lastNames?.message)}</span>}
-            </div>
-            <div>
-                <label htmlFor="email">Correo</label>
-                <input
-                    id="email"
-                    type="email"
-                    {...register("email")}
-                    disabled={disable || true}
-                    aria-invalid={errors?.email ? "true" : "false"}
+
+                <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Correo</FormLabel>
+                            <FormControl>
+                                <Input id="email" type="email" {...field} disabled={disable} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
                 />
-                {errors?.email && <span role="alert">{String(errors.email?.message)}</span>}
-            </div>
-            <div>
-                <label htmlFor="address">Dirección</label>
-                <input
-                    id="address"
-                    {...register("address")}
-                    disabled={disable}
-                    aria-invalid={errors?.address ? "true" : "false"}
+
+                <FormField
+                    control={form.control}
+                    name="address"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Dirección</FormLabel>
+                            <FormControl>
+                                <Input id="address" {...field} disabled={disable} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
                 />
-                {errors?.address && <span role="alert">{String(errors.address?.message)}</span>}
-            </div>
-            <div>
-                <label htmlFor="phone">Teléfono</label>
-                <input
-                    id="phone"
-                    type="tel"
-                    {...register("phone")}
-                    disabled={disable || true}
-                    aria-invalid={errors?.phone ? "true" : "false"}
+
+                <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Teléfono</FormLabel>
+                            <FormControl>
+                                <Input id="phone" type="tel" {...field} disabled={disable} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
                 />
-                {errors?.phone && <span role="alert">{String(errors.phone?.message)}</span>}
-            </div>
-            {!disable && (
-                <div>
-                    <button type="submit" disabled={changeStatus === "pending"}>
-                        {changeStatus === "pending" ? "Guardando..." : "Guardar cambios"}
-                    </button>
-                </div>
-            )}
-        </form>
+
+                {!disable && (
+                    <div>
+                        <Button
+                            onClick={form.handleSubmit(handleSummit)}
+
+                            disabled={changeStatus === "pending"}
+                            className="inline-flex items-center justify-center gap-2 rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-medium disabled:opacity-50"
+                        >
+                            {changeStatus === "pending" ? "Guardando..." : "Guardar cambios"}
+                        </Button>
+                    </div>
+                )}
+            </form>
+        </Form>
     );
 }
