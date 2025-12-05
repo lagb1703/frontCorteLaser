@@ -3,6 +3,8 @@ import { Link } from "react-router";
 import { adminRoutes } from "@/core/adminRoutes";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Menu, X } from "lucide-react";
+import { useState } from "react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -40,11 +42,20 @@ interface Props {
 }
 
 export default function Header({ user, token }: Props) {
+    const { logOut } = useLogOut();
+    const [open, setOpen] = useState(false);
+
+    const close = () => setOpen(false);
 
     return (
         <header className="w-full border-b bg-background">
             <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
+                    <div className="sm:hidden">
+                        <Button variant="ghost" size="sm" onClick={() => setOpen(true)} aria-label="Abrir menú">
+                            <Menu className="size-5" />
+                        </Button>
+                    </div>
                     <Button variant="ghost" asChild>
                         <Link to="/" className="text-lg font-semibold">CorteLaser</Link>
                     </Button>
@@ -88,6 +99,60 @@ export default function Header({ user, token }: Props) {
                     )}
                 </div>
             </div>
+
+            {/* Mobile sheet / drawer */}
+            {open && (
+                <div className="fixed inset-0 z-50 flex">
+                    <div className="fixed inset-0 bg-black/40" onClick={close} />
+                    <aside className="relative w-64 max-w-full bg-background border-r p-4">
+                        <div className="flex items-center justify-between mb-4">
+                            <Button variant="ghost" size="sm" asChild>
+                                <Link to="/" onClick={close} className="text-lg font-semibold">CorteLaser</Link>
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={close} aria-label="Cerrar menú">
+                                <X className="size-5" />
+                            </Button>
+                        </div>
+
+                        <nav className="flex flex-col gap-2">
+                            {(user && token) && (
+                                <>
+                                    <Button variant="ghost" size="sm" asChild>
+                                        <Link to="/update" onClick={close}>Subir archivo</Link>
+                                    </Button>
+                                    <Button variant="ghost" size="sm" asChild>
+                                        <Link to="/files" onClick={close}>Mis archivos</Link>
+                                    </Button>
+                                </>
+                            )}
+
+                            {(user?.isAdmin && token) && adminRoutes.map((r) => (
+                                <Button key={r.path} variant="ghost" size="sm" asChild>
+                                    <Link to={r.path} onClick={close}>{r.path.replace('/', '') || 'admin'}</Link>
+                                </Button>
+                            ))}
+
+                            <div className="mt-4 border-t pt-4">
+                                {user ? (
+                                    <>
+                                        <div className="mb-2"><Badge variant="secondary">{user.names ?? user.email}</Badge></div>
+                                        <Button variant="ghost" size="sm" onClick={() => { logOut(); close(); }}>Cerrar Sesión</Button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Button size="sm" asChild>
+                                            <Link to="/login" onClick={close}>Iniciar sesión</Link>
+                                        </Button>
+                                        <Button size="sm" variant="outline" asChild>
+                                            <Link to="/register" onClick={close}>Registrar</Link>
+                                        </Button>
+                                    </>
+                                )}
+                            </div>
+                        </nav>
+                    </aside>
+                </div>
+            )}
         </header>
     )
 }
