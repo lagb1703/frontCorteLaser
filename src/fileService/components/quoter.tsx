@@ -34,7 +34,7 @@ export default function Quoter({ materials, materialId, setMaterialId, thickness
 
     return (
         <div
-            className="flex gap-10 justify-between">
+            className="flex gap-10 justify-around items-center p-4">
             <Select
                 value={materialId != null ? String(materialId) : ""}
                 onValueChange={(val) => handleMaterialChange(val)}

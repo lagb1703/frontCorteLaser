@@ -39,8 +39,15 @@ export default function QuoterPage() {
     refetch();
   }, [materialId, thicknessId, amount, refetch, thicknesses]);
   return (
-    <div>
-      {imageData && <ImageVisualizer image={imageData} />}
+    <div
+      className="h-full">
+      {
+        imageData &&
+        <div
+          className="">
+          <ImageVisualizer image={imageData} />
+        </div>
+      }
       <Quoter
         materials={materials || []}
         materialId={materialId!}
@@ -61,11 +68,15 @@ export default function QuoterPage() {
           price={priceData.price}
         />
       )}
-      <Button 
-        onClick={() => setIsPaymentOpen(true)}
-        disabled={!priceData}>
-          Pay
-      </Button>
+      <div
+        className="w-full flex justify-center">
+        <Button
+          className="m-4"
+          onClick={() => setIsPaymentOpen(true)}
+          disabled={!priceData}>
+          Pagar
+        </Button>
+      </div>
       {priceData && (
         <PaymentDialog
           isOpen={isPaymentOpen}
