@@ -14,7 +14,12 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useLogOut } from "../hooks/useLogOut";
 
-function DropDownMenuHeader() {
+interface DropDownMenuHeaderProps {
+    user: User | null;
+    token: string | null;
+}
+
+function DropDownMenuHeader({ user, token }: DropDownMenuHeaderProps) {
     const { logOut } = useLogOut();
     return (
         <DropdownMenu>
@@ -29,6 +34,13 @@ function DropDownMenuHeader() {
                         Perfil
                     </DropdownMenuItem>
                 </Link>
+                {(user?.isAdmin && token) && adminRoutes.map((r) => (
+                    <Link key={r.path} to={r.path} onClick={close}>
+                        <DropdownMenuItem>
+                            {r.path.replace('/', '') || 'admin'}
+                        </DropdownMenuItem>
+                    </Link>
+                ))}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logOut}>Cerrar Sesión</DropdownMenuItem>
             </DropdownMenuContent>
@@ -72,12 +84,6 @@ export default function Header({ user, token }: Props) {
                                 </Button>
                             </>
                         )}
-
-                        {(user?.isAdmin && token) && adminRoutes.map((r) => (
-                            <Button key={r.path} variant="ghost" size="sm" asChild>
-                                <Link to={r.path}>{r.path.replace('/', '') || 'admin'}</Link>
-                            </Button>
-                        ))}
                     </nav>
                 </div>
 
@@ -85,7 +91,10 @@ export default function Header({ user, token }: Props) {
                     {(user && token) ? (
                         <>
                             <Badge variant="secondary">{user.names ?? user.email}</Badge>
-                            <DropDownMenuHeader />
+                            <DropDownMenuHeader 
+                                user={user}
+                                token={token}
+                            />
                         </>
                     ) : (
                         <div className="flex items-center gap-2">
@@ -125,12 +134,6 @@ export default function Header({ user, token }: Props) {
                                     </Button>
                                 </>
                             )}
-
-                            {(user?.isAdmin && token) && adminRoutes.map((r) => (
-                                <Button key={r.path} variant="ghost" size="sm" asChild>
-                                    <Link to={r.path} onClick={close}>{r.path.replace('/', '') || 'admin'}</Link>
-                                </Button>
-                            ))}
 
                             <div className="mt-4 border-t pt-4">
                                 {user ? (
