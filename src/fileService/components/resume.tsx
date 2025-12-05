@@ -15,10 +15,11 @@ interface props {
     thicknessId: string | number;
     materials: Material[];
     thicknesses: Thickness[];
+    amount: number;
     price: number;
 }
 
-export default function Resume({ materialId, thicknessId, materials, thicknesses, price }: props) {
+export default function Resume({ materialId, thicknessId, materials, thicknesses, amount, price }: props) {
     const material = useMemo(
         () => materials.find((mat) => String(mat.materialId) === String(materialId)),
         [materials, materialId]
@@ -54,6 +55,11 @@ export default function Resume({ materialId, thicknessId, materials, thicknesses
                             <p className="text-sm text-muted-foreground">Precio Espesura</p>
                             <Badge variant="secondary">{thickness?.price != null ? fmt(thickness.price) : "No especificado"}</Badge>
                         </div>
+                    </div>
+
+                    <div>
+                        <p className="text-sm text-muted-foreground">Cantidad</p>
+                        <p className="font-medium">{amount ?? "No especificado"}</p>
                     </div>
                 </div>
 

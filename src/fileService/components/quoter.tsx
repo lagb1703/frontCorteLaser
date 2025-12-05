@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Input } from "@/components/ui/input";
 
 interface props {
     materials: Array<Material>;
@@ -18,9 +19,11 @@ interface props {
     thicknesses: Array<Thickness>;
     thicknessId: string | number | null;
     setThicknessId: (id: string | number) => void;
+    amount: number | null;
+    setAmount: (amount: number) => void;
 }
 
-export default function Quoter({ materials, materialId, setMaterialId, thicknesses, thicknessId, setThicknessId }: props) {
+export default function Quoter({ materials, materialId, setMaterialId, thicknesses, thicknessId, setThicknessId, amount, setAmount }: props) {
     const handleMaterialChange = useCallback((id: string | number) => {
         setMaterialId(id);
     }, [setMaterialId]);
@@ -69,6 +72,23 @@ export default function Quoter({ materials, materialId, setMaterialId, thickness
                     </SelectGroup>
                 </SelectContent>
             </Select>
+            <Input
+                type="number"
+                className="w-full"
+                placeholder="Amount"
+                value={amount ?? ""}
+                onChange={(e) => {
+                    const val = e.target.value;
+                    const num = parseInt(val);
+                    if (isNaN(num)) {
+                        return;
+                    }
+                    if (num < 0) {
+                        return;
+                    }
+                    setAmount(num);
+                }}
+            />
         </div>
     );
 }

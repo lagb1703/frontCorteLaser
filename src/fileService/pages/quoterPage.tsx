@@ -13,14 +13,14 @@ import PaymentDialog from "@/paymentModule/components/paymentDialog";
 
 export default function QuoterPage() {
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
-
   const { fileId } = useParams<{ fileId: string }>();
   const { data: imageData } = useGetImage(fileId!);
-  const { materialId, thicknessId, setMaterialId, setThicknessId } = useQuoter();
+  const { materialId, thicknessId, setMaterialId, setThicknessId, amount, setAmount } = useQuoter();
   const { data: priceData, refetch } = useGetPrice(
     fileId!,
     materialId,
-    thicknessId
+    thicknessId,
+    amount
   );
   const { data: materials } = useGetMaterials();
   const { data: thicknesses } = useGetThicknessByMaterialId(materialId);
@@ -37,7 +37,7 @@ export default function QuoterPage() {
       return;
     }
     refetch();
-  }, [materialId, thicknessId, refetch, thicknesses]);
+  }, [materialId, thicknessId, amount, refetch, thicknesses]);
   return (
     <div>
       {imageData && <ImageVisualizer image={imageData} />}
@@ -48,6 +48,8 @@ export default function QuoterPage() {
         thicknesses={thicknesses || []}
         thicknessId={thicknessId!}
         setThicknessId={setThicknessId}
+        amount={amount}
+        setAmount={setAmount}
       />
       {priceData && (
         <Resume
@@ -55,6 +57,7 @@ export default function QuoterPage() {
           thicknessId={thicknessId!}
           materials={materials || []}
           thicknesses={thicknesses || []}
+          amount={amount!}
           price={priceData.price}
         />
       )}

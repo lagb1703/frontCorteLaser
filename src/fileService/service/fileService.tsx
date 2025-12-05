@@ -60,8 +60,8 @@ export class FileService {
         }
         return await result.blob();
     }
-    public async getPrice(id: string | number, mateiralId: string | number, thicknessId: string | number): Promise<PriceResponse> {
-        const result = await this.fetchWrapper.send(`/file/price?id=${id}&materialId=${mateiralId}&thicknessId=${thicknessId}`, {
+    public async getPrice(id: string | number, mateiralId: string | number, thicknessId: string | number, amount: number): Promise<PriceResponse> {
+        const result = await this.fetchWrapper.send(`/file/price?id=${id}&materialId=${mateiralId}&thicknessId=${thicknessId}&amount=${amount}`, {
             method: "GET",
         });
         if (result.status !== 200) {
