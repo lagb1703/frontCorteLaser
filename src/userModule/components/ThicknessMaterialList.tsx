@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import {
     DndContext,
     KeyboardSensor,
@@ -20,22 +20,27 @@ import {
 import { arrayMove } from "@dnd-kit/sortable";
 import { type Material } from "@/materialModule/validators/materialValidators";
 import { type Thickness } from "@/materialModule/validators/thicknessValidators";
-import { Card, CardHeader } from "@/components/ui/card";
+import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { useGetMaterials } from "@/materialModule/hooks";
 import { useAdminMaterialThickness } from "../hooks/useAdminMaterialThickness";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
-function Item(props: { id: string | number }) {
+const Item = React.memo(function Item(props: { id: string | number }) {
     const { id } = props;
-    const thickness = JSON.parse(id as string) as Thickness;
+    const thickness = useMemo(() => JSON.parse(id as string) as Thickness, [id]);
 
-    return <Card >
-        <CardHeader className="text-center w-full">
-            {thickness.name}
-        </CardHeader>
-    </Card>;
-}
+    return (
+        <Card>
+            <CardHeader className="text-center w-full">
+                {thickness.name}
+            </CardHeader>
+        </Card>
+    );
+});
 
-function SortableItem(props: { id: string }) {
+const SortableItem = React.memo(function SortableItem(props: { id: string }) {
     const {
         attributes,
         listeners,
@@ -54,27 +59,29 @@ function SortableItem(props: { id: string }) {
             <Item id={props.id} />
         </div>
     );
-}
+});
 
 
 function Container(props: { id: string; items: string[] }) {
     const { id, items } = props;
 
-    const { setNodeRef } = useDroppable({
-        id
-    });
+    const { setNodeRef } = useDroppable({ id });
 
     return (
-        <SortableContext
-            id={id}
-            items={items}
-            strategy={verticalListSortingStrategy}
-        >
-            <div ref={setNodeRef} className="bg-[#dadada] p-2.5 m-2.5 flex-1">
-                {items.map((itemId) => (
-                    <SortableItem key={itemId} id={itemId} />
-                ))}
-            </div>
+        <SortableContext id={id} items={items} strategy={verticalListSortingStrategy}>
+            <Card className="m-2.5 flex-1">
+                <CardHeader>
+                    <CardTitle className="flex items-center justify-between">
+                        {id === "mt" ? "Asociados" : "Disponibles"}
+                        <Badge>{items.length}</Badge>
+                    </CardTitle>
+                </CardHeader>
+                <CardContent ref={setNodeRef} className="bg-[#fafafa] p-2">
+                    {items.map((itemId) => (
+                        <SortableItem key={itemId} id={itemId} />
+                    ))}
+                </CardContent>
+            </Card>
         </SortableContext>
     );
 }
@@ -84,7 +91,7 @@ export default function ThicknessMaterialList() {
         mt: [],
         thickness: [],
     });
-    const { data: materials } = useGetMaterials();
+    const { data: materials, isLoading } = useGetMaterials();
     const {
         materialId,
         setMaterialId,
@@ -106,8 +113,12 @@ export default function ThicknessMaterialList() {
             coordinateGetter: sortableKeyboardCoordinates
         })
     );
+    const onMaterialClick = useCallback((id: number | undefined) => {
+        if (id != null) setMaterialId(id);
+    }, [setMaterialId]);
+
     return (
-        <div className="flex flex-row">
+        <div className="flex flex-row gap-4">
             <DndContext
                 sensors={sensors}
                 collisionDetection={closestCorners}
@@ -115,27 +126,36 @@ export default function ThicknessMaterialList() {
                 onDragOver={handleDragOver}
                 onDragEnd={handleDragEnd}
             >
-                <div>
-                    {materials?.map((material: Material) => (
-                        <div 
-                            onClick={() => {
-                                setMaterialId(material.materialId!);
-                            }} 
-                            className={"p-2 m-2 bg-blue-300 cursor-pointer" + (materialId === material.materialId ? " border-4 border-blue-800" : "")}
-                            key={material.materialId}>
-                                {material.name}
-                            </div>
-                    ))}
+                <div className="w-56">
+                    <Card className="m-2">
+                        <CardHeader>
+                            <CardTitle>Materiales</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            {isLoading ? (
+                                <div className="space-y-2">
+                                    {[1,2,3].map(i => <Skeleton key={i} className="h-4 w-full" />)}
+                                </div>
+                            ) : (
+                                materials?.map((material: Material) => (
+                                    <Button
+                                        key={material.materialId}
+                                        variant={materialId === material.materialId ? "default" : "ghost"}
+                                        className={`w-full justify-start mb-2 ${materialId === material.materialId ? "border-2" : ""}`}
+                                        onClick={() => onMaterialClick(material.materialId!)}
+                                    >
+                                        {material.name}
+                                    </Button>
+                                ))
+                            )}
+                        </CardContent>
+                    </Card>
                 </div>
-                {
-                    Object.keys(items).map((containerId) => (
-                        <Container
-                            key={containerId}
-                            id={containerId}
-                            items={items[containerId]}
-                        />
-                    ))
-                }
+
+                {Object.keys(items).map((containerId) => (
+                    <Container key={containerId} id={containerId} items={items[containerId]} />
+                ))}
+
                 <DragOverlay>{activeId ? <Item id={activeId} /> : null}</DragOverlay>
             </DndContext>
         </div>
