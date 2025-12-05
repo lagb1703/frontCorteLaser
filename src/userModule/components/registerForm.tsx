@@ -58,7 +58,7 @@ export default function RegisterForm() {
                         control={form.control}
                         name="names"
                         render={({ field }) => (
-                            <FormItem className="basis-[48%]">
+                            <FormItem className="basis-full lg:basis-[48%] min-w-[210px]">
                                 <FormLabel className="text-sm">Nombres</FormLabel>
                                 <FormControl>
                                     <Input id="names" placeholder="Nombres" autoComplete="given-name" className="h-8 text-sm" {...field} />
@@ -71,7 +71,7 @@ export default function RegisterForm() {
                         control={form.control}
                         name="lastNames"
                         render={({ field }) => (
-                            <FormItem className="basis-[48%]">
+                            <FormItem className="basis-full lg:basis-[48%] min-w-[210px]">
                                 <FormLabel className="text-sm">Apellidos</FormLabel>
                                 <FormControl>
                                     <Input id="lastNames" placeholder="Apellidos" autoComplete="family-name" className="h-8 text-sm" {...field} />
@@ -86,7 +86,7 @@ export default function RegisterForm() {
                     control={form.control}
                     name="email"
                     render={({ field }) => (
-                        <FormItem className="mb-1">
+                        <FormItem className="min-w-[210px]">
                             <FormLabel className="text-sm">Correo</FormLabel>
                             <FormControl>
                                 <Input id="email" type="email" placeholder="correo@ejemplo.com" autoComplete="email" className="h-8 text-sm" {...field} />
@@ -102,7 +102,7 @@ export default function RegisterForm() {
                         control={form.control}
                         name="address"
                         render={({ field }) => (
-                            <FormItem className="basis-[48%]">
+                            <FormItem className="basis-full lg:basis-[48%] min-w-[210px]">
                                 <FormLabel className="text-sm">Dirección</FormLabel>
                                 <FormControl>
                                     <Input id="address" placeholder="Dirección" autoComplete="street-address" className="h-8 text-sm" {...field} />
@@ -116,7 +116,7 @@ export default function RegisterForm() {
                         control={form.control}
                         name="phone"
                         render={({ field }) => (
-                            <FormItem className="basis-[48%]">
+                            <FormItem className="basis-full lg:basis-[48%] min-w-[210px]">
                                 <FormLabel className="text-sm">Teléfono</FormLabel>
                                 <FormControl>
                                     <Input id="phone" type="tel" placeholder="Teléfono" autoComplete="tel" className="h-8 text-sm" {...field} />
@@ -131,7 +131,7 @@ export default function RegisterForm() {
                     control={form.control}
                     name="password"
                     render={({ field }) => (
-                        <FormItem className="mb-1">
+                        <FormItem className="min-w-[210px]">
                             <FormLabel className="text-sm">Contraseña</FormLabel>
                             <FormControl>
                                 <Input id="password" type="password" placeholder="Contraseña" autoComplete="current-password" className="h-8 text-sm" {...field} />
