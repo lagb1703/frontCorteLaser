@@ -31,13 +31,13 @@ export default function LoginForm() {
 
     const onSubmit = async (data: LoginInput) => {
         const toastId = toast.loading("Accediendo...");
-        try{
+        try {
             await loginMutation.mutateAsync(data);
             toast.success("Acceso exitoso", { id: toastId });
             setTimeout(() => {
                 navigate("/")
             }, 1000)
-        }catch (error: any) {
+        } catch (error: any) {
             toast.error(error.message || "Error al iniciar sesión", { id: toastId });
         }
     }
@@ -50,8 +50,13 @@ export default function LoginForm() {
 
     return (
         <Form {...form}>
-            <div className="w-full max-w-xs sm:max-w-sm mx-auto p-4 sm:p-6">
-              <form onSubmit={form.handleSubmit(onSubmit)} noValidate>
+            <form
+                className="w-full max-w-xs sm:max-w-sm p-4 sm:p-6"
+                onSubmit={form.handleSubmit(onSubmit)} noValidate>
+                <h2
+                    className="text-2xl font-semibold mb-4 text-center">
+                    Iniciar Sesión
+                </h2>
                 <FormField
                     control={form.control}
                     name="email"
@@ -96,8 +101,7 @@ export default function LoginForm() {
                         <p className="text-sm text-red-600">Error Google: {String(loginGoogleQuery.error?.message)}</p>
                     )}
                 </div>
-              </form>
-            </div>
+            </form>
         </Form>
     )
 }
