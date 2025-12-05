@@ -85,8 +85,8 @@ export default function LoginForm() {
                     )}
                 />
 
-                <div className="mt-3 flex justify-end">
-                    <Button type="submit" className="h-8 px-3 text-sm" disabled={loginMutation.status === 'pending'}>
+                <div className="mt-3 px-2 flex justify-end">
+                    <Button type="submit" className="h-8 w-full px-3 text-sm" disabled={loginMutation.status === 'pending'}>
                         {loginMutation.status === 'pending' ? "Ingresando..." : "Ingresar"}
                     </Button>
                 </div>
@@ -94,12 +94,17 @@ export default function LoginForm() {
                 <hr className="my-3" />
 
                 <div className="flex flex-col sm:flex-row sm:justify-between gap-2">
-                    <Button type="button" onClick={handleGoogleLogin} className="h-8 px-3 text-sm w-full sm:w-auto" disabled={loginGoogleQuery.isFetching}>
-                        {loginGoogleQuery.isFetching ? "Redirigiendo..." : "Ingresar con Google"}
+                    <Button type="button" onClick={handleGoogleLogin} className="basis-full h-8 py-5 text-sm w-full sm:w-auto" disabled={loginGoogleQuery.isFetching}>
+                        <img src="/googleIcon/google-48.png" alt="Google Icon" className="w-5 h-5 mr-2 inline-block align-middle" />
+                        {loginGoogleQuery.isFetching ? "Accediendo..." : "Ingresar con Google"}
                     </Button>
-                    {loginGoogleQuery.isError && (
+                    {/* {loginGoogleQuery.isError && (
                         <p className="text-sm text-red-600">Error Google: {String(loginGoogleQuery.error?.message)}</p>
-                    )}
+                    )} */}
+                </div>
+                <div>
+                    <p
+                    className="text-xs">Google icon by Icons8</p>
                 </div>
             </form>
         </Form>
