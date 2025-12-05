@@ -1,6 +1,5 @@
 import LoginPage from '../autentification/pages/loginPage';
 import RegisterPage from '../userModule/pages/registerPage';
-import MtPage from "@/userModule/pages/mtPage";
 
 export const PublicRoutes = [
     {
@@ -14,9 +13,5 @@ export const PublicRoutes = [
     {
         path: "/register",
         element: <RegisterPage />
-    },
-    {
-        path: "/mt",
-        element: <MtPage />
     }
 ];

@@ -11,10 +11,6 @@ export const PrivateRoutes = [
         element: <UserPage />
     },
     {
-        path: "/material",
-        element: <MaterialPage />
-    },
-    {
         path: "/quoter/:fileId",
         element: <QuoterPage />
     },
