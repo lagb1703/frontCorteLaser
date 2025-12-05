@@ -51,34 +51,36 @@ export default function RegisterForm() {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} noValidate className="space-y-2">
-                <FormField
-                    control={form.control}
-                    name="names"
-                    render={({ field }) => (
-                        <FormItem className="mb-1">
-                            <FormLabel className="text-sm">Nombres</FormLabel>
-                            <FormControl>
-                                <Input id="names" placeholder="Nombres" autoComplete="given-name" className="h-8 text-sm" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-                <FormField
-                    control={form.control}
-                    name="lastNames"
-                    render={({ field }) => (
-                        <FormItem className="mb-1">
-                            <FormLabel className="text-sm">Apellidos</FormLabel>
-                            <FormControl>
-                                <Input id="lastNames" placeholder="Apellidos" autoComplete="family-name" className="h-8 text-sm" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+            <form onSubmit={form.handleSubmit(onSubmit)} noValidate className="w-full px-10">
+                <div
+                    className="flex w-full flex-wrap justify-between">
+                    <FormField
+                        control={form.control}
+                        name="names"
+                        render={({ field }) => (
+                            <FormItem className="basis-[48%]">
+                                <FormLabel className="text-sm">Nombres</FormLabel>
+                                <FormControl>
+                                    <Input id="names" placeholder="Nombres" autoComplete="given-name" className="h-8 text-sm" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="lastNames"
+                        render={({ field }) => (
+                            <FormItem className="basis-[48%]">
+                                <FormLabel className="text-sm">Apellidos</FormLabel>
+                                <FormControl>
+                                    <Input id="lastNames" placeholder="Apellidos" autoComplete="family-name" className="h-8 text-sm" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </div>
 
                 <FormField
                     control={form.control}
@@ -94,33 +96,36 @@ export default function RegisterForm() {
                     )}
                 />
 
-                <FormField
-                    control={form.control}
-                    name="address"
-                    render={({ field }) => (
-                        <FormItem className="mb-1">
-                            <FormLabel className="text-sm">Dirección</FormLabel>
-                            <FormControl>
-                                <Input id="address" placeholder="Dirección" autoComplete="street-address" className="h-8 text-sm" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                <div
+                    className="flex w-full flex-wrap justify-between">
+                    <FormField
+                        control={form.control}
+                        name="address"
+                        render={({ field }) => (
+                            <FormItem className="basis-[48%]">
+                                <FormLabel className="text-sm">Dirección</FormLabel>
+                                <FormControl>
+                                    <Input id="address" placeholder="Dirección" autoComplete="street-address" className="h-8 text-sm" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                <FormField
-                    control={form.control}
-                    name="phone"
-                    render={({ field }) => (
-                        <FormItem className="mb-1">
-                            <FormLabel className="text-sm">Teléfono</FormLabel>
-                            <FormControl>
-                                <Input id="phone" type="tel" placeholder="Teléfono" autoComplete="tel" className="h-8 text-sm" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                    <FormField
+                        control={form.control}
+                        name="phone"
+                        render={({ field }) => (
+                            <FormItem className="basis-[48%]">
+                                <FormLabel className="text-sm">Teléfono</FormLabel>
+                                <FormControl>
+                                    <Input id="phone" type="tel" placeholder="Teléfono" autoComplete="tel" className="h-8 text-sm" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </div>
 
                 <FormField
                     control={form.control}
@@ -136,8 +141,8 @@ export default function RegisterForm() {
                     )}
                 />
 
-                <div className="mt-3">
-                    <Button type="submit" className="h-8 px-3 text-sm" disabled={registerMutation.status === "pending" || !form.formState.isValid}>
+                <div className="w-full flex justify-center mt-4">
+                    <Button type="submit" className="w-[70%] py-5 h-8 px-3 text-sm" disabled={registerMutation.status === "pending" || !form.formState.isValid}>
                         {registerMutation.status === "pending" ? "Creando..." : "Crear usuario"}
                     </Button>
                 </div>
