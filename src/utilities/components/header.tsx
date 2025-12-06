@@ -35,6 +35,11 @@ function DropDownMenuHeader({ user, token }: DropDownMenuHeaderProps) {
                         Perfil
                     </DropdownMenuItem>
                 </Link>
+                <Link to="/payments">
+                    <DropdownMenuItem>
+                        Mis pagos
+                    </DropdownMenuItem>
+                </Link>
                 {(user?.isAdmin && token) && adminRoutes.map((r) => (
                     <Link key={r.path} to={r.path}>
                         <DropdownMenuItem>

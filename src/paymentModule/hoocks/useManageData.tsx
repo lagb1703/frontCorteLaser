@@ -54,7 +54,10 @@ export function useManageData({ fileId, materialId, thicknessId, amount, onClose
 
     const { setValue, clearErrors, control } = form
     useEffect(() => {
+        if(!fileId || !materialId || !thicknessId || !amount)
+            return;
         setValue("reference", `${fileId}-${materialId}-${thicknessId}-${amount}@${crypto.randomUUID()}`)
+        console.log(`Reference set to: ${fileId}-${materialId}-${thicknessId}-${amount}@<UUID>`)
         clearErrors("reference")
     }, [fileId, materialId, thicknessId, amount]);
 
