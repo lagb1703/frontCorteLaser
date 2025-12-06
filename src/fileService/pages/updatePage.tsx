@@ -4,9 +4,9 @@ export default function UpdatePage() {
     
     return (
         <div
-            className="w-full flex">
+            className="w-full flex flex-wrap justify-center">
             <div
-                className="basis-1/2 flex justify-center items-center flex-col">
+                className="basis-1/2 min-w-[300px] flex justify-center items-center flex-col">
                 <h1
                     className="text-6xl font-bold w-full text-center">Sube tu archivo</h1>
                 <div>
@@ -16,7 +16,7 @@ export default function UpdatePage() {
                     </p>
                 </div>
             </div>
-            <main className="basis-1/2 flex justify-center items-center duration-750">
+            <main className="basis-1/2 min-w-[300px] flex justify-center items-center duration-750">
                 <UpdateFile />
             </main>
         </div>
