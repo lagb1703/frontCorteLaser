@@ -1,61 +1,69 @@
 import { useAddThickness, useChangeThickness, useDeleteThickness } from "@/materialModule/hooks";
-import { useForm } from "react-hook-form"
-import type { Resolver } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { useCallback } from "react";
+import { toast } from "sonner";
 import { thicknessSchema, type Thickness } from "@/materialModule/validators/thicknessValidators";
 
 const refectTimeout = 100; //para el futuro, esto lo hice para que de tiempo a que el backend procese la solicitud antes de volver a obtener los materiales
 
-export function useAdminThickness(thickness: Thickness | null, refect?: () => void) {
-    const {
-        register,
-        handleSubmit,
-        formState,
-        reset,
-    } = useForm<Thickness>({
-        resolver: zodResolver(thicknessSchema) as Resolver<Thickness>,
-        mode: "onChange",
-        defaultValues: thickness ?? {},
-    })
+export function useAdminThickness(refect?: () => void) {
     const addThicknessMutation = useAddThickness();
     const changeThicknessMutation = useChangeThickness();
     const deleteThicknessMutation = useDeleteThickness();
 
-    const onDelete = useCallback(async () => {
-        if (thickness) {
+    const onDelete = useCallback(async (id: number | null) => {
+        if (id) {
+            const toastId = toast.loading("Eliminando...");
             try {
-                await deleteThicknessMutation.mutateAsync(thickness.thicknessId!);
-            } finally {
+                await deleteThicknessMutation.mutateAsync(id);
+                toast.success("Item eliminado", { id: toastId });
                 setTimeout(() => {
                     if (refect) {
                         refect();
                     }
                 }, refectTimeout);
+            } catch (error: any) {
+                toast.error(error?.message || "Error al eliminar item", { id: toastId });
             }
         }
-    }, [thickness, deleteThicknessMutation, refect]);
+    }, [deleteThicknessMutation, refect]);
 
-    const onSubmit = useCallback(async (data: Thickness) => {
-        delete data.lastModification;
-        if (thickness) {
-            await changeThicknessMutation.mutateAsync({ thicknessId: thickness.thicknessId!, thickness: data });
-        } else {
-            await addThicknessMutation.mutateAsync({ thickness: data });
-            reset();
+    const onEdit = useCallback(async (id: number | null, data: Thickness) => {
+        if (!id) return;
+        const toastId = toast.loading("Editando grosor...");
+        try {
+            await changeThicknessMutation.mutateAsync({ thicknessId: id, thickness: data });
+            toast.success("Grosor editado", { id: toastId });
             setTimeout(() => {
                 if (refect) {
                     refect();
                 }
             }, refectTimeout);
+        } catch (error: any) {
+            toast.error(error?.message || "Error al guardar material", { id: toastId });
+            return;
         }
-    }, [thickness, addThicknessMutation, changeThicknessMutation, reset, refect]);
+
+    }, [changeThicknessMutation, refect]);
+
+    const onSave = useCallback(async (data: Thickness) => {
+        const toastId = toast.loading("Guardando grosor...");
+        try {
+            await addThicknessMutation.mutateAsync({ thickness: data });
+            toast.success("Grosor guardado", { id: toastId });
+            setTimeout(() => {
+                if (refect) {
+                    refect();
+                }
+            }, refectTimeout);
+        } catch (error: any) {
+            toast.error(error?.message || "Error al guardar material", { id: toastId });
+        }
+    }, [addThicknessMutation, refect]);
 
     return {
-        register,
-        handleSubmit:handleSubmit(onSubmit),
+        onSave,
+        onEdit,
         onDelete,
-        formState,
         status: {
             isLoading: addThicknessMutation.status === "pending" || changeThicknessMutation.status === "pending",
             isError: addThicknessMutation.status === "error" || changeThicknessMutation.status === "error",

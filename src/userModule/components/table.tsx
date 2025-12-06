@@ -206,7 +206,7 @@ export function ItemTable({ data, idName, useAdminData, refetch }: TableProps) {
             accessorKey: idName,
             header: "id",
             cell: ({ row }) => (
-                <div className="capitalize">{row.getValue("materialId") ? row.getValue("materialId") : row.getValue("thicknessId")}</div>
+                <div className="capitalize">{row.getValue(idName)}</div>
             ),
         },
         {
