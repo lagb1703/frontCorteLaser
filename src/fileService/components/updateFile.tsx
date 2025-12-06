@@ -3,6 +3,8 @@ import { useCallback } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner"
 import { Input } from "@/components/ui/input";
+import { File } from 'lucide-react';
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function UpdateFile() {
     const navigate = useNavigate();
@@ -26,9 +28,18 @@ export default function UpdateFile() {
     }, [saveFile, navigate]);
 
     return (
-        <Input
-            type="file"
-            onChange={updateFile}
-        />
+        <Card className="flex items-center gap-2">
+            <CardContent className="flex flex-col items-center gap-4">
+                <div
+                    className="flex items-center gap-2">
+                    <File className="w-5 h-5 text-gray-600" />
+                        <Input
+                            type="file"
+                            onChange={updateFile}
+                            className="cursor-pointer hover:bg-gray-100 transition-colors "
+                        />
+                </div>
+            </CardContent>
+        </Card>
     )
 }
