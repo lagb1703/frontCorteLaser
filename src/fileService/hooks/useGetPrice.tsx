@@ -12,7 +12,7 @@ export function useGetPrice(id: string | number, materialId: string | number | n
         refetchOnMount: false,
         refetchOnReconnect: false,
         queryFn: async () => {
-            if (materialId === null || thicknessId === null || amount === null) {
+            if (materialId === null || thicknessId === null || amount === null || amount <= 0) {
                 return { price: 0, quoteId: 0 };
             }
             return await fileService.current.getPrice(id, materialId, thicknessId, amount);

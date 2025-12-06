@@ -12,10 +12,11 @@ interface InputData {
     fileId: string | number
     materialId: string | number
     thicknessId: string | number
+    amount: number
     onClose: () => void
 }
 
-export function useManageData({ fileId, materialId, thicknessId, onClose }: InputData) {
+export function useManageData({ fileId, materialId, thicknessId, amount, onClose }: InputData) {
     const navigate = useNavigate();
     const {
         data: paymentMethods, 
@@ -53,9 +54,9 @@ export function useManageData({ fileId, materialId, thicknessId, onClose }: Inpu
 
     const { setValue, clearErrors, control } = form
     useEffect(() => {
-        setValue("reference", `${fileId}-${materialId}-${thicknessId}@${crypto.randomUUID()}`)
+        setValue("reference", `${fileId}-${materialId}-${thicknessId}-${amount}@${crypto.randomUUID()}`)
         clearErrors("reference")
-    }, [fileId, materialId, thicknessId]);
+    }, [fileId, materialId, thicknessId, amount]);
 
     const setAcceptUserPolicy = useCallback((value: boolean) => {
         if(!acceptancesTokens)

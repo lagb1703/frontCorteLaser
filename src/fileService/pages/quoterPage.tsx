@@ -79,6 +79,7 @@ export default function QuoterPage() {
       </div>
       {priceData && (
         <PaymentDialog
+          amount={amount!}
           isOpen={isPaymentOpen}
           onClose={() => setIsPaymentOpen(false)}
           fileId={fileId!}

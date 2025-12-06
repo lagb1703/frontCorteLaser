@@ -23,9 +23,10 @@ type PaymentDialogProps = {
     fileId: string | number
     materialId: string | number
     thicknessId: string | number
+    amount: number
 }
 
-export default function PaymentDialog({ isOpen, onClose, fileId, materialId, thicknessId }: PaymentDialogProps) {
+export default function PaymentDialog({ isOpen, onClose, fileId, materialId, thicknessId, amount }: PaymentDialogProps) {
     const {
         form,
         control,
@@ -37,7 +38,7 @@ export default function PaymentDialog({ isOpen, onClose, fileId, materialId, thi
         paymentMethods,
         isLoadingPaymentMethods,
         submitHandler,
-    } = useManageData({ fileId, materialId, thicknessId, onClose });
+    } = useManageData({ fileId, materialId, amount, thicknessId, onClose });
     const acceptance_token = useWatch({ control, name: "acceptance_token" }) as string
     const accept_personal_auth = useWatch({ control, name: "accept_personal_auth" }) as string
     return (
