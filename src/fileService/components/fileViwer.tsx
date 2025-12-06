@@ -51,6 +51,7 @@ export default function FileViwer({ file, downloadFile }: Props){
             </Card>
         );
     }
+    console.log(file)
 
     return (
         <Card className="w-full">
@@ -74,7 +75,7 @@ export default function FileViwer({ file, downloadFile }: Props){
 
                     <div>
                         <div className="text-sm text-muted-foreground">Subido</div>
-                        <div className="mt-1 text-sm">{file?.date ? new Date(file.date).toLocaleString() : "--"}</div>
+                        <div className="mt-1 text-sm">{String(file.date).split(".")[0]}</div>
                     </div>
 
                     <div className="flex items-center gap-2">
