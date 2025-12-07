@@ -53,13 +53,6 @@ export function useManageData({ fileId, materialId, thicknessId, amount, onClose
     })
 
     const { setValue, clearErrors, control } = form
-    useEffect(() => {
-        if(!fileId || !materialId || !thicknessId || !amount)
-            return;
-        setValue("reference", `${fileId}-${materialId}-${thicknessId}-${amount}@${crypto.randomUUID()}`)
-        console.log(`Reference set to: ${fileId}-${materialId}-${thicknessId}-${amount}@<UUID>`)
-        clearErrors("reference")
-    }, [fileId, materialId, thicknessId, amount]);
 
     const setAcceptUserPolicy = useCallback((value: boolean) => {
         if(!acceptancesTokens)
@@ -89,6 +82,7 @@ export function useManageData({ fileId, materialId, thicknessId, amount, onClose
         try {
             if(!data.payment_method?.installments)
                 data.payment_method.installments = 1;
+            data.reference = `${fileId}-${materialId}-${thicknessId}-${amount}@${crypto.randomUUID()}`;
             const toastId = toast.loading("Procesando el pago...");
             try{
                 await paymentMutation.mutateAsync({
@@ -108,7 +102,7 @@ export function useManageData({ fileId, materialId, thicknessId, amount, onClose
             setValue("acceptance_token", "", { shouldValidate: true, shouldDirty: true });
             setValue("accept_personal_auth", "", { shouldValidate: true, shouldDirty: true });
         }
-    }, [paymentMutation, onClose, refetchAcceptanceTokens]);
+    }, [paymentMutation, onClose, refetchAcceptanceTokens, fileId, materialId, thicknessId, amount]);
 
     useEffect(() => {
         if (!paymentMethods || paymentMethods.length === 0) return;

@@ -222,7 +222,7 @@ export function ItemTable({ data, idName, useAdminData, refetch }: TableProps) {
                     </Button>
                 )
             },
-            cell: ({ row }) => <div className="lowercase">{row.getValue("name")}</div>,
+            cell: ({ row }) => <div className="">{row.getValue("name")}</div>,
         },
         {
             accessorKey: "price",
