@@ -70,11 +70,13 @@ export default function Header({ user, token }: Props) {
         <header className="w-full border-b bg-background">
             <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
-                    <div className="sm:hidden">
-                        <Button variant="ghost" size="sm" onClick={() => setOpen(true)} aria-label="Abrir menú">
-                            <Menu className="size-5" />
-                        </Button>
-                    </div>
+                    {user && token &&
+                        <div className="sm:hidden">
+                            <Button variant="ghost" size="sm" onClick={() => setOpen(true)} aria-label="Abrir menú">
+                                <Menu className="size-5" />
+                            </Button>
+                        </div>
+                    }
                     <Button variant="ghost" asChild>
                         <Link to="/" className="text-lg font-semibold">
                             <span
@@ -107,7 +109,7 @@ export default function Header({ user, token }: Props) {
                     {(user && token) ? (
                         <>
                             <Badge variant="secondary">{user.names ?? user.email}</Badge>
-                            <DropDownMenuHeader 
+                            <DropDownMenuHeader
                                 user={user}
                                 token={token}
                             />
@@ -125,8 +127,7 @@ export default function Header({ user, token }: Props) {
                 </div>
             </div>
 
-            {/* Mobile sheet / drawer */}
-            {open && (
+            {open && user && token && (
                 <div className="fixed inset-0 z-50 flex">
                     <div className="fixed inset-0 bg-black/40" onClick={close} />
                     <aside className="relative w-64 max-w-full bg-background border-r p-4">
@@ -152,21 +153,8 @@ export default function Header({ user, token }: Props) {
                             )}
 
                             <div className="mt-4 border-t pt-4">
-                                {user ? (
-                                    <>
-                                        <div className="mb-2"><Badge variant="secondary">{user.names ?? user.email}</Badge></div>
-                                        <Button variant="ghost" size="sm" onClick={() => { logOut(); close(); }}>Cerrar Sesión</Button>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Button size="sm" asChild>
-                                            <Link to="/login" onClick={close}>Iniciar sesión</Link>
-                                        </Button>
-                                        <Button size="sm" variant="outline" asChild>
-                                            <Link to="/register" onClick={close}>Registrar</Link>
-                                        </Button>
-                                    </>
-                                )}
+                                <div className="mb-2"><Badge variant="secondary">{user.names ?? user.email}</Badge></div>
+                                <Button variant="ghost" size="sm" onClick={() => { logOut(); close(); }}>Cerrar Sesión</Button>
                             </div>
                         </nav>
                     </aside>
