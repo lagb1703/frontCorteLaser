@@ -33,7 +33,7 @@ export default function Resume({ materialId, thicknessId, materials, thicknesses
         n == null ? "No especificado" : n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
     return (
-        <Card className="w-full max-w-lg mx-auto mt-1">
+        <Card className="w-full max-w-lg md:max-w-[97%] mx-auto mt-1">
             <CardHeader>
                 <CardTitle>Resumen</CardTitle>
             </CardHeader>

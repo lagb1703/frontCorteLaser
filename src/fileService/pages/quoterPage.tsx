@@ -69,9 +69,9 @@ export default function QuoterPage() {
         />
       )}
       <div
-        className="w-full flex justify-center">
+        className="w-full flex justify-center p-4">
         <Button
-          className="m-4"
+          className="basis-full md:basis-auto lg:basis-[32%] lg:py-6 m-4"
           onClick={() => setIsPaymentOpen(true)}
           disabled={!priceData}>
           Pagar

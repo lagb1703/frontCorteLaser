@@ -34,12 +34,12 @@ export default function Quoter({ materials, materialId, setMaterialId, thickness
 
     return (
         <div
-            className="flex gap-10 justify-around items-center p-4">
+            className="flex flex-wrap min-h-[250px] md:min-h-[150px] lg:min-h-auto justify-between items-center py-4 px-5">
             <Select
                 value={materialId != null ? String(materialId) : ""}
                 onValueChange={(val) => handleMaterialChange(val)}
             >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="basis-full md:basis-[48%] lg:basis-[32%]">
                     <SelectValue placeholder="Select Material" />
                 </SelectTrigger>
                 <SelectContent>
@@ -53,12 +53,11 @@ export default function Quoter({ materials, materialId, setMaterialId, thickness
                     </SelectGroup>
                 </SelectContent>
             </Select>
-
             <Select
                 value={thicknessId != null ? String(thicknessId) : ""}
                 onValueChange={(val) => handleThicknessChange(val)}
             >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="basis-full md:basis-[48%] lg:basis-[32%]">
                     <SelectValue placeholder="Select Thickness" />
                 </SelectTrigger>
                 <SelectContent>
@@ -74,7 +73,7 @@ export default function Quoter({ materials, materialId, setMaterialId, thickness
             </Select>
             <Input
                 type="number"
-                className="w-full"
+                className="basis-full md:basis-auto lg:basis-[32%]"
                 placeholder="Amount"
                 value={amount ?? ""}
                 onChange={(e) => {
