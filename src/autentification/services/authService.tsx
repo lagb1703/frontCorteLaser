@@ -34,16 +34,7 @@ export class AuthService {
         this.fetchWrapper.setToken(token);
         return true;
     }
-    public async loginGoogle(): Promise<void> {
-        const url = `${import.meta.env.VITE_API_BASE_URL}/auth/login/google`;
-        if (typeof window !== 'undefined') {
-            window.location.href = url;
-        }
-        return Promise.resolve();
-    }
-    public authGoogle(): string {
-        return "";
-    }
+    
     public refreshToken(_token: string): string {
         return "";
     }

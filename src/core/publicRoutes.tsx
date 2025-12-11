@@ -14,5 +14,9 @@ export const PublicRoutes = [
     {
         path: "/register",
         element: <RegisterPage />
+    },
+    {
+        path: "token/:token",
+        element: <h1>Token Page</h1>
     }
 ];

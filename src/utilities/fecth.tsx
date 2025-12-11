@@ -34,6 +34,7 @@ export class FetchWapper {
 
     public async send(url: string, options: RequestInit = {}, token?: string): Promise<Response> {
         const authToken = this.normalizeToken(token ?? this.jwt);
+        console.log(authToken ? { 'Authorization': `Bearer ${authToken}` } : {})
         const result = await fetch(`${this.baseUrl}${url}`, {
             ...options,
             headers: {

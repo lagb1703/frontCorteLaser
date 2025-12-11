@@ -7,6 +7,9 @@ import {
 import { Card, CardContent } from "@/components/ui/card"
 import AutoPlay from "embla-carousel-autoplay"
 import { useRef, useState, useEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router';
+import { FetchWapper } from '../fecth';
+
 
 const carouselItems = [
     {
@@ -94,6 +97,18 @@ function CarouselSection() {
 }
 
 export default function HomePage() {
+    const {search} = useLocation();
+    const navigate = useNavigate();
+    
+    useEffect(() => {
+        const params = new URLSearchParams(search);
+        const token = params.get('token');
+        const fetchWrapper = FetchWapper.getInstance();
+        if (token) {
+            fetchWrapper.setToken(token.replace("b'", "").replace("'", ""));
+            navigate('/', { replace: true });
+        }
+    }, [search, navigate]);
     const color = useChangeColor();
     return (
         <div>
