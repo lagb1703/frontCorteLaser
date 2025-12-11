@@ -8,11 +8,11 @@ export function useGetAllUserFile(): UseQueryResult<Array<FileDb>, Error> {
     return useQuery<Array<FileDb>, Error>({
         queryKey: ["userFiles"],
         refetchOnWindowFocus: false,
-        refetchOnMount: false,
+        refetchOnMount: true,
         refetchOnReconnect: false,
         queryFn: async () => {
             return await fileService.current.getAllUserInfoFiles();
         },
-        staleTime: 600000,
+        staleTime: 10000,
     });
 }
