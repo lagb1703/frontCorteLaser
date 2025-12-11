@@ -22,7 +22,6 @@ export function useManageData({ fileId, materialId, thicknessId, amount, onClose
         data: paymentMethods, 
         isLoading: isLoadingPaymentMethods
     } = useGetPaymentMethods();
-    console.log("Payment Methods:", paymentMethods);
     const {
         data: acceptancesTokens, 
         isLoading: isLoadingAcceptanceTokens,

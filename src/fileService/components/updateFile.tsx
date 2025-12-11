@@ -10,7 +10,6 @@ export default function UpdateFile() {
     const navigate = useNavigate();
     const saveFile = useSaveFile();
     const updateFile = useCallback(async (e: any) => {
-        console.log("File to be uploaded:");
         const file = e.target?.files?.[0];
         if (!file) return;
         const formData = new FormData();

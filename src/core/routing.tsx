@@ -13,7 +13,6 @@ export const AppRouter = () => {
     const { token, initialized } = useGetToken();
     const { data: user, isLoading, refetch } = useGetUser();
     useEffect(() => {
-        console.log("Token changed, refetching user");
         refetch();
     }, [token, refetch]);
     return (

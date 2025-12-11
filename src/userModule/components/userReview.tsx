@@ -10,7 +10,6 @@ interface props {
 
 export default function UserReview({ disable = false }: props) {
     const { form, handleSummit, changeStatus } = useInfo();
-    console.log(form.formState.errors);
     return (
         <Form {...form}>
             <form

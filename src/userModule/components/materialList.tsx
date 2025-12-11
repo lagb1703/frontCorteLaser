@@ -22,7 +22,6 @@ interface props {
 
 export default function MaterialsList() {
     const { data, refetch } = useGetMaterials();
-    console.log("pepe el mago");
     return (
         <div>
             <ItemTable data={data || []} idName="materialId" refetch={refetch} useAdminData={useAdminMaterial} />

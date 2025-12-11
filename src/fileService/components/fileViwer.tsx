@@ -51,7 +51,6 @@ export default function FileViwer({ file, downloadFile }: Props){
             </Card>
         );
     }
-    console.log(file)
 
     return (
         <Card className="w-full">

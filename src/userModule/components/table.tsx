@@ -235,7 +235,6 @@ export function ItemTable({ data, idName, useAdminData, refetch }: TableProps) {
             accessorKey: "lastModification",
             header: () => <div className="text-right">Ultima Modificación</div>,
             cell: ({ row }) => {
-                console.log(row.getValue("lastModification"))
                 return <div className="text-right font-medium">{(row.getValue("lastModification") as string)?.split("T")[0]}</div>
             },
         },
@@ -246,7 +245,6 @@ export function ItemTable({ data, idName, useAdminData, refetch }: TableProps) {
                 const { isOpen, open, setIsOpen, toggle, close } = useOpenClose();
                 const data = row.original as any;
                 const onConfirm = useCallback(async (formData: Material | Thickness) => {
-                    console.log(formData, data[idName])
                     await onEdit(data[idName], formData);
                 }, [data, idName]);
                 return (
