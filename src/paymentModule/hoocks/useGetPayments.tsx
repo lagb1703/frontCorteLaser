@@ -7,8 +7,8 @@ export const useGetPayemnts = (): UseQueryResult<DbPaymentType[]> => {
     const paymentService = useRef<PaymentService>(PaymentService.getInstance());
     return useQuery<DbPaymentType[]>({
         queryKey: ["payments"],
-        refetchOnWindowFocus: false,
-        refetchOnMount: false,
+        refetchOnWindowFocus: true,
+        refetchOnMount: true,
         refetchOnReconnect: false,
         queryFn: () => paymentService.current.getPayments(),
         staleTime: 0,
