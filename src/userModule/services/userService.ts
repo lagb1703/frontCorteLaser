@@ -1,5 +1,6 @@
 import { FetchWapper } from "@/utilities/fecth";
 import { type User } from "../validators/userValidators";
+import type { IdentificationType } from "../validators/identificationTypesValidatos";
 
 export class UserService{
     private static instance: UserService;
@@ -67,5 +68,16 @@ export class UserService{
         }
         const userData: User = await result.json();
         return userData;
+    }
+
+    public async getAllIdentificationTypes(): Promise<Array<IdentificationType>>{
+        const result = await this.fetchWrapper.send('/user/identificationTypes', {
+            method: 'GET',
+        });
+        if (result.status !== 200) {
+            throw new Error('Error fetching identification types');
+        }
+        const identificationTypes: IdentificationType[] = await result.json();
+        return identificationTypes;
     }
 }

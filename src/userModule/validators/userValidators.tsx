@@ -11,6 +11,9 @@ export const userSchema = z.object({
         z.number().min(1000000000, "El teléfono debe tener al menos 10 dígitos").max(9999999999, "El teléfono debe tener como máximo 10 dígitos"),
     ]),
     isAdmin: z.boolean().optional().default(false),
+    identification: z.string().min(1, "La identificación es requerida"),
+    identificationTypeId: z.union([z.string().min(1, "El tipo de identificación es requerido"), z.number()]),
+    identificationType: z.string().optional().nullable(),
 })
 
 export type User = z.infer<typeof userSchema>

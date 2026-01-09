@@ -6,3 +6,4 @@ export * from "./useChangeAddress";
 export * from "./useInfo"
 export * from "./useAdminMaterial";
 export * from "./useAdminThickness";
+export * from "./useGetAllIdentificationTypes";
