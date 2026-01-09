@@ -10,11 +10,11 @@ export default function FilesPage() {
         <div
             className="flex flex-wrap justify-around items-center h-full pt-4 pb-4 gap-1">
             <div
-                className="basis-2/3 lg:basis-[31%] min-w-[300px] max-h-[80vh] overflow-y-auto">
+                className="basis-2/3 lg:basis-[40%] min-w-[300px] max-h-[80vh] overflow-y-auto">
                 <FileList fileId={fileId} files={files || []} isLoading={isLoadingFiles} setFileId={choiseFile} deleteFile={handleDeleteFile} />
             </div>
             <div
-                className="basis-2/3 min-w-[300px]">
+                className="basis-2/3 lg:basis-[55%] min-w-[300px]">
                 <FileViwer file={file} downloadFile={downloadFile} />
             </div>
         </div>
