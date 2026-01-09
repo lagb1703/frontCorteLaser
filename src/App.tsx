@@ -1,4 +1,5 @@
 import { AppRouter } from "./core/routing";
+import { MultifileProvider } from "./utilities/global/multifileContext";
 import {
   QueryClient,
   QueryClientProvider,
@@ -14,7 +15,9 @@ function App() {
   return (
     <ThemeProvider attribute="class" defaultTheme="system">
       <QueryClientProvider client={queryClient}>
-        <AppRouter />
+        <MultifileProvider>
+          <AppRouter />
+        </MultifileProvider>
         <Toaster />
         <BackgroundParticles />
       </QueryClientProvider>
