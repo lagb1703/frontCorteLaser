@@ -6,6 +6,7 @@ import {
     CardTitle,
     CardContent,
 } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -30,7 +31,8 @@ import {
 } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { ArrowUpDown } from "lucide-react"
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { MultifileContext } from "@/utilities/global/multifileContext";
 
 interface Props {
     files: FileDb[];
@@ -41,7 +43,47 @@ interface Props {
 }
 
 export default function FileList({ files, isLoading, fileId, setFileId, deleteFile }: Props) {
+    const { setFilesIds } = useContext(MultifileContext);
     const columns: ColumnDef<FileDb>[] = [
+        {
+            id: "select",
+            header: ({ table }) => (
+                <Checkbox
+                    checked={
+                        table.getIsAllPageRowsSelected() ||
+                        (table.getIsSomePageRowsSelected() && "indeterminate")
+                    }
+                    onCheckedChange={(value) => {
+                        table.toggleAllPageRowsSelected(!!value);
+                        if (value) {
+                            setFilesIds(files.map((file) => String(file.id)));
+                            return;
+                        }
+                        setFilesIds([]);
+                    }}
+                    aria-label="Select all"
+                />
+            ),
+            cell: ({ row }) => (
+                <Checkbox
+                    checked={row.getIsSelected()}
+                    onCheckedChange={(value) => {
+                        row.toggleSelected(!!value);
+                        const selectedIds = table
+                            .getSelectedRowModel()
+                            .rows.map((r) => String((r.original as any)["id"]));
+                        if(value)
+                            selectedIds.push(String((row.original as any)["id"]))
+                        else
+                            selectedIds.splice(selectedIds.indexOf(String((row.original as any)["id"])), 1);
+                        setFilesIds(selectedIds);
+                    }}
+                    aria-label="Select row"
+                />
+            ),
+            enableSorting: false,
+            enableHiding: false,
+        },
         {
             accessorKey: "name",
             header: ({ column }) => {
@@ -58,6 +100,18 @@ export default function FileList({ files, isLoading, fileId, setFileId, deleteFi
             cell: ({ row }) => <div className="">{row.getValue("name")}</div>,
         },
         {
+            id: "see",
+            enableHiding: false,
+            cell: ({ row }) => {
+                const id = (row.original as any)["id"] as string;
+                return (
+                    <Button size="sm" variant="ghost" onClick={() => setFileId(id)}>
+                        Ver
+                    </Button>
+                )
+            },
+        },
+        {
             id: "delete",
             enableHiding: false,
             cell: ({ row }) => {
@@ -72,19 +126,6 @@ export default function FileList({ files, isLoading, fileId, setFileId, deleteFi
                         }}
                     >
                         <Trash2 className="size-4" />
-                    </Button>
-                )
-            },
-        },
-
-        {
-            id: "see",
-            enableHiding: false,
-            cell: ({ row }) => {
-                const id = (row.original as any)["id"] as string;
-                return (
-                    <Button size="sm" variant="ghost" onClick={() => setFileId(id)}>
-                        Ver
                     </Button>
                 )
             },
