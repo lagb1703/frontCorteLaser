@@ -43,6 +43,15 @@ export class FileService {
         }
         return await result.blob();
     }
+    public async getFileMetadata(id: string | number): Promise<FileDb> {
+        const result = await this.fetchWrapper.send(`/file/metadata?id=${id}`, {
+            method: "GET",
+        })
+        if (result.status !== 200) {
+            throw new Error("Error al descargar el archivo");
+        }
+        return await result.json();
+    }
     public async deleteFile(id: string | number): Promise<void> {
         const result = await this.fetchWrapper.send(`/file?id=${id}`, {
             method: "DELETE",

@@ -1,14 +1,18 @@
 import UserPage from '../userModule/pages/userPage';
-import MaterialPage from '../userModule/pages/materialPage';
 import QuoterPage from '@/fileService/pages/quoterPage';
 import UpdatePage from '@/fileService/pages/updatePage';
 import FilesPage from '@/fileService/pages/filesPage';
 import PaymentPage from '@/paymentModule/pages/paymentPage';
+import QuoterManyPage from '@/fileService/pages/quoterManyPage';
 
 export const PrivateRoutes = [
     {
         path: "/user",
         element: <UserPage />
+    },
+    {
+        path: "/quoter",
+        element: <QuoterManyPage />
     },
     {
         path: "/quoter/:fileId",
@@ -25,5 +29,5 @@ export const PrivateRoutes = [
     {
         path: "/payments",
         element: <PaymentPage />
-    },
+    }
 ];

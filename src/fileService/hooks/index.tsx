@@ -4,4 +4,5 @@ export * from "./useGetImage";
 export * from "./useSaveFile";
 export * from "./useGetAllUserFile";
 export * from "./useGetPrice";
-export * from "./useQuoter"
+export * from "./useQuoter";
+export * from "./useGetFileMetadata";

@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
     type ColumnDef,
@@ -31,7 +32,7 @@ import {
 } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { ArrowUpDown } from "lucide-react"
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { MultifileContext } from "@/utilities/global/multifileContext";
 
 interface Props {
@@ -43,7 +44,10 @@ interface Props {
 }
 
 export default function FileList({ files, isLoading, fileId, setFileId, deleteFile }: Props) {
-    const { setFilesIds } = useContext(MultifileContext);
+    const { filesIds, setFilesIds } = useContext(MultifileContext);
+    useEffect(()=>{
+        setFilesIds([]);
+    }, []);
     const columns: ColumnDef<FileDb>[] = [
         {
             id: "select",
@@ -272,6 +276,9 @@ export default function FileList({ files, isLoading, fileId, setFileId, deleteFi
                         </div>
                     </div>
                 )}
+                <Link to={`/quoter${filesIds.length == 1 ? `/${filesIds[0]}` : ""}`}>
+                    <Button className="w-full mt-4" disabled={filesIds.length === 0}>Cotizar</Button>
+                </Link>
             </CardContent>
         </Card>
     );
