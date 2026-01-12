@@ -8,11 +8,11 @@ export default function UpdatePage() {
             <div
                 className="basis-1/2 min-w-[300px] flex justify-center items-center flex-col">
                 <h1
-                    className="text-6xl font-bold w-full text-center">Sube tu archivo</h1>
+                    className="text-6xl font-bold w-full text-center">Sube tus archivos</h1>
                 <div>
                     <p
                         className="text-center text-lg mt-4">
-                        Sube tu archivo en formato dxf para comenzar a cotizar tu proyecto de corte láser.
+                        Sube tus archivos en formato dxf para comenzar a cotizar tu proyecto de corte láser.
                     </p>
                 </div>
             </div>
