@@ -2,28 +2,30 @@ import { type Material } from "@/materialModule/validators/materialValidators";
 import { type Thickness } from "@/materialModule/validators/thicknessValidators";
 import { useCallback } from "react";
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
 } from "@/components/ui/select"
 import { Input } from "@/components/ui/input";
 
 interface props {
     materials: Array<Material>;
     materialId: string | number | null;
+    disableMaterialChange?: boolean;
     setMaterialId: (id: string | number) => void;
     thicknesses: Array<Thickness>;
     thicknessId: string | number | null;
+    disableThicknessChange?: boolean;
     setThicknessId: (id: string | number) => void;
-    amount: number | null;
-    setAmount: (amount: number) => void;
+    amount?: number | null;
+    setAmount?: (amount: number) => void;
 }
 
-export default function Quoter({ materials, materialId, setMaterialId, thicknesses, thicknessId, setThicknessId, amount, setAmount }: props) {
+export default function Quoter({ materials, materialId, setMaterialId, thicknesses, thicknessId, setThicknessId, amount, setAmount, disableMaterialChange, disableThicknessChange }: props) {
     const handleMaterialChange = useCallback((id: string | number) => {
         setMaterialId(id);
     }, [setMaterialId]);
@@ -38,6 +40,7 @@ export default function Quoter({ materials, materialId, setMaterialId, thickness
             <Select
                 value={materialId != null ? String(materialId) : ""}
                 onValueChange={(val) => handleMaterialChange(val)}
+                disabled={!!disableMaterialChange}
             >
                 <SelectTrigger className="basis-full md:basis-[48%] lg:basis-[32%]">
                     <SelectValue placeholder="Select Material" />
@@ -56,6 +59,7 @@ export default function Quoter({ materials, materialId, setMaterialId, thickness
             <Select
                 value={thicknessId != null ? String(thicknessId) : ""}
                 onValueChange={(val) => handleThicknessChange(val)}
+                disabled={!!disableThicknessChange}
             >
                 <SelectTrigger className="basis-full md:basis-[48%] lg:basis-[32%]">
                     <SelectValue placeholder="Select Thickness" />
@@ -71,23 +75,25 @@ export default function Quoter({ materials, materialId, setMaterialId, thickness
                     </SelectGroup>
                 </SelectContent>
             </Select>
-            <Input
-                type="number"
-                className="basis-full md:basis-auto lg:basis-[32%]"
-                placeholder="Amount"
-                value={amount ?? ""}
-                onChange={(e) => {
-                    const val = e.target.value;
-                    const num = parseInt(val);
-                    if (isNaN(num)) {
-                        return;
-                    }
-                    if (num < 0) {
-                        return;
-                    }
-                    setAmount(num);
-                }}
-            />
+            {amount !== undefined && setAmount !== undefined && (
+                <Input
+                    type="number"
+                    className="basis-full md:basis-auto lg:basis-[32%]"
+                    placeholder="Amount"
+                    value={amount ?? ""}
+                    onChange={(e) => {
+                        const val = e.target.value;
+                        const num = parseInt(val);
+                        if (isNaN(num)) {
+                            return;
+                        }
+                        if (num < 0) {
+                            return;
+                        }
+                        setAmount(num);
+                    }}
+                />
+            )}
         </div>
     );
 }

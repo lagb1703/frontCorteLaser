@@ -10,13 +10,15 @@ interface ShapeItemProps {
     fileId: string;
     materials: Array<Material>;
     setPrice: (fileId: string | number, price: number) => void;
+    materialGeneralId?: string | number;
+    thicknessGeneralId?: string | number;
 }
-function ShapeItem({ fileId, materials, setPrice }: ShapeItemProps) {
+function ShapeItem({ fileId, materials, setPrice, materialGeneralId, thicknessGeneralId }: ShapeItemProps) {
     const { data: imageData, isLoading: isImageLoading } = useGetImage(fileId);
     const { data: fileMetadata, isLoading: isMetadataLoading } = useGetFileMetadata(fileId);
     const { materialId, thicknessId, amount, setMaterialId, setThicknessId, setAmount } = useQuoter();
-    const { data: thicknesses } = useGetThicknessByMaterialId(materialId);
-    const { data: priceData, refetch } = useGetPrice(fileId, materialId!, thicknessId!, amount!);
+    const { data: thicknesses } = useGetThicknessByMaterialId(materialGeneralId || materialId!);
+    const { data: priceData, refetch } = useGetPrice(fileId, materialGeneralId || materialId!, thicknessGeneralId || thicknessId!, amount!);
     useEffect(() => {
         if (priceData) {
             setPrice(fileId, priceData.price);
@@ -32,7 +34,7 @@ function ShapeItem({ fileId, materials, setPrice }: ShapeItemProps) {
                 <div
                     className="h-22 basis-1/10 flex items-center justify-center">
                     {isImageLoading ? (
-                        <Skeleton className="h-24 w-24 rounded-full" />
+                        <Skeleton className="h-20 w-20 rounded-full" />
                     ) : (
                         <ImageVisualizer image={imageData!} />
                     )}
@@ -42,20 +44,22 @@ function ShapeItem({ fileId, materials, setPrice }: ShapeItemProps) {
                     {
                         (!isMetadataLoading) ?
                             fileMetadata?.name :
-                            <Skeleton className="h-24 w-24 rounded-full" />
+                            <Skeleton className="h-20 w-20 rounded-full" />
                     }
                 </div>
                 <div
                     className="basis-7/10">
                     <Quoter
                         materials={materials}
-                        materialId={materialId!}
+                        materialId={materialGeneralId || materialId!}
                         setMaterialId={setMaterialId}
-                        thicknessId={thicknessId!}
+                        thicknessId={thicknessGeneralId || thicknessId!}
                         setThicknessId={setThicknessId}
                         amount={amount!}
                         setAmount={setAmount}
                         thicknesses={thicknesses || []}
+                        disableMaterialChange={!!materialGeneralId}
+                        disableThicknessChange={!!thicknessGeneralId}
                     />
                 </div>
                 <div
@@ -68,9 +72,12 @@ function ShapeItem({ fileId, materials, setPrice }: ShapeItemProps) {
 export interface ShapeTableProps {
     filesIds: Array<string>;
     setPrice: (fileId: string | number, price: number) => void;
+    materialId?: string | number;
+    thicknessId?: string | number;
 }
-export default function ShapeTable({ filesIds, setPrice }: ShapeTableProps) {
+export default function ShapeTable({ filesIds, setPrice, materialId, thicknessId }: ShapeTableProps) {
     const { data: materialsData } = useGetMaterials();
+    console.log(materialId, thicknessId);
     return (
         <ul className="space-y-4">
             {filesIds.map((fileId) => (
@@ -79,6 +86,8 @@ export default function ShapeTable({ filesIds, setPrice }: ShapeTableProps) {
                     fileId={fileId}
                     materials={materialsData || []}
                     setPrice={setPrice}
+                    materialGeneralId={materialId}
+                    thicknessGeneralId={thicknessId}
                 />
             ))}
         </ul>
