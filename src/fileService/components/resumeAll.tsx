@@ -19,7 +19,14 @@ export default function ResumeAll({ prices }: ResumeAllProps) {
                     <span>${totalPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
                 <Button className="mt-4 w-full" onClick={openPayment} disabled={!disable}>Proceder al pago</Button>
-                <PaymentDialog isOpen={isPaymentOpen} onClose={closePayment} items={prices} />
+                <PaymentDialog isOpen={isPaymentOpen} onClose={closePayment} items={prices.map(price=>{
+                    return {
+                        fileId: price.fileId,
+                        amount: price.amount,
+                        materialId: price.materialId,
+                        thicknessId: price.thicknessId
+                    }
+                })} />
             </div>
         </div>
     );

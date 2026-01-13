@@ -44,11 +44,14 @@ export function useManageData({ items, onClose }: InputData) {
                 exp_year: "",
                 card_holder: "",
             },
-            items: items,
+            items: [],
         },
     })
-
-    const { setValue, clearErrors, control } = form
+    useEffect(() => {
+        form.setValue("items", items, { shouldValidate: true, shouldDirty: true });
+    }, [items]);
+    
+    const { setValue, clearErrors, control } = form;
 
     const setAcceptUserPolicy = useCallback((value: boolean) => {
         if(!acceptancesTokens)
