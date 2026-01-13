@@ -1,5 +1,6 @@
 import { useGetFileMetadata, useGetPrice, useGetImage, useQuoter } from "../hooks";
 import { useGetMaterials, useGetThicknessByMaterialId } from "@/materialModule/hooks";
+import type { PriceInterface } from "../interfaces/prices";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect } from "react";
 import ImageVisualizer from "./imageVisualizer";
@@ -9,7 +10,7 @@ import type { Material } from "@/materialModule/validators/materialValidators";
 interface ShapeItemProps {
     fileId: string;
     materials: Array<Material>;
-    setPrice: (fileId: string | number, price: number) => void;
+    setPrice: (prices: PriceInterface) => void;
     materialGeneralId?: string | number;
     thicknessGeneralId?: string | number;
 }
@@ -21,7 +22,7 @@ function ShapeItem({ fileId, materials, setPrice, materialGeneralId, thicknessGe
     const { data: priceData, refetch } = useGetPrice(fileId, materialGeneralId || materialId!, thicknessGeneralId || thicknessId!, amount!);
     useEffect(() => {
         if (priceData) {
-            setPrice(fileId, priceData.price);
+            setPrice({ fileId, materialId: materialGeneralId || materialId!, thicknessId: thicknessGeneralId || thicknessId!, amount: amount!, price: priceData.price });
         }
     }, [priceData, fileId, setPrice]);
     useEffect(()=>{
@@ -71,7 +72,7 @@ function ShapeItem({ fileId, materials, setPrice, materialGeneralId, thicknessGe
 
 export interface ShapeTableProps {
     filesIds: Array<string>;
-    setPrice: (fileId: string | number, price: number) => void;
+    setPrice: (prices: PriceInterface) => void;
     materialId?: string | number;
     thicknessId?: string | number;
 }

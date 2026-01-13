@@ -21,16 +21,16 @@ export default function QuoterManyPage() {
     const { materialId, thicknessId, setMaterialId, setThicknessId } = useQuoter();
     const { data: thicknesses } = useGetThicknessByMaterialId(materialId);
     const { filesIds } = useContext(MultifileContext);
-    const [prices, setPrices] = useState<PriceInterface[]>(filesIds.map((id) => ({ fileId: id, price: 0 })));
-    const setPrice = useCallback((fileId: string | number, price: number) => {
+    const [prices, setPrices] = useState<PriceInterface[]>(filesIds.map((id) => ({ fileId: id, materialId: 0, thicknessId: 0, amount: 0, price: 0 })));
+    const setPrice = useCallback((prices: PriceInterface) => {
         setPrices((prevPrices) => {
-            const existingPriceIndex = prevPrices.findIndex((p) => p.fileId === fileId);
+            const existingPriceIndex = prevPrices.findIndex((p) => p.fileId === prices.fileId);
             if (existingPriceIndex !== -1) {
                 const updatedPrices = [...prevPrices];
-                updatedPrices[existingPriceIndex] = { fileId, price };
+                updatedPrices[existingPriceIndex] = prices;
                 return updatedPrices;
             } else {
-                return [...prevPrices, { fileId, price }];
+                return [...prevPrices, prices];
             }
         });
     }, [setPrices]);

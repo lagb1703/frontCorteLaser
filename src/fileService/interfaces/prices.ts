@@ -1,4 +1,5 @@
-export interface PriceInterface {
-    fileId: string | number;
+import type { ReferenceType } from "@/paymentModule/validators/paymentValidators";
+
+export interface PriceInterface extends ReferenceType {
     price: number;
 }
