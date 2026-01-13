@@ -79,12 +79,16 @@ export default function QuoterPage() {
       </div>
       {priceData && (
         <PaymentDialog
-          amount={amount!}
+          items= {[
+            {
+              materialId: materialId!,
+              thicknessId: thicknessId!,
+              fileId: fileId!,
+              amount: amount!,
+            }
+          ]}
           isOpen={isPaymentOpen}
           onClose={() => setIsPaymentOpen(false)}
-          fileId={fileId!}
-          materialId={materialId!}
-          thicknessId={thicknessId!}
         />)}
     </div>
   );

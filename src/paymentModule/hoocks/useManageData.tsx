@@ -1,6 +1,6 @@
 import { useGetAcceptanceTokens, usePostPayment, useGetPaymentMethods } from "./"
-import { paymentTypeSchema } from "../validators/paymentValidators"
-import type { PaymentType } from "../validators/paymentValidators"
+import {paymentTypeSchema} from "../validators/paymentValidators";
+import type { PaymentType, ReferenceType } from "../validators/paymentValidators"
 import { useCallback } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -9,14 +9,11 @@ import { useNavigate } from "react-router"
 import { toast } from "sonner"
 
 interface InputData {
-    fileId: string | number
-    materialId: string | number
-    thicknessId: string | number
-    amount: number
+    items: ReferenceType[]
     onClose: () => void
 }
 
-export function useManageData({ fileId, materialId, thicknessId, amount, onClose }: InputData) {
+export function useManageData({ items, onClose }: InputData) {
     const navigate = useNavigate();
     const {
         data: paymentMethods, 
@@ -47,7 +44,7 @@ export function useManageData({ fileId, materialId, thicknessId, amount, onClose
                 exp_year: "",
                 card_holder: "",
             },
-            reference: "",
+            items: items,
         },
     })
 
@@ -77,11 +74,10 @@ export function useManageData({ fileId, materialId, thicknessId, amount, onClose
     
     const paymentMutation = usePostPayment();
 
-    const submitHandler = useCallback(async (data: any) => {
+    const submitHandler = useCallback(async (data: PaymentType) => {
         try {
             if(!data.payment_method?.installments)
                 data.payment_method.installments = 1;
-            data.reference = `${fileId}-${materialId}-${thicknessId}-${amount}@${crypto.randomUUID()}`;
             const toastId = toast.loading("Procesando el pago...");
             try{
                 await paymentMutation.mutateAsync({
@@ -101,7 +97,7 @@ export function useManageData({ fileId, materialId, thicknessId, amount, onClose
             setValue("acceptance_token", "", { shouldValidate: true, shouldDirty: true });
             setValue("accept_personal_auth", "", { shouldValidate: true, shouldDirty: true });
         }
-    }, [paymentMutation, onClose, refetchAcceptanceTokens, fileId, materialId, thicknessId, amount]);
+    }, [paymentMutation, onClose, refetchAcceptanceTokens]);
 
     useEffect(() => {
         if (!paymentMethods || paymentMethods.length === 0) return;

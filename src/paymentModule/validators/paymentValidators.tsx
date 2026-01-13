@@ -46,7 +46,16 @@ export const wompiTokenizerSchema = z.object({
     card_holder: z.string(),
 })
 
-export type WompiTokenizerType = z.infer<typeof wompiTokenizerSchema>
+export type WompiTokenizerType = z.infer<typeof wompiTokenizerSchema>;
+
+export const ReferenceTypeSchema = z.object({
+    materialId: z.union([z.string(), z.number()]),
+    thicknessId: z.union([z.string(), z.number()]),
+    fileId: z.union([z.string(), z.number()]),
+    amount: z.number().min(1, "La cantidad mínima es 1"),
+})
+
+export type ReferenceType = z.infer<typeof ReferenceTypeSchema>;
 
 export const paymentTypeSchema = z.object({
     acceptance_token: z.string().min(1, "Debes aceptar los términos y condiciones"),
@@ -55,7 +64,7 @@ export const paymentTypeSchema = z.object({
     amount_in_cents: z.number().optional().nullable(),
     payment_method: paymentMethodWompiSchemaValidated,
     card: wompiTokenizerSchema.optional().nullable(),
-    reference: z.string()
+    items: z.array(ReferenceTypeSchema).min(1),
 }).superRefine((val, ctx) => {
     const type = typeof val.payment_method?.type === 'string' ? val.payment_method.type : String(val.payment_method?.type)
     if (type === 'CARD') {

@@ -16,17 +16,15 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { useManageData } from "../hoocks"
 import PaymentChoice from "./paymentChoise"
 import { Label } from "@/components/ui/label"
+import type { ReferenceType } from "../validators/paymentValidators"
 
 type PaymentDialogProps = {
     isOpen: boolean
     onClose: () => void
-    fileId: string | number
-    materialId: string | number
-    thicknessId: string | number
-    amount: number
+    items: ReferenceType[]
 }
 
-export default function PaymentDialog({ isOpen, onClose, fileId, materialId, thicknessId, amount }: PaymentDialogProps) {
+export default function PaymentDialog({ isOpen, onClose, items }: PaymentDialogProps) {
     const {
         form,
         control,
@@ -38,7 +36,7 @@ export default function PaymentDialog({ isOpen, onClose, fileId, materialId, thi
         paymentMethods,
         isLoadingPaymentMethods,
         submitHandler,
-    } = useManageData({ fileId, materialId, amount, thicknessId, onClose });
+    } = useManageData({ items, onClose });
     const acceptance_token = useWatch({ control, name: "acceptance_token" }) as string
     const accept_personal_auth = useWatch({ control, name: "accept_personal_auth" }) as string
     return (
