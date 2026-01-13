@@ -1,6 +1,6 @@
 import ShapeTable from "../components/shapeTable";
 import ResumeAll from "../components/resumeAll";
-import { useContext, useState, useCallback } from "react";
+import { useContext, useState, useCallback, useEffect } from "react";
 import { MultifileContext } from "@/utilities/global/multifileContext";
 import type { PriceInterface } from "../interfaces/prices";
 import {
@@ -22,6 +22,14 @@ export default function QuoterManyPage() {
     const { data: thicknesses } = useGetThicknessByMaterialId(materialId);
     const { filesIds } = useContext(MultifileContext);
     const [prices, setPrices] = useState<PriceInterface[]>(filesIds.map((id) => ({ fileId: id, materialId: 0, thicknessId: 0, amount: 0, price: 0 })));
+    useEffect(() => {
+        setPrices(prices.map((p)=>{
+            return{
+                ...p,
+                price: 0
+            }
+        }))
+    }, [materialId]);
     const setPrice = useCallback((prices: PriceInterface) => {
         setPrices((prevPrices) => {
             const existingPriceIndex = prevPrices.findIndex((p) => p.fileId === prices.fileId);
