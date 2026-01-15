@@ -9,7 +9,8 @@ import {
   DragOverlay,
   type DragStartEvent,
   type DragEndEvent,
-  type DragOverEvent
+  type DragOverEvent,
+  pointerWithin
 } from "@dnd-kit/core";
 import {
   sortableKeyboardCoordinates,
@@ -23,7 +24,7 @@ import { Composite, Leaf } from "../class/tree";
 export default function PriceCalculatorChange() {
   const [activeSidebarItem, setActiveSidebarItem] = useState<CollapsibleItem | null>(null);
   const [activeNode, setActiveNode] = useState<Node | null>(null);
-  const {root, addNewNode, moveNode} = useSematicalTree();
+  const { root, addNewNode, moveNode, deleteNode } = useSematicalTree();
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -39,7 +40,7 @@ export default function PriceCalculatorChange() {
   function handleDragStart(event: DragStartEvent) {
     const { active } = event;
     const activeId = active.id as string;
-    
+
     // Check sidebar first
     const sidebarItem = [...variables, ...operations].find(i => i.title === activeId);
     if (sidebarItem) {
@@ -65,22 +66,26 @@ export default function PriceCalculatorChange() {
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
-    
+
+    console.log("Drag End:", { active, over });
+
     setActiveSidebarItem(null);
     setActiveNode(null);
 
-    if (!over) return;
-
     const activeId = active.id as string;
+
+    if (!over) {
+      console.log("Dropped outside any valid target.");
+      deleteNode(activeId);
+      return;
+    }
     const overId = over.id as string;
-    
     // Check if dragging from sidebar
     const sidebarItem = [...variables, ...operations].find(i => i.title === activeId);
-    
     if (sidebarItem) {
       const newNode = sidebarItem.nridad ? new Composite(sidebarItem.title, sidebarItem.symbol, sidebarItem.nridad!) : new Leaf(sidebarItem.title, sidebarItem.symbol);
-      
-      if(overId === "canvas-area") {
+
+      if (overId === "canvas-area") {
         addNewNode(newNode, "");
       } else {
         // Try to add to the dropped node
@@ -92,9 +97,9 @@ export default function PriceCalculatorChange() {
     } else {
       // Moving existing node inside tree
       if (overId === "canvas-area") {
-         moveNode(activeId, "");
+        moveNode(activeId, "");
       } else {
-         moveNode(activeId, overId);
+        moveNode(activeId, overId);
       }
     }
   }
@@ -103,7 +108,7 @@ export default function PriceCalculatorChange() {
     <div className="w-full h-full overflow-hidden">
       <DndContext
         sensors={sensors}
-        collisionDetection={closestCorners}
+        collisionDetection={pointerWithin}
         onDragStart={handleDragStart}
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
@@ -117,10 +122,10 @@ export default function PriceCalculatorChange() {
           </div>
         </section>
         <DragOverlay>
-           {activeSidebarItem ? <ItemCard item={activeSidebarItem} /> : null}
-           {activeNode ? (
-             activeNode instanceof Leaf ? <Variable item={activeNode} /> : <OperatorOverlay item={activeNode} />
-           ) : null}
+          {activeSidebarItem ? <ItemCard item={activeSidebarItem} /> : null}
+          {activeNode ? (
+            activeNode instanceof Leaf ? <Variable item={activeNode} /> : <OperatorOverlay item={activeNode} />
+          ) : null}
         </DragOverlay>
       </DndContext>
     </div>

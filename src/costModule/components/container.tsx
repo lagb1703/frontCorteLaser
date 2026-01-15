@@ -41,7 +41,6 @@ export function OperatorOverlay({ item }: Props) {
         </CardTitle>
       </CardHeader>
       <CardContent className="bg-[#fafafa] p-2 flex flex-wrap gap-2">
-         {/* Simplified view for overlay: just show count of children or simple placeholders */}
          <div className="text-xs text-gray-400">
            {item.getChildren().length} elementos
          </div>
@@ -51,27 +50,26 @@ export function OperatorOverlay({ item }: Props) {
 }
 
 function Operator({ item }: Props) {
-  const childrenRefs = useRef<Array<JSX.Element>>([]);
-
-  const { setNodeRef } = useDroppable({ id: item.getId() });
+  const { setNodeRef, isOver } = useDroppable({ id: item.getId() });
 
   if (!(item instanceof Composite)) {
     return null;
   }
-  childrenRefs.current = item.getChildren().map((child) => (
-    <CrossComponent key={child.getId()} item={child} />
-  ));
+  
+  const children = item.getChildren();
+
   return (
-    <SortableContext id={item.getId()} items={item.getChildren().map(child => child.getId())} strategy={horizontalListSortingStrategy}>
-      <Card className="m-2.5 flex-1">
+    <SortableContext id={item.getId()} items={children.map(child => child.getId())} strategy={horizontalListSortingStrategy}>
+      <Card className={`m-2.5 flex-1 min-w-[200px] h-fit transition-colors duration-200 ${isOver ? 'ring-2 ring-blue-500 bg-blue-50' : ''}`}>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            {/* Added title for visibility in tree */}
             {item.name}
           </CardTitle>
         </CardHeader>
-        <CardContent ref={setNodeRef} className="bg-[#fafafa] p-2 flex flex-wrap gap-2 min-h-[50px]">
-          {childrenRefs.current}
+        <CardContent ref={setNodeRef} className={`p-2 flex flex-wrap gap-2 w-full min-h-[50px] rounded-b-lg ${isOver ? 'bg-blue-100/50' : 'bg-[#fafafa]'}`}>
+          {children.map((child) => (
+            <CrossComponent key={child.getId()} item={child} />
+          ))}
         </CardContent>
       </Card>
     </SortableContext>
@@ -106,17 +104,22 @@ function CrossComponent({ item }: Props) {
 export default function Container(props: { id: string; item: Node | null }) {
   const { id, item } = props;
 
-  const { setNodeRef } = useDroppable({ id });
+  const { setNodeRef, isOver } = useDroppable({ id });
 
   return (
     <SortableContext id={id} items={[item?.getId() || ""]} strategy={horizontalListSortingStrategy}>
-      <Card className="m-2.5 flex-1">
+      <Card className={`m-2.5 flex-1 h-full min-h-[200px] transition-colors duration-200 ${isOver ? 'ring-2 ring-blue-500 bg-blue-50' : ''}`}>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
+             Construcción de Fórmula
           </CardTitle>
         </CardHeader>
-        <CardContent ref={setNodeRef} className="bg-[#fafafa] p-2">
-          {item ? <CrossComponent item={item} /> : (<div className="text-gray-500">Arrastra un elemento aquí</div>)}
+        <CardContent ref={setNodeRef} className={`p-2 h-full rounded-b-lg ${isOver ? 'bg-blue-100/50' : 'bg-[#fafafa]'}`}>
+          {item ? <CrossComponent item={item} /> : (
+            <div className="flex items-center justify-center h-40 m-2 border-2 border-dashed border-gray-300 rounded-lg bg-white/50">
+              <span className="text-gray-400 font-medium">Arrastra una variable u operación aquí para comenzar</span>
+            </div>
+          )}
         </CardContent>
       </Card>
     </SortableContext>
