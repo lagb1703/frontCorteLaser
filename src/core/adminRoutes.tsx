@@ -1,6 +1,7 @@
 import MaterialPage from "@/userModule/pages/materialPage";
 import ThicknessPage from "@/userModule/pages/thicknessPage";
 import MtPage from "@/userModule/pages/mtPage";
+import SetPriceCalculatorPage from "@/costModule/pages/setPriceCalculatorPage";
 
 export const adminRoutes = [
     {
@@ -14,5 +15,9 @@ export const adminRoutes = [
     {
         path: "/mt",
         element: <MtPage />
+    },
+    {
+        path: "/price",
+        element: <SetPriceCalculatorPage />
     }
 ];

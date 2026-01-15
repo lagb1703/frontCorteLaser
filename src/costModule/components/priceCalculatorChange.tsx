@@ -1,0 +1,128 @@
+import { useState } from "react";
+import {
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  closestCorners,
+  DragOverlay,
+  type DragStartEvent,
+  type DragEndEvent,
+  type DragOverEvent
+} from "@dnd-kit/core";
+import {
+  sortableKeyboardCoordinates,
+} from "@dnd-kit/sortable";
+import SelectionList, { ItemCard, variables, operations } from "./selectionList";
+import Container, { Variable, OperatorOverlay } from "./container";
+import { useSematicalTree } from "../hoocks";
+import type { CollapsibleItem, Node } from "../interfaces";
+import { Composite, Leaf } from "../class/tree";
+
+export default function PriceCalculatorChange() {
+  const [activeSidebarItem, setActiveSidebarItem] = useState<CollapsibleItem | null>(null);
+  const [activeNode, setActiveNode] = useState<Node | null>(null);
+  const {root, addNewNode, moveNode} = useSematicalTree();
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates
+    })
+  );
+
+  function handleDragStart(event: DragStartEvent) {
+    const { active } = event;
+    const activeId = active.id as string;
+    
+    // Check sidebar first
+    const sidebarItem = [...variables, ...operations].find(i => i.title === activeId);
+    if (sidebarItem) {
+      setActiveSidebarItem(sidebarItem);
+      setActiveNode(null);
+      return;
+    }
+
+    // Check tree nodes
+    if (root) {
+      const node = root.find(activeId);
+      if (node) {
+        setActiveNode(node);
+        setActiveSidebarItem(null);
+      }
+    }
+  }
+
+  function handleDragOver(event: DragOverEvent) {
+    // const { active, over } = event;
+    // console.log("Drag Over:", { active, over });
+  }
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    
+    setActiveSidebarItem(null);
+    setActiveNode(null);
+
+    if (!over) return;
+
+    const activeId = active.id as string;
+    const overId = over.id as string;
+    
+    // Check if dragging from sidebar
+    const sidebarItem = [...variables, ...operations].find(i => i.title === activeId);
+    
+    if (sidebarItem) {
+      const newNode = sidebarItem.nridad ? new Composite(sidebarItem.title, sidebarItem.symbol, sidebarItem.nridad!) : new Leaf(sidebarItem.title, sidebarItem.symbol);
+      
+      if(overId === "canvas-area") {
+        addNewNode(newNode, "");
+      } else {
+        // Try to add to the dropped node
+        const parentNode = root?.find(overId);
+        if (parentNode && parentNode instanceof Composite) {
+          addNewNode(newNode, overId);
+        }
+      }
+    } else {
+      // Moving existing node inside tree
+      if (overId === "canvas-area") {
+         moveNode(activeId, "");
+      } else {
+         moveNode(activeId, overId);
+      }
+    }
+  }
+
+  return (
+    <div className="w-full h-full overflow-hidden">
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCorners}
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDragEnd={handleDragEnd}
+      >
+        <section className="flex gap-3 h-full flex-wrap">
+          <div className="basis-full lg:basis-[25%]">
+            <SelectionList />
+          </div>
+          <div className="basis-full lg:basis-[70%]">
+            <Container id="canvas-area" item={root} />
+          </div>
+        </section>
+        <DragOverlay>
+           {activeSidebarItem ? <ItemCard item={activeSidebarItem} /> : null}
+           {activeNode ? (
+             activeNode instanceof Leaf ? <Variable item={activeNode} /> : <OperatorOverlay item={activeNode} />
+           ) : null}
+        </DragOverlay>
+      </DndContext>
+    </div>
+  );
+}

@@ -1,0 +1,14 @@
+import PriceCalculatorChange from "../components/priceCalculatorChange";
+
+export default function SetPriceCalculatorPage() {
+    return (
+        <div className="p-4 h-full flex flex-col justify-around">
+            <h1 className="text-2xl font-bold mb-4">Configurar Calculadora de Precios</h1>
+            <div className="w-full flex justify-around items-center flex-wrap">
+                <div className="h-full basis-[75%] overflow-auto">
+                    <PriceCalculatorChange />
+                </div>
+            </div>
+        </div>
+    );
+}
