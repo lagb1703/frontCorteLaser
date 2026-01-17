@@ -19,7 +19,6 @@ interface Props {
 }
 
 export function Variable({ item }: Props) {
-  console.log("Rendering Variable:", item);
   const { symbol, setSymbol } = useSymbol(item);
   return (
     <Card>
@@ -68,8 +67,6 @@ function Operator({ item }: Props) {
   }
 
   const children = item.getChildren();
-  console.log("Rendering Operator:", item, "with children:", children);
-  console.log("isOver:", isOver, "active:", active);
 
   return (
     <SortableContext id={item.getId()} items={children.map(child => child.getId())} strategy={horizontalListSortingStrategy}>

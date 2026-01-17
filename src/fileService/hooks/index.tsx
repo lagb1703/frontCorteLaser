@@ -7,3 +7,4 @@ export * from "./useGetPrice";
 export * from "./useQuoter";
 export * from "./useGetFileMetadata";
 export * from "./useGetPriceCalculator";
+export * from "./usePostPriceCalculator";

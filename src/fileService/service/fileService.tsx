@@ -78,6 +78,12 @@ export class FileService {
         }
         return await result.json();
     }
+    public async setPriceCalculator(expresion: string): Promise<string | number> {
+        const result = await this.fetchWrapper.send(`/file/price?exp=${encodeURIComponent(expresion)}`, {
+            method: 'POST',
+        });
+        return await result.text();
+    }
     public async getPriceEstimate(): Promise<string> {
         const result = await this.fetchWrapper.send(`/file/price/estimate`, {
             method: "GET",
