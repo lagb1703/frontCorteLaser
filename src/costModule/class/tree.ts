@@ -65,15 +65,18 @@ export class Composite implements Node {
     }
 
     getExpresion(): string {
-        if (this.children.length === 0) {
-            throw new Error("Composite node has no children.");
-        }
         const childExpressions = this.children.map(child => child.getExpresion());
         const nridad = this.nridad === "*" ? Infinity : this.nridad;
+        if(this.children.length === 0){
+            return "";
+        }
         if (nridad === 1) {
             return `${this.symbol}(${childExpressions[0]})`;
         }
-        return `(${childExpressions.join(` ${this.symbol} `)})`;
+        if(this.children.length === 1) {
+            return childExpressions[0];
+        }
+        return `(${childExpressions.filter(expr => expr !== "" && expr != "()").join(` ${this.symbol} `)})`;
     }
 
     getName(): string {

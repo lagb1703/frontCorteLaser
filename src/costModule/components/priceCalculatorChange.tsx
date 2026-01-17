@@ -60,11 +60,9 @@ export default function PriceCalculatorChange() {
     const quenque: ASTNode[] = [semanticalRoot];
     const newRoot = AstToNode(semanticalRoot);
     const treeNodes: Node[] = [newRoot];
-    console.log(quenque)
     while (quenque.length > 0) {
       const current = quenque.shift()!;
       const currentNode = treeNodes.shift()!;
-      console.log(current);
       if (Array.isArray(current)) {
         const child = current[2];
         if (typeof child === "string") {
