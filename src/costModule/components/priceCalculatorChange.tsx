@@ -19,9 +19,10 @@ import { useSematicalTree, useGetSemanticalTree } from "../hoocks";
 import type { CollapsibleItem, Node } from "../interfaces";
 import { Composite, Leaf } from "../class/tree";
 import { Button } from "@/components/ui/button";
-import { useGetPriceCalculator, usePostPriceCalculator } from "@/fileService/hooks";
-import { toast } from "sonner";
+import { useGetPriceCalculator } from "@/fileService/hooks";
 import type { ASTNode } from "../parser/ast";
+import ConfirmDialog from "./confirmDialog";
+import { useOpenClose } from "@/utilities/hooks";
 
 function AstToNode(ast: ASTNode): Node {
   if (Array.isArray(ast)) {
@@ -52,7 +53,7 @@ export default function PriceCalculatorChange() {
   const { root, setRoot, addNewNode, moveNode, deleteNode, getSematicalTree } = useSematicalTree();
   const { data: priceCalculator } = useGetPriceCalculator();
   const { root: semanticalRoot } = useGetSemanticalTree(priceCalculator || "");
-  const postPriceCalculator = usePostPriceCalculator();
+  const { isOpen, open, close } = useOpenClose();
   useEffect(() => {
     if (!semanticalRoot) {
       return;
@@ -195,17 +196,10 @@ export default function PriceCalculatorChange() {
       <div
         className="w-full flex justify-center lg:justify-end lg:p-10">
         <Button className="mt-4 p-7" onClick={() => {
-          const tree: string = getSematicalTree();
-          console.log(tree);
-          const toastId = toast.loading("Guardando calculadora de precios...");
-          try {
-            postPriceCalculator.mutate(tree);
-            toast.success("Calculadora de precios guardada correctamente", { id: toastId });
-          } catch (e) {
-            toast.error("Error al guardar la calculadora de precios");
-          }
+          open();
         }}>Guardar Cambios</Button>
       </div>
+      <ConfirmDialog isOpen={isOpen} onClose={close} newExpression={getSematicalTree()} />
     </div>
   );
 }
