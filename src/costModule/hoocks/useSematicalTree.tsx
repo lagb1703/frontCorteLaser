@@ -62,11 +62,16 @@ export function useSematicalTree() {
         }
     }, [root]);
 
+    const getSematicalTree = useCallback(() => {
+        return root?.getExpresion() || "";
+    }, [root]);
+
     return {
         root,
         setRoot,
         addNewNode,
         deleteNode,
-        moveNode
+        moveNode,
+        getSematicalTree
     }
 }

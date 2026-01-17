@@ -5,7 +5,6 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  closestCorners,
   DragOverlay,
   type DragStartEvent,
   type DragEndEvent,
@@ -20,11 +19,12 @@ import Container, { Variable, OperatorOverlay } from "./container";
 import { useSematicalTree } from "../hoocks";
 import type { CollapsibleItem, Node } from "../interfaces";
 import { Composite, Leaf } from "../class/tree";
+import { Button } from "@/components/ui/button";
 
 export default function PriceCalculatorChange() {
   const [activeSidebarItem, setActiveSidebarItem] = useState<CollapsibleItem | null>(null);
   const [activeNode, setActiveNode] = useState<Node | null>(null);
-  const { root, addNewNode, moveNode, deleteNode } = useSematicalTree();
+  const { root, addNewNode, moveNode, deleteNode, getSematicalTree } = useSematicalTree();
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -80,10 +80,9 @@ export default function PriceCalculatorChange() {
       return;
     }
     const overId = over.id as string;
-    // Check if dragging from sidebar
     const sidebarItem = [...variables, ...operations].find(i => i.title === activeId);
     if (sidebarItem) {
-      const newNode = sidebarItem.nridad ? new Composite(sidebarItem.title, sidebarItem.symbol, sidebarItem.nridad!) : new Leaf(sidebarItem.title, sidebarItem.symbol);
+      const newNode = sidebarItem.nridad ? new Composite(sidebarItem.symbol, sidebarItem.title, sidebarItem.nridad!) : new Leaf(sidebarItem.symbol, sidebarItem.title);
 
       if (overId === "canvas-area") {
         addNewNode(newNode, "");
@@ -113,7 +112,7 @@ export default function PriceCalculatorChange() {
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
       >
-        <section className="flex gap-3 h-full flex-wrap">
+        <section className="flex gap-3 h-fit flex-wrap">
           <div className="basis-full lg:basis-[25%]">
             <SelectionList />
           </div>
@@ -128,6 +127,12 @@ export default function PriceCalculatorChange() {
           ) : null}
         </DragOverlay>
       </DndContext>
+      <div
+        className="w-full flex justify-center lg:justify-end lg:p-10">
+        <Button className="mt-4 p-7" onClick={()=>{
+          console.log(getSematicalTree());
+        }}>Guardar Cambios</Button>
+      </div>
     </div>
   );
 }

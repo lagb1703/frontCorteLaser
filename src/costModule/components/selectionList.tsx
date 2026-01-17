@@ -18,16 +18,32 @@ import type { CollapsibleItem } from "../interfaces";
 
 
 export const variables: CollapsibleItem[] = [{
-  title: "x",
-  symbol: "x",
+  title: "precio Material",
+  symbol: "materialPrice",
 },
 {
-  title: "y",
-  symbol: "y",
+  title: "precio Espesor",
+  symbol: "thicknessPrice",
 },
 {
-  title: "z",
-  symbol: "z",
+  title: "area",
+  symbol: "area",
+},
+{
+  title: "peso material",
+  symbol: "weight",
+},
+{
+  title: "perímetro",
+  symbol: "perimeter",
+},
+{
+  title: "cantidad",
+  symbol: "amount",
+},
+{
+  title: "number",
+  symbol: "number",
 }];
 
 export const operations: CollapsibleItem[] = [
@@ -35,6 +51,9 @@ export const operations: CollapsibleItem[] = [
   { title: "Resta", symbol: "-", nridad: "*" },
   { title: "Multiplicación", symbol: "*", nridad: "*" },
   { title: "División", symbol: "/", nridad: 2 },
+  { title: "Potenciación", symbol: "**", nridad: 2 },
+  {title: "modulo", symbol: "%", nridad: 2 },
+  {title: "redondear", symbol: "round", nridad: 1 },
 ];
 
 

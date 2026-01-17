@@ -69,6 +69,10 @@ export class Composite implements Node {
             throw new Error("Composite node has no children.");
         }
         const childExpressions = this.children.map(child => child.getExpresion());
+        const nridad = this.nridad === "*" ? Infinity : this.nridad;
+        if (nridad === 1) {
+            return `${this.symbol}(${childExpressions[0]})`;
+        }
         return `(${childExpressions.join(` ${this.symbol} `)})`;
     }
 

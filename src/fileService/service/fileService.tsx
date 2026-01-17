@@ -78,4 +78,13 @@ export class FileService {
         }
         return await result.json();
     }
+    public async getPriceEstimate(): Promise<PriceResponse> {
+        const result = await this.fetchWrapper.send(`/price/estimate`, {
+            method: "GET",
+        });
+        if (result.status !== 200) {
+            throw new Error("Error al obtener el precio del archivo");
+        }
+        return await result.json();
+    }
 }
