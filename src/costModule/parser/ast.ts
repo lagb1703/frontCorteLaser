@@ -3,7 +3,8 @@ export type ASTNode =
   | Identifier
   | BinaryExpression
   | UnaryExpression
-  | CallExpression;
+  | CallExpression
+  | Array<ASTNode | string>;
 
 interface BinaryExpression {
   type: "BinaryExpression";
@@ -31,5 +32,5 @@ interface NumberLiteral {
 
 interface Identifier {
   type: "Identifier";
-  value: string;
+  name: string;
 }

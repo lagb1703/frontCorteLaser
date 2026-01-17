@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   DndContext,
   KeyboardSensor,
@@ -21,16 +21,94 @@ import type { CollapsibleItem, Node } from "../interfaces";
 import { Composite, Leaf } from "../class/tree";
 import { Button } from "@/components/ui/button";
 import { useGetPriceCalculator } from "@/fileService/hooks";
+import type { ASTNode } from "../parser/ast";
+
+function AstToNode(ast: ASTNode): Node {
+  console.log(typeof ast, ast);
+  if(Array.isArray(ast)){
+    const newNode = ast[2];
+    if(typeof newNode === "string"){
+      throw new Error("Invalid AST structure");
+    }
+    return AstToNode(newNode);
+  }
+  switch (ast.type) {
+    case "BinaryExpression":
+      const nridad = ast.operator === "/" || ast.operator === "**" || ast.operator === "%" || ast.operator === "//" ? 2 : "*";
+      return new Composite(ast.operator, ast.operator, nridad);
+    case "UnaryExpression":
+      return new Composite(ast.operator, ast.operator, 1);
+    case "CallExpression":
+      return new Composite(ast.callee, ast.callee, ast.args.length);
+    case "Identifier":
+      return new Leaf(ast.name, ast.name);
+    case "NumberLiteral":
+      return new Leaf(ast.value.toString(), "number");
+  }
+}
 
 export default function PriceCalculatorChange() {
   const [activeSidebarItem, setActiveSidebarItem] = useState<CollapsibleItem | null>(null);
   const [activeNode, setActiveNode] = useState<Node | null>(null);
-  const { root, addNewNode, moveNode, deleteNode, getSematicalTree } = useSematicalTree();
+  const { root, setRoot, addNewNode, moveNode, deleteNode, getSematicalTree } = useSematicalTree();
   const { data: priceCalculator } = useGetPriceCalculator();
-  const { error: treeError, root: semanticalRoot } = useGetSemanticalTree("round(2)");
-  console.log("Price Calculator Data:", priceCalculator);
-  console.log("Semantical Tree Error:", treeError);
-  console.log("Semantical Tree Root:", semanticalRoot);
+  const { error: treeError, root: semanticalRoot } = useGetSemanticalTree(priceCalculator || "");
+
+  useEffect(() => {
+    if (!semanticalRoot) {
+      return;
+    }
+    console.log(semanticalRoot);
+    const quenque: ASTNode[] = [semanticalRoot];
+    const newRoot = AstToNode(semanticalRoot);
+    const treeNodes: Node[] = [newRoot];
+    while (quenque.length > 0) {
+      const current = quenque.shift()!;
+      const currentNode = treeNodes.shift()!;
+      if(Array.isArray(current)){
+        for(let i = 0; i < current.length; i++){
+          const child = current[i];
+          if(typeof child === "string" || Array.isArray(child)){
+            continue;
+          }
+          const childNode = AstToNode(child);
+          (currentNode as Composite).add(childNode);
+          quenque.push(child);
+          treeNodes.push(childNode);
+        }
+        continue;
+      }
+      if(typeof current === "string"){
+        continue;
+      }
+      if (!Array.isArray(current) && current.type === "BinaryExpression") {
+        const leftNode = AstToNode(current.left);
+        const rightNode = AstToNode(current.right);
+        (currentNode as Composite).add(leftNode);
+        (currentNode as Composite).add(rightNode);
+        quenque.push(current.left, current.right);
+        treeNodes.push(leftNode, rightNode);
+        continue;
+      }
+      if (!Array.isArray(current) && current.type === "UnaryExpression") {
+        const argNode = AstToNode(current.argument);
+        (currentNode as Composite).add(argNode);
+        quenque.push(current.argument);
+        treeNodes.push(argNode);
+        continue;
+      }
+      if (!Array.isArray(current) && current.type === "CallExpression") {
+        for (const arg of current.args) {
+          const argNode = AstToNode(arg);
+          (currentNode as Composite).add(argNode);
+          quenque.push(arg);
+          treeNodes.push(argNode);
+        }
+        continue;
+      }
+    }
+    setRoot(newRoot);
+  }, [semanticalRoot]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
