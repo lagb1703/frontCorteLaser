@@ -1,13 +1,11 @@
 import { useQuery, type UseQueryResult } from "@tanstack/react-query";
-import { type PriceResponse } from "../validators/priceValidator";
 import { FileService } from "../service/fileService";
 import { useRef } from "react";
 
-export function useGetPriceCalculator(): UseQueryResult<PriceResponse, Error> {
+export function useGetPriceCalculator(): UseQueryResult<string, Error> {
     const fileService = useRef<FileService>(FileService.getInstance());
-    return useQuery<PriceResponse, Error>({
+    return useQuery<string, Error>({
         queryKey: ["file", "priceCalculator"],
-        enabled: false,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: false,

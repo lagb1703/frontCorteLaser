@@ -16,15 +16,21 @@ import {
 } from "@dnd-kit/sortable";
 import SelectionList, { ItemCard, variables, operations } from "./selectionList";
 import Container, { Variable, OperatorOverlay } from "./container";
-import { useSematicalTree } from "../hoocks";
+import { useSematicalTree, useGetSemanticalTree } from "../hoocks";
 import type { CollapsibleItem, Node } from "../interfaces";
 import { Composite, Leaf } from "../class/tree";
 import { Button } from "@/components/ui/button";
+import { useGetPriceCalculator } from "@/fileService/hooks";
 
 export default function PriceCalculatorChange() {
   const [activeSidebarItem, setActiveSidebarItem] = useState<CollapsibleItem | null>(null);
   const [activeNode, setActiveNode] = useState<Node | null>(null);
   const { root, addNewNode, moveNode, deleteNode, getSematicalTree } = useSematicalTree();
+  const { data: priceCalculator } = useGetPriceCalculator();
+  const { error: treeError, root: semanticalRoot } = useGetSemanticalTree("round(2)");
+  console.log("Price Calculator Data:", priceCalculator);
+  console.log("Semantical Tree Error:", treeError);
+  console.log("Semantical Tree Root:", semanticalRoot);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -129,7 +135,7 @@ export default function PriceCalculatorChange() {
       </DndContext>
       <div
         className="w-full flex justify-center lg:justify-end lg:p-10">
-        <Button className="mt-4 p-7" onClick={()=>{
+        <Button className="mt-4 p-7" onClick={() => {
           console.log(getSematicalTree());
         }}>Guardar Cambios</Button>
       </div>

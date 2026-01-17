@@ -78,8 +78,8 @@ export class FileService {
         }
         return await result.json();
     }
-    public async getPriceEstimate(): Promise<PriceResponse> {
-        const result = await this.fetchWrapper.send(`/price/estimate`, {
+    public async getPriceEstimate(): Promise<string> {
+        const result = await this.fetchWrapper.send(`/file/price/estimate`, {
             method: "GET",
         });
         if (result.status !== 200) {
