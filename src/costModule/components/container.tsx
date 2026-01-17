@@ -1,6 +1,7 @@
 import {
   useDroppable,
 } from "@dnd-kit/core";
+import { Fragment } from "react";
 import {
   SortableContext,
   horizontalListSortingStrategy,
@@ -18,6 +19,7 @@ interface Props {
 }
 
 export function Variable({ item }: Props) {
+  console.log("Rendering Variable:", item);
   const { symbol, setSymbol } = useSymbol(item);
   return (
     <Card>
@@ -59,13 +61,15 @@ export function OperatorOverlay({ item }: Props) {
 }
 
 function Operator({ item }: Props) {
-  const { setNodeRef, isOver } = useDroppable({ id: item.getId() });
+  const { setNodeRef, isOver, active } = useDroppable({ id: item.getId() });
 
   if (!(item instanceof Composite)) {
     return null;
   }
 
   const children = item.getChildren();
+  console.log("Rendering Operator:", item, "with children:", children);
+  console.log("isOver:", isOver, "active:", active);
 
   return (
     <SortableContext id={item.getId()} items={children.map(child => child.getId())} strategy={horizontalListSortingStrategy}>
@@ -73,11 +77,14 @@ function Operator({ item }: Props) {
         <CardContent ref={setNodeRef} className={`flex flex-wrap items-center justify-start gap-2 w-full min-h-[50px] ${isOver ? 'bg-blue-100/50' : 'bg-[#fafafa]'}`}>
           {children.map((child, index) => {
             const nridad: number = item.nridad === "*" ? Infinity : Number(item.nridad);
-            return <>
+            if(child.getId() === active?.id){
+              return null;
+            }
+            return <Fragment key={child.getId()}>
               {nridad === 1 && <span className="self-center text-gray-400 mx-1"> {item.symbol} </span>}
-              <CrossComponent key={child.getId()} item={child} />
+              <CrossComponent item={child} />
               {index < children.length - 1 && nridad > 1 && <span className="self-center text-gray-400 mx-1"> {item.symbol} </span>}
-            </>
+            </Fragment>
           })}
         </CardContent>
       </Card>

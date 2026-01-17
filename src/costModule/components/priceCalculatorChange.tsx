@@ -24,7 +24,6 @@ import { useGetPriceCalculator } from "@/fileService/hooks";
 import type { ASTNode } from "../parser/ast";
 
 function AstToNode(ast: ASTNode): Node {
-  console.log(typeof ast, ast);
   if(Array.isArray(ast)){
     const newNode = ast[2];
     if(typeof newNode === "string"){
@@ -58,7 +57,6 @@ export default function PriceCalculatorChange() {
     if (!semanticalRoot) {
       return;
     }
-    console.log(semanticalRoot);
     const quenque: ASTNode[] = [semanticalRoot];
     const newRoot = AstToNode(semanticalRoot);
     const treeNodes: Node[] = [newRoot];

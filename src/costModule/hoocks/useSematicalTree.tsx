@@ -4,9 +4,9 @@ import { useState, useCallback, useEffect } from "react";
 
 export function useSematicalTree() {
     const [root, setRoot] = useState<Node | null>(null);
-    useEffect(() => {
-        console.log("Current Tree Root:", root);
-    }, [root]);
+    // useEffect(() => {
+    //     console.log("Current Tree Root:", root);
+    // }, [root]);
     const addNewNode = useCallback((newNode: Node, id: string) => {
         if (!root) {
             setRoot(newNode);
