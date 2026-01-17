@@ -8,7 +8,6 @@ import {
   DragOverlay,
   type DragStartEvent,
   type DragEndEvent,
-  type DragOverEvent,
   pointerWithin
 } from "@dnd-kit/core";
 import {
@@ -25,9 +24,9 @@ import { toast } from "sonner";
 import type { ASTNode } from "../parser/ast";
 
 function AstToNode(ast: ASTNode): Node {
-  if(Array.isArray(ast)){
+  if (Array.isArray(ast)) {
     const newNode = ast[2];
-    if(typeof newNode === "string"){
+    if (typeof newNode === "string") {
       throw new Error("Invalid AST structure");
     }
     return AstToNode(newNode);
@@ -52,7 +51,7 @@ export default function PriceCalculatorChange() {
   const [activeNode, setActiveNode] = useState<Node | null>(null);
   const { root, setRoot, addNewNode, moveNode, deleteNode, getSematicalTree } = useSematicalTree();
   const { data: priceCalculator } = useGetPriceCalculator();
-  const { error: treeError, root: semanticalRoot } = useGetSemanticalTree(priceCalculator || "");
+  const { root: semanticalRoot } = useGetSemanticalTree(priceCalculator || "");
   const postPriceCalculator = usePostPriceCalculator();
   useEffect(() => {
     if (!semanticalRoot) {
@@ -61,23 +60,21 @@ export default function PriceCalculatorChange() {
     const quenque: ASTNode[] = [semanticalRoot];
     const newRoot = AstToNode(semanticalRoot);
     const treeNodes: Node[] = [newRoot];
+    console.log(quenque)
     while (quenque.length > 0) {
       const current = quenque.shift()!;
       const currentNode = treeNodes.shift()!;
-      if(Array.isArray(current)){
-        for(let i = 0; i < current.length; i++){
-          const child = current[i];
-          if(typeof child === "string" || Array.isArray(child)){
-            continue;
-          }
-          const childNode = AstToNode(child);
-          (currentNode as Composite).add(childNode);
-          quenque.push(child);
-          treeNodes.push(childNode);
+      console.log(current);
+      if (Array.isArray(current)) {
+        const child = current[2];
+        if (typeof child === "string") {
+          continue;
         }
+        quenque.push(child);
+        treeNodes.push(currentNode);
         continue;
       }
-      if(typeof current === "string"){
+      if (typeof current === "string") {
         continue;
       }
       if (!Array.isArray(current) && current.type === "BinaryExpression") {
@@ -124,7 +121,6 @@ export default function PriceCalculatorChange() {
     const { active } = event;
     const activeId = active.id as string;
 
-    // Check sidebar first
     const sidebarItem = [...variables, ...operations].find(i => i.title === activeId);
     if (sidebarItem) {
       setActiveSidebarItem(sidebarItem);
@@ -132,7 +128,6 @@ export default function PriceCalculatorChange() {
       return;
     }
 
-    // Check tree nodes
     if (root) {
       const node = root.find(activeId);
       if (node) {
@@ -142,15 +137,8 @@ export default function PriceCalculatorChange() {
     }
   }
 
-  function handleDragOver(event: DragOverEvent) {
-    // const { active, over } = event;
-    // console.log("Drag Over:", { active, over });
-  }
-
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
-
-    console.log("Drag End:", { active, over });
 
     setActiveSidebarItem(null);
     setActiveNode(null);
@@ -158,7 +146,6 @@ export default function PriceCalculatorChange() {
     const activeId = active.id as string;
 
     if (!over) {
-      console.log("Dropped outside any valid target.");
       deleteNode(activeId);
       return;
     }
@@ -170,14 +157,12 @@ export default function PriceCalculatorChange() {
       if (overId === "canvas-area") {
         addNewNode(newNode, "");
       } else {
-        // Try to add to the dropped node
         const parentNode = root?.find(overId);
         if (parentNode && parentNode instanceof Composite) {
           addNewNode(newNode, overId);
         }
       }
     } else {
-      // Moving existing node inside tree
       if (overId === "canvas-area") {
         moveNode(activeId, "");
       } else {
@@ -192,7 +177,6 @@ export default function PriceCalculatorChange() {
         sensors={sensors}
         collisionDetection={pointerWithin}
         onDragStart={handleDragStart}
-        onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
       >
         <section className="flex gap-3 h-fit flex-wrap">
@@ -216,11 +200,11 @@ export default function PriceCalculatorChange() {
           const tree: string = getSematicalTree();
           console.log(tree);
           const toastId = toast.loading("Guardando calculadora de precios...");
-          try{
+          try {
             postPriceCalculator.mutate(tree);
             toast.success("Calculadora de precios guardada correctamente", { id: toastId });
-          }catch(e){
-            toast.error("Error al guardar la calculadora de precios", { id: toastId });
+          } catch (e) {
+            toast.error("Error al guardar la calculadora de precios");
           }
         }}>Guardar Cambios</Button>
       </div>
