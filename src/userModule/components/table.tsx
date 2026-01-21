@@ -67,7 +67,8 @@ interface AlertDialogProps {
     onConfirm: (() => Promise<void>) | ((data: any) => Promise<void>);
     icon?: React.ReactNode;
     variant?: "default" | "destructive" | "outline" | "ghost";
-    status: any
+    status: any;
+    hasWeight?: boolean;
 }
 
 function DeleteAlertDialog({ isOpen, buttonName, open, setIsOpen, icon, variant, close, toggle, onConfirm, status }: AlertDialogProps) {
@@ -107,13 +108,14 @@ function DeleteAlertDialog({ isOpen, buttonName, open, setIsOpen, icon, variant,
     );
 }
 
-function SaveAlertDialog({ isOpen, buttonName, open, setIsOpen, close, toggle, icon, variant, onConfirm, status, rowData }: AlertDialogProps) {
+function SaveAlertDialog({ isOpen, buttonName, open, setIsOpen, close, toggle, icon, variant, onConfirm, status, rowData, hasWeight }: AlertDialogProps) {
     const form = useForm<Material | Thickness>({
         resolver: zodResolver(materialSchema) as Resolver<Material | Thickness>,
         mode: "onChange",
         defaultValues: {
             name: rowData?.name || "",
             price: rowData?.price || 0,
+            weight: (rowData as Material)?.weight || 0
         },
     })
     return (
@@ -167,6 +169,29 @@ function SaveAlertDialog({ isOpen, buttonName, open, setIsOpen, close, toggle, i
                                 </FormItem>
                             )}
                         />
+                        {hasWeight && (
+                            <FormField
+                                control={form.control}
+                                name="weight"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Peso</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                placeholder="Peso"
+                                                {...field}
+                                                onChange={(e) => {
+                                                    const v = (e.target as HTMLInputElement).value
+                                                    field.onChange(v === "" ? undefined : Number(v))
+                                                }}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        )}
                         <AlertDialogFooter>
                             <AlertDialogCancel asChild>
                                 <Button variant="outline">Cancelar</Button>
@@ -201,6 +226,8 @@ interface TableProps {
 
 export function ItemTable({ data, idName, useAdminData, refetch }: TableProps) {
     const { onSave, onEdit, onDelete, status } = useAdminData(refetch);
+    const hasWeight = idName === "materialId" || (data[0] as Material)?.weight !== undefined;
+
     const columns: ColumnDef<Material | Thickness>[] = [
         {
             accessorKey: idName,
@@ -237,85 +264,96 @@ export function ItemTable({ data, idName, useAdminData, refetch }: TableProps) {
             cell: ({ row }) => {
                 return <div className="text-right font-medium">{(row.getValue("lastModification") as string)?.split("T")[0]}</div>
             },
-        },
-        {
-            id: "save",
-            enableHiding: false,
-            cell: ({ row }) => {
-                const { isOpen, open, setIsOpen, toggle, close } = useOpenClose();
-                const data = row.original as any;
-                const onConfirm = useCallback(async (formData: Material | Thickness) => {
-                    await onEdit(data[idName], formData);
-                }, [data, idName]);
-                return (
-                    <div className="flex justify-end">
-                        <SaveAlertDialog
-                            buttonName="Editar"
-                            isOpen={isOpen}
-                            open={open}
-                            setIsOpen={setIsOpen}
-                            toggle={toggle}
-                            close={close}
-                            rowData={data}
-                            onConfirm={onConfirm}
-                            status={{ isLoading: false }} // Placeholder for status
-                        />
-                    </div>
-                )
-            },
-        },
-        {
-            id: "delete",
-            enableHiding: false,
-            cell: ({ row }) => {
-                const { isOpen, open, toggle, setIsOpen, close } = useOpenClose();
-                const id = (row.original as any)[idName] as number | null;
-                return (
-                    <div className="flex justify-end">
-                        <DeleteAlertDialog
-                            buttonName="Eliminar"
-                            isOpen={isOpen}
-                            open={open}
-                            setIsOpen={setIsOpen}
-                            toggle={toggle}
-                            close={close}
-                            onConfirm={async () => {
-                                await onDelete(id);
-                            }}
-                            status={{ isLoading: false }} // Placeholder for status
-                        />
-                    </div>
-                )
-            },
-        },
-        {
-            id: "saveNew",
-            enableHiding: false,
-            header: () => {
-                const { isOpen, open, toggle, setIsOpen, close } = useOpenClose();
-                const onConfirm = useCallback(async (data: Material | Thickness) => {
-                    await onSave(data);
-                }, []);
-                return (
-                    <div className="flex justify-end">
-                        <SaveAlertDialog
-                            buttonName=""
-                            isOpen={isOpen}
-                            open={open}
-                            setIsOpen={setIsOpen}
-                            toggle={toggle}
-                            close={close}
-                            onConfirm={onConfirm}
-                            icon={<Plus />}
-                            variant="ghost"
-                            status={{ isLoading: false }} // Placeholder for status
-                        />
-                    </div>
-                )
-            },
-            cell: () => null,
         }
     ];
+    if (hasWeight) {
+        columns.push({
+            accessorKey: "weight",
+            header: () => <div className="text-right">Peso (gramos)</div>,
+            cell: ({ row }) => {
+                return <div className="text-right font-medium">{row.getValue("weight")}</div>
+            },
+        });
+    }
+    columns.push({
+        id: "save",
+        enableHiding: false,
+        cell: ({ row }) => {
+            const { isOpen, open, setIsOpen, toggle, close } = useOpenClose();
+            const data = row.original as any;
+            const onConfirm = useCallback(async (formData: Material | Thickness) => {
+                await onEdit(data[idName], formData);
+            }, [data, idName]);
+            return (
+                <div className="flex justify-end">
+                    <SaveAlertDialog
+                        buttonName="Editar"
+                        isOpen={isOpen}
+                        open={open}
+                        setIsOpen={setIsOpen}
+                        toggle={toggle}
+                        close={close}
+                        rowData={data}
+                        onConfirm={onConfirm}
+                        status={{ isLoading: false }} // Placeholder for status
+                        hasWeight={hasWeight}
+                    />
+                </div>
+            )
+        },
+    })
+    columns.push({
+        id: "delete",
+        enableHiding: false,
+        cell: ({ row }) => {
+            const { isOpen, open, toggle, setIsOpen, close } = useOpenClose();
+            const id = (row.original as any)[idName] as number | null;
+            return (
+                <div className="flex justify-end">
+                    <DeleteAlertDialog
+                        buttonName="Eliminar"
+                        isOpen={isOpen}
+                        open={open}
+                        setIsOpen={setIsOpen}
+                        toggle={toggle}
+                        close={close}
+                        onConfirm={async () => {
+                            await onDelete(id);
+                        }}
+                        status={{ isLoading: false }} // Placeholder for status
+                    />
+                </div>
+            )
+        },
+    });
+    columns.push({
+        id: "saveNew",
+        enableHiding: false,
+        header: () => {
+            const { isOpen, open, toggle, setIsOpen, close } = useOpenClose();
+            const onConfirm = useCallback(async (data: Material | Thickness) => {
+                await onSave(data);
+            }, []);
+            return (
+                <div className="flex justify-end">
+                    <SaveAlertDialog
+                        buttonName=""
+                        isOpen={isOpen}
+                        open={open}
+                        setIsOpen={setIsOpen}
+                        toggle={toggle}
+                        close={close}
+                        onConfirm={onConfirm}
+                        icon={<Plus />}
+                        variant="ghost"
+                        status={{ isLoading: false }} // Placeholder for status
+                        hasWeight={hasWeight}
+                    />
+                </div>
+            )
+        },
+        cell: () => null,
+    });
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
         []
@@ -435,11 +473,11 @@ export function ItemTable({ data, idName, useAdminData, refetch }: TableProps) {
                 </Table>
             </div>
             <div className="flex items-center justify-between space-x-2 py-4">
-            <div>
-                <p className="text-sm text-muted-foreground">
-                    Mostrando {table.getRowModel().rows.length} de {table.getFilteredRowModel().rows.length} resultados.
-                </p>
-            </div>
+                <div>
+                    <p className="text-sm text-muted-foreground">
+                        Mostrando {table.getRowModel().rows.length} de {table.getFilteredRowModel().rows.length} resultados.
+                    </p>
+                </div>
                 <div className="space-x-2">
                     <Button
                         variant="outline"
