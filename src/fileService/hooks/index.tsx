@@ -8,3 +8,4 @@ export * from "./useQuoter";
 export * from "./useGetFileMetadata";
 export * from "./useGetPriceCalculator";
 export * from "./usePostPriceCalculator";
+export * from "./useChoiseFile";

@@ -1,4 +1,4 @@
-import { useChoiseFile } from "../hooks/useChoiseFile";
+import { useChoiseFile } from "../hooks";
 import FileViwer from "../components/fileViwer";
 import FileList from "../components/fileList";
 

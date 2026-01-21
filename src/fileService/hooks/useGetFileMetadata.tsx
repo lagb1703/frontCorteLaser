@@ -11,6 +11,15 @@ export function useGetFileMetadata(id: string | number): UseQueryResult<FileDb, 
         refetchOnMount: false,
         refetchOnReconnect: false,
         queryFn: async () => {
+            if( id === null || id === undefined ) {
+                return {
+                    id: 0,
+                    name: "",
+                    md5: "",
+                    bucket: "",
+                    date: new Date(),
+                }
+            }
             return await fileService.current.getFileMetadata(id);
         },
         staleTime: Infinity,

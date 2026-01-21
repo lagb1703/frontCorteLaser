@@ -1,10 +1,11 @@
-import { useGetAllUserFile, useDeleteFile, useGetFile } from "./";
+import { useGetAllUserFile, useDeleteFile, useGetFile, useGetFileMetadata } from "./";
 import { useState, useCallback } from "react";
 import { toast } from "sonner";
 
 
 export function useChoiseFile() {
     const [fileId, setFileId] = useState<string | number | null>(null);
+    const {data: fileMetadata, refetch: refetchFileMetadata} = useGetFileMetadata(fileId!);
     const { data: files, isLoading: isLoadingFiles, refetch: refetchUserFiles } = useGetAllUserFile();
     const choiseFile = useCallback((id: string | number) => {
         setFileId(id);
@@ -27,10 +28,12 @@ export function useChoiseFile() {
 
             const result = await refetch();
             if (!result.data) return;
+            const metadata = await refetchFileMetadata();
+            if (!metadata.data) return;
             const url = window.URL.createObjectURL(result.data);
             const a = document.createElement('a');
             a.href = url;
-            a.download = files?.find(f => f.id === fileId)?.name || 'downloadedFile';
+            a.download = metadata.data.name || `${fileId}.dxf`;
             document.body.appendChild(a);
             a.click();
             a.remove();
@@ -39,7 +42,7 @@ export function useChoiseFile() {
         } catch (error: any) {
             toast.error(error.message || "Error al descargar el archivo", { id: toastId });
         }
-    }, [fileId, refetch, files]);
+    }, [fileId, refetch, refetchFileMetadata]);
     return {
         fileId,
         files,
