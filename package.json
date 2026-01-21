@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "build:grammar":"peggy src/costModule/parser/price.peggy --format es --output src/costModule/parser/pricing-parser.js",
+    "build:grammar": "peggy src/costModule/parser/price.peggy --format es --output src/costModule/parser/pricing-parser.js",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -50,6 +50,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
     "babel-plugin-react-compiler": "^1.0.0",
+    "baseline-browser-mapping": "^2.9.16",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",

@@ -2,6 +2,12 @@ import type { PriceInterface } from "../interfaces/prices"
 import { Button } from "@/components/ui/button";
 import { useOpenClose } from "@/utilities/hooks";
 import PaymentDialog from "@/paymentModule/components/paymentDialog";
+import {
+    Card,
+    CardHeader,
+    CardTitle,
+    CardContent,
+} from "@/components/ui/card";
 
 interface ResumeAllProps {
     prices: Array<PriceInterface>;

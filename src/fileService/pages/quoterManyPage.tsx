@@ -9,12 +9,6 @@ import {
 } from "@/materialModule/hooks";
 import Quoter from "../components/quoter";
 import { useQuoter } from "../hooks";
-import {
-    Card,
-    CardHeader,
-    CardTitle,
-    CardContent,
-} from "@/components/ui/card";
 
 export default function QuoterManyPage() {
     const { data: materials } = useGetMaterials();
@@ -43,12 +37,12 @@ export default function QuoterManyPage() {
         });
     }, [setPrices]);
     return (
-        <div className="p-4 h-full flex flex-col justify-around">
+        <main className="p-4 h-full flex flex-col justify-around">
             <h1 className="text-2xl font-bold mb-4">Cotizar archivos</h1>
             <div
                 className="flex justify-around items-center p-1 flex-wrap">
                 <h2 className="text-xl font-bold mb-3">Cotizar todos: </h2>
-                <div
+                <section
                     className="basis-2/3">
                     <Quoter
                         materials={materials!}
@@ -58,24 +52,24 @@ export default function QuoterManyPage() {
                         setThicknessId={setThicknessId}
                         thicknesses={thicknesses || []}
                     />
-                </div>
+                </section>
             </div>
             <div
-                className="w-full flex justify-around items-center flex-wrap">
-                <div
-                    className="h-full basis-[75%] overflow-auto">
+                className="w-full flex justify-around items-center lg:items-start flex-wrap gap-2">
+                <section
+                    className="basis-full md:basis-[75%] overflow-auto">
                     <ShapeTable 
                         filesIds={filesIds} 
                         setPrice={setPrice} 
                         materialId={materialId!}
                         thicknessId={thicknessId!}
                         />
-                </div>
-                <div
-                    className="h-full min-h-[50vh] basis-[20%] ml-4">
+                </section>
+                <section
+                    className="lg:h-full max-h-[75vh] basis-[75%] lg:basis-[20%] ml-4">
                     <ResumeAll prices={prices} />
-                </div>
+                </section>
             </div>
-        </div>
+        </main>
     );
 }

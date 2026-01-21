@@ -6,6 +6,12 @@ import { useEffect } from "react";
 import ImageVisualizer from "./imageVisualizer";
 import Quoter from "./quoter";
 import type { Material } from "@/materialModule/validators/materialValidators";
+import {
+    Card,
+    CardHeader,
+    CardTitle,
+    CardContent,
+} from "@/components/ui/card";
 
 interface ShapeItemProps {
     fileId: string;
@@ -25,47 +31,65 @@ function ShapeItem({ fileId, materials, setPrice, materialGeneralId, thicknessGe
             setPrice({ fileId, materialId: materialGeneralId || materialId!, thicknessId: thicknessGeneralId || thicknessId!, amount: amount!, price: priceData.price });
         }
     }, [priceData, fileId, setPrice]);
-    useEffect(()=>{
+    useEffect(() => {
         refetch();
     }, [materialId, thicknessId, amount]);
     return (
         <li
             className="">
-            <div className="flex items-center justify-around flex-wrap p-4 border rounded-lg shadow-md">
-                <div
-                    className="h-22 basis-1/10 flex items-center justify-center">
-                    {isImageLoading ? (
-                        <Skeleton className="h-20 w-20 rounded-full" />
-                    ) : (
-                        <ImageVisualizer image={imageData!} />
-                    )}
-                </div>
-                <div
-                    className="basis-1/10 overflow-clip text-center">
-                    {
-                        (!isMetadataLoading) ?
-                            fileMetadata?.name :
+            <Card>
+                <CardHeader
+                    className="w-full justify-start h-auto">
+                    <div
+                        className="flex w-full items-center gap-4">
+                        <div
+                            className="shrink-0 flex justify-center items-center p-2">
+                            <CardTitle className="text-center whitespace-nowrap">Archivo Cotizado:</CardTitle>
+                        </div>
+                        <div
+                            className="grow text-left">
+                            {
+                                (!isMetadataLoading) ?
+                                    <span className="break-all">{fileMetadata?.name}</span> :
+                                    <Skeleton className="h-6 w-full rounded-full" />
+                            }
+                        </div>
+                    </div>
+                </CardHeader>
+                <CardContent
+                    className="flex items-center justify-around flex-wrap p-4">
+                    <div
+                        className="basis-full lg:h-22 lg:basis-1/10 flex items-center justify-center">
+                        {isImageLoading ? (
                             <Skeleton className="h-20 w-20 rounded-full" />
-                    }
-                </div>
-                <div
-                    className="basis-7/10">
-                    <Quoter
-                        materials={materials}
-                        materialId={materialGeneralId || materialId!}
-                        setMaterialId={setMaterialId}
-                        thicknessId={thicknessGeneralId || thicknessId!}
-                        setThicknessId={setThicknessId}
-                        amount={amount!}
-                        setAmount={setAmount}
-                        thicknesses={thicknesses || []}
-                        disableMaterialChange={!!materialGeneralId}
-                        disableThicknessChange={!!thicknessGeneralId}
-                    />
-                </div>
-                <div
-                    className="basis-1/10">{(priceData) ? priceData.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0}</div>
-            </div>
+                        ) : (
+                            <ImageVisualizer image={imageData!} />
+                        )}
+                    </div>
+                    <div
+                        className="basis-full lg:basis-7/10">
+                        <Quoter
+                            materials={materials}
+                            materialId={materialGeneralId || materialId!}
+                            setMaterialId={setMaterialId}
+                            thicknessId={thicknessGeneralId || thicknessId!}
+                            setThicknessId={setThicknessId}
+                            amount={amount!}
+                            setAmount={setAmount}
+                            thicknesses={thicknesses || []}
+                            disableMaterialChange={!!materialGeneralId}
+                            disableThicknessChange={!!thicknessGeneralId}
+                        />
+                    </div>
+                    <div
+                        className="basis-full lg:basis-1/10">
+                        <span className="font-bold text-lg">
+                            precio: $
+                            {(priceData) ? priceData.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0}
+                        </span>
+                        </div>
+                </CardContent>
+            </Card>
         </li>
     );
 }
@@ -80,7 +104,7 @@ export default function ShapeTable({ filesIds, setPrice, materialId, thicknessId
     const { data: materialsData } = useGetMaterials();
     console.log(materialId, thicknessId);
     return (
-        <ul className="space-y-4">
+        <ul className="space-y-4 w-full">
             {filesIds.map((fileId) => (
                 <ShapeItem
                     key={fileId}
