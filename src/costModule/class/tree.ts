@@ -1,4 +1,5 @@
 import type { Node } from "../interfaces";
+import { v4 as uuidv4 } from 'uuid';
 
 export class Leaf implements Node {
     symbol: string;
@@ -9,7 +10,7 @@ export class Leaf implements Node {
     constructor(symbol: string, name: string) {
         this.symbol = symbol;
         this.name = name;
-        this.id = crypto.randomUUID();
+        this.id = uuidv4();
     }
 
     getExpresion(): string {
@@ -33,7 +34,7 @@ export class Composite implements Node {
     symbol: string;
     name: string;
     nridad: number | "*";
-    id: string = crypto.randomUUID();
+    id: string = uuidv4();
     children: Node[];
     parent: Node | null = null;
 
