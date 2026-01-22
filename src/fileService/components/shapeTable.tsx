@@ -102,7 +102,6 @@ export interface ShapeTableProps {
 }
 export default function ShapeTable({ filesIds, setPrice, materialId, thicknessId }: ShapeTableProps) {
     const { data: materialsData } = useGetMaterials();
-    console.log(materialId, thicknessId);
     return (
         <ul className="space-y-4 w-full">
             {filesIds.map((fileId) => (

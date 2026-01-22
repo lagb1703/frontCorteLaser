@@ -44,8 +44,6 @@ export default function RegisterForm() {
         },
     })
 
-    console.log(form.formState.errors);
-
     const navigate = useNavigate()
 
     const registerMutation = useRegister()

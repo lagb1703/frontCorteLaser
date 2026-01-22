@@ -14,7 +14,6 @@ export default function UpdateFile() {
     const updateFile = useCallback(async (e: any) => {
         const files = e.target?.files;
         const filesIds: string[] = [];
-        console.log(files);
         if (!files || files.length === 0) return;
         for (let i = 0; i < files.length; i++) {
             const file = files[i];

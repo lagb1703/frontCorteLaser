@@ -37,10 +37,6 @@ export default function PaymentDialog({ isOpen, onClose, items }: PaymentDialogP
         isLoadingPaymentMethods,
         submitHandler,
     } = useManageData({ items, onClose });
-    console.log(items);
-    // console.log("errors", form.formState.errors);
-    console.log(!form.formState.isValid);
-    console.log(form.formState.isSubmitting);
     const acceptance_token = useWatch({ control, name: "acceptance_token" }) as string
     const accept_personal_auth = useWatch({ control, name: "accept_personal_auth" }) as string
     return (
