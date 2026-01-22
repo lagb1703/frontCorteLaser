@@ -5,7 +5,7 @@ import { toast } from "sonner";
 
 export function useChoiseFile() {
     const [fileId, setFileId] = useState<string | number | null>(null);
-    const {data: fileMetadata, refetch: refetchFileMetadata} = useGetFileMetadata(fileId!);
+    const { refetch: refetchFileMetadata } = useGetFileMetadata(fileId!);
     const { data: files, isLoading: isLoadingFiles, refetch: refetchUserFiles } = useGetAllUserFile();
     const choiseFile = useCallback((id: string | number) => {
         setFileId(id);

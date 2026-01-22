@@ -71,7 +71,7 @@ interface AlertDialogProps {
     hasWeight?: boolean;
 }
 
-function DeleteAlertDialog({ isOpen, buttonName, open, setIsOpen, icon, variant, close, toggle, onConfirm, status }: AlertDialogProps) {
+function DeleteAlertDialog({ isOpen, buttonName, icon, variant, close, toggle, onConfirm, status }: AlertDialogProps) {
     return (
         <AlertDialog open={isOpen} onOpenChange={toggle}>
             <AlertDialogTrigger asChild>
@@ -108,7 +108,7 @@ function DeleteAlertDialog({ isOpen, buttonName, open, setIsOpen, icon, variant,
     );
 }
 
-function SaveAlertDialog({ isOpen, buttonName, open, setIsOpen, close, toggle, icon, variant, onConfirm, status, rowData, hasWeight }: AlertDialogProps) {
+function SaveAlertDialog({ isOpen, buttonName, toggle, icon, variant, onConfirm, status, rowData, hasWeight }: AlertDialogProps) {
     const form = useForm<Material | Thickness>({
         resolver: zodResolver(materialSchema) as Resolver<Material | Thickness>,
         mode: "onChange",
@@ -225,7 +225,7 @@ interface TableProps {
 }
 
 export function ItemTable({ data, idName, useAdminData, refetch }: TableProps) {
-    const { onSave, onEdit, onDelete, status } = useAdminData(refetch);
+    const { onSave, onEdit, onDelete } = useAdminData(refetch);
     const hasWeight = idName === "materialId" || (data[0] as Material)?.weight !== undefined;
 
     const columns: ColumnDef<Material | Thickness>[] = [

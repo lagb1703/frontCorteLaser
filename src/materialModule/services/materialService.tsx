@@ -36,9 +36,10 @@ export class MaterialService {
     }
     public async getMaterialById(materialId: string): Promise<Material>{
         return {
-            name: "",
+            name: materialId,
             price: 0,
-            lastModification: new Date(),
+            lastModification: "",
+            weight: 0,
         }
     }
     public async getThicknessByMaterial(materialId: string | number):Promise<Array<Thickness>>{

@@ -1,4 +1,4 @@
-import type { UseFormRegister, FormState, Control, UseFormSetValue, UseFormReset } from "react-hook-form"
+import type { Control, UseFormSetValue, UseFormReset } from "react-hook-form"
 import { useWatch } from "react-hook-form"
 import type { PaymentType, PaymentMethodType } from "../validators/paymentValidators"
 import {

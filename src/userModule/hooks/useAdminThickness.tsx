@@ -1,7 +1,7 @@
 import { useAddThickness, useChangeThickness, useDeleteThickness } from "@/materialModule/hooks";
 import { useCallback } from "react";
 import { toast } from "sonner";
-import { thicknessSchema, type Thickness } from "@/materialModule/validators/thicknessValidators";
+import { type Thickness } from "@/materialModule/validators/thicknessValidators";
 
 const refectTimeout = 100; //para el futuro, esto lo hice para que de tiempo a que el backend procese la solicitud antes de volver a obtener los materiales
 

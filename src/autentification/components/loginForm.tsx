@@ -1,7 +1,6 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useLogin } from "../hooks/useLogin"
-import { useLoginGoogle } from "../hooks/useLoginGoogle"
 import { loginSchema, type LoginInput } from "../validators/userValidators"
 import {
     Form,
@@ -42,12 +41,6 @@ export default function LoginForm() {
             toast.error(error.message || "Error al iniciar sesión", { id: toastId });
         }
     }
-
-    // const loginGoogleQuery = useLoginGoogle({ enabled: false })
-
-    // const handleGoogleLogin = () => {
-    //     void loginGoogleQuery.refetch()
-    // }
 
     return (
         <Form {...form}>

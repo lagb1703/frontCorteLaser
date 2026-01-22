@@ -1,7 +1,6 @@
 import { useAddMaterial, useChangeMaterial, useDeleteMaterial } from "@/materialModule/hooks";
-import { materialSchema, type Material } from "@/materialModule/validators/materialValidators";
-import { useCallback, useState } from "react";
-import { ZodError } from "zod";
+import { type Material } from "@/materialModule/validators/materialValidators";
+import { useCallback } from "react";
 import { toast } from "sonner";
 
 const refectTimeout = 100; //para el futuro, esto lo hice para que de tiempo a que el backend procese la solicitud antes de volver a obtener los materiales
