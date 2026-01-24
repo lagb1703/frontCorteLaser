@@ -34,6 +34,10 @@ export class ZoomTool implements ToolInterface {
         }, { passive: false });
     }
     activate(drawService: DrawService): void {
+        const canvas: HTMLCanvasElement | null = drawService.getCanvas();
+        if (canvas) {
+            canvas.style.cursor = 'default';
+        }
         this.tool?.activate();
     }
 }
@@ -49,32 +53,47 @@ export class PanTool implements ToolInterface {
         if (!scope || !canvas) return;
         this.tool = new scope.Tool();
         const view = scope.view;
-        scope.tool = new scope.Tool()
-        scope.tool.onKeyDown = (event: paper.KeyEvent) => {
-            if (event.key === 'space') {
+
+        document.addEventListener('keydown', (event) => {
+            if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
+                return;
+            }
+            console.log("Global Key:", event.code);
+            if (event.code === 'Space') {
+                event.preventDefault();
                 if (scope.tool !== this.tool) {
                     this.lastTool = scope.tool;
                     this.tool?.activate();
                     canvas.style.cursor = 'grab';
                 }
-                return false;
+                return;
             }
-        };
-        scope.tool.onKeyUp = (event: paper.KeyEvent) => {
-            if (event.key === 'space') {
+        });
+        document.addEventListener('keyup', (event) => {
+            if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
+                return;
+            }
+            if (event.code === 'Space') {
+                event.preventDefault();
                 if (this.lastTool) {
-                    this.lastTool.activate(); // Volver a la herramienta anterior
+                    this.lastTool.activate();
                     canvas.style.cursor = 'default';
                 }
             }
-        };
+        });
         this.tool.onMouseDrag = (event: paper.ToolEvent) => {
-            const delta = event.delta;
-            view.center = view.center.subtract(delta);
+            const nativeEvent = (event as any).event as MouseEvent;
+            const screenDelta = new paper.Point(nativeEvent.movementX, nativeEvent.movementY);
+            const projectDelta = screenDelta.divide(view.zoom);
+            view.center = view.center.subtract(projectDelta);
         };
     }
 
     activate(drawService: DrawService): void {
+        const canvas: HTMLCanvasElement | null = drawService.getCanvas();
+        if (canvas) {
+            canvas.style.cursor = 'grab';
+        }
         this.tool?.activate();
     }
 }
@@ -129,7 +148,7 @@ export class SelectTool implements ToolInterface {
         const scope: paper.PaperScope | null = drawService.getPaper();
         if (!scope) return;
         this.tool = new scope.Tool();
-        
+
         this.tool.onMouseDown = (event: paper.ToolEvent) => {
             if (this.selectedItem) {
                 this.selectedItem.selected = false;

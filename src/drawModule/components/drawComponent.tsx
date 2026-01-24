@@ -9,11 +9,13 @@ import {
     Minus,
     ZoomOut,
     LoaderCircle,
-    MousePointer2 
+    MousePointer2,
+    Move
 } from 'lucide-react';
 
 const toolsBar = [
     { name: "select", label: "Seleccionar", icon: MousePointer2 },
+    { name: "pan", label: "Mover", icon: Move },
     { name: "line", label: "Linea", icon: Slash },
     { name: "circle", label: "Circulo", icon: CircleArrowOutUpRight },
     { name: "semicircle", label: "Semicirculo", icon: LoaderCircle },
