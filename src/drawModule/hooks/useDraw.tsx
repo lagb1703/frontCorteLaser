@@ -30,11 +30,38 @@ export function useDraw() {
     const saveFile = useSaveFile();
     useEffect(() => {
         console.log("Canvas ref changed:", canvasRef.current);
+        let resizeObserver: ResizeObserver;
         if (canvasRef.current) {
             drawService.current = new DrawService(canvasRef.current);
             drawService.current.setUp(toolsRef.current);
+            const handleResize = () => {
+                const canvas = canvasRef.current;
+                const service = drawService.current;
+
+                if (canvas && canvas.parentElement && service) {
+                    const { clientWidth, clientHeight } = canvas.parentElement;
+                    canvas.width = clientWidth;
+                    canvas.height = clientHeight;
+                    const scope = service.getPaper();
+                    if (scope) {
+                        scope.view.viewSize = new scope.Size(clientWidth, clientHeight);
+                    }
+                }
+            };
+            resizeObserver = new ResizeObserver(() => {
+                console.log("Resizing canvas to fit parent");
+                handleResize();
+            });
+            if (canvasRef.current.parentElement) {
+                resizeObserver.observe(canvasRef.current.parentElement);
+            }
+            handleResize();
         }
+
         return () => {
+            if (resizeObserver) {
+                resizeObserver.disconnect();
+            }
             if (drawService.current) {
                 drawService.current.destroy();
             }
@@ -56,8 +83,10 @@ export function useDraw() {
     }, [drawService, saveFile]);
     return {
         canvasRef,
+        toolName,
         setToolName,
         save,
         tools: toolsRef.current,
+        drawService
     };
 }

@@ -1,6 +1,14 @@
 import { useDraw } from "../hooks";
 import { Button } from "@/components/ui/button";
-import { Slash, CircleArrowOutUpRight, Spline, RectangleHorizontal } from 'lucide-react';
+import {
+    Slash,
+    CircleArrowOutUpRight,
+    Spline,
+    RectangleHorizontal,
+    ZoomIn,
+    Minus,
+    ZoomOut
+} from 'lucide-react';
 
 const toolsBar = [
     { name: "line", label: "Linea", icon: Slash },
@@ -10,7 +18,24 @@ const toolsBar = [
 ]
 
 export default function DrawComponent() {
-    const { canvasRef, setToolName, save } = useDraw();
+    const { canvasRef, toolName, setToolName, drawService, save } = useDraw();
+    const actionsButtons = [
+        { name: "zoomIn", icon: ZoomIn, onclick: ()=>{
+            if(drawService.current){
+                drawService.current.setZoom(2);
+            }
+        } },
+        { name: "clear", icon: Minus, onclick: ()=>{
+            if(drawService.current){
+                drawService.current.resetZoom();
+            }
+        } },
+        { name: "zoomOut", icon: ZoomOut, onclick: ()=>{
+            if(drawService.current){
+                drawService.current.setZoom(0.5);
+            }
+        } },
+    ];
     return (
         <main>
             <section
@@ -30,10 +55,24 @@ export default function DrawComponent() {
                     </Button>))}
             </section>
             <section
-                className="flex w-full justify-center items-center bg-white">
-                <canvas ref={canvasRef} className="w-[90%] border border-black"></canvas>
-                <article>
-                    <Button variant="outline" className="mb-2">Clear Canvas</Button>
+                className="flex w-full justify-center items-center bg-white relative">
+                <div
+                    className="w-full h-[300px] justify-center items-center">
+                    <canvas 
+                        ref={canvasRef} 
+                        className="border w-[500px] h-full border-black mx-auto"></canvas>
+                </div>
+                <article
+                    className="absolute right-0 top-1/2 flex flex-col -translate-y-1/2">
+                    {actionsButtons.map((action) => (
+                        <Button
+                            key={action.name}
+                            variant="outline"
+                            className="rounded-full m-1 p-2"
+                            onClick={action.onclick}>
+                            <action.icon />
+                        </Button>
+                    ))}
                 </article>
             </section>
             <div>
