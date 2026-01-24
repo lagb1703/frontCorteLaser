@@ -119,6 +119,7 @@ export class RectangleTool implements ToolInterface {
 
 export class SelectTool implements ToolInterface {
     tool: paper.Tool | null = null;
+    private selectedItem: paper.Item | null = null;
 
     constructor() {
         this.tool = new paper.Tool();
@@ -128,7 +129,13 @@ export class SelectTool implements ToolInterface {
         const scope: paper.PaperScope | null = drawService.getPaper();
         if (!scope) return;
         this.tool = new scope.Tool();
+        
         this.tool.onMouseDown = (event: paper.ToolEvent) => {
+            if (this.selectedItem) {
+                this.selectedItem.selected = false;
+                this.selectedItem.strokeColor = new paper.Color('black');
+                this.selectedItem = null;
+            }
             const hitResult = scope.project.hitTest(event.point, {
                 fill: true,
                 stroke: true,
@@ -136,10 +143,15 @@ export class SelectTool implements ToolInterface {
                 tolerance: 5,
             });
             if (hitResult && hitResult.item) {
-                const result = hitResult.item.remove();
-                console.log('Elemento seleccionado:', hitResult.item, result);
-            } else {
-                console.log('No se seleccionó ningún elemento.');
+                this.selectedItem = hitResult.item;
+                this.selectedItem.selected = true;
+                this.selectedItem.strokeColor = new paper.Color('red');
+                return;
+            }
+        };
+        this.tool.onMouseDrag = (event: paper.ToolEvent) => {
+            if (this.selectedItem) {
+                this.selectedItem.position = this.selectedItem.position.add(event.delta);
             }
         };
     }
