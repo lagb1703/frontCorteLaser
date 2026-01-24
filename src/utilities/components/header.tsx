@@ -100,6 +100,9 @@ export default function Header({ user, token }: Props) {
                                 <Button variant="ghost" size="sm" asChild>
                                     <Link to="/files">Mis archivos</Link>
                                 </Button>
+                                <Button variant="ghost" size="sm" asChild>
+                                    <Link to="/draw">Dibujar</Link>
+                                </Button>
                             </>
                         )}
                     </nav>
