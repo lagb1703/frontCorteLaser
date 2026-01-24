@@ -85,16 +85,25 @@ export class DrawService {
 
     public saveFile(): Blob{
         if (!this.scope) throw new Error('Paper scope is not initialized');
-        const svgString = this.scope.project.exportSVG({ asString: false });
-
-        console.log(svgString);
-
-        // const makerModel = (makerjs.importer as any).fromSVGString(svgString);
-
-        // const dxfString = makerjs.exporter.toDXF(makerModel, {
-        //      units: makerjs.unitType.Millimeter
-        // });
-
-        return new Blob([], { type: 'application/dxf' });
+        const svgString = this.scope.project.exportSVG({ asString: false }) as SVGElement;
+        const original = {paths: {} as Record<string, makerjs.IPath>} as makerjs.IModel;
+        if(!original || !original.paths) throw new Error('Error creating makerjs model');
+        for(let i = 0; i < svgString.children.length; i++){
+            const g = svgString.children[i];
+            for(let j = 0; j < g.children.length; j++){
+                const path = g.children[j];
+                console.log(path.getAttribute('d'));
+                const makerModel = makerjs.importer.fromSVGPathData(path.getAttribute('d') || '');
+                if(!makerModel.paths) continue;
+                const lines = Object.keys(makerModel.paths)
+                for(let k in Object.keys(makerModel.paths)){
+                    original.paths[`path_${i}_${j}`] = makerModel.paths[lines[k]];
+                }
+            }
+        }
+        const dxfString = makerjs.exporter.toDXF(original, {
+             units: makerjs.unitType.Millimeter
+        });
+        return new Blob([dxfString], { type: 'application/dxf' });
     }
 }
