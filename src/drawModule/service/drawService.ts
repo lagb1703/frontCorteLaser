@@ -22,12 +22,18 @@ export class DrawService {
         this.canvas = canvas;
         this.scope = new paper.PaperScope();
         this.scope.setup(this.canvas);
+        this.scope
     }
 
     public destroy(): void {
         if (this.scope) {
-            // this.scope.remove();
+            this.scope.project?.remove();
+            this.scope.view?.remove();
             this.scope = null;
+        }
+        if(this.canvas && this.canvas.parentNode){
+            const clone = this.canvas.cloneNode(true) as HTMLCanvasElement;
+            this.canvas.parentNode.replaceChild(clone, this.canvas);
         }
     }
 

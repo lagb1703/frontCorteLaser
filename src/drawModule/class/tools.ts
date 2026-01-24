@@ -10,17 +10,16 @@ export class ZoomTool implements ToolInterface {
         const canvas: HTMLCanvasElement | null = drawService.getCanvas();
         if (!scope || !canvas) return;
         this.tool = new scope.Tool();
-        const view = scope.view;
+
         canvas.addEventListener('wheel', (event) => {
-            event.preventDefault(); // Evitar que la página haga scroll
-
+            if (!scope.project || !scope.view) return;
+            event.preventDefault();
+            const view = scope.view;
             const oldZoom = view.zoom;
-
-            // Detectar dirección de la rueda
-            // Si deltaY es negativo, subimos zoom, si es positivo, bajamos
+            const factor = 1.05;
             const newZoom = event.deltaY < 0
-                ? oldZoom * drawService.zoomFactor
-                : oldZoom / drawService.zoomFactor;
+                ? oldZoom * factor
+                : oldZoom / factor;
             if (newZoom < drawService.zoomBounds.min || newZoom > drawService.zoomBounds.max) return;
             const mousePosition = view.viewToProject(
                 new paper.Point(event.offsetX, event.offsetY)
@@ -28,9 +27,11 @@ export class ZoomTool implements ToolInterface {
             const beta = oldZoom / newZoom;
             const mouseOffset = mousePosition.subtract(view.center);
             const newCenter = mousePosition.subtract(mouseOffset.multiply(beta));
+
             view.zoom = newZoom;
             view.center = newCenter;
-        });
+            drawService.zoomFactor = newZoom;
+        }, { passive: false });
     }
     activate(drawService: DrawService): void {
         this.tool?.activate();
