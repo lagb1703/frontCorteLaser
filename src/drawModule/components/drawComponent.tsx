@@ -19,7 +19,7 @@ const toolsBar = [
     { name: "line", label: "Linea", icon: Slash },
     { name: "circle", label: "Circulo", icon: CircleArrowOutUpRight },
     { name: "semicircle", label: "Semicirculo", icon: LoaderCircle },
-    { name: "spline", label: "Polilinea", icon: Spline },
+    { name: "polyline", label: "Polilinea", icon: Spline },
     { name: "rectangle", label: "Rectangulo", icon: RectangleHorizontal },
 ]
 

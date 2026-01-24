@@ -132,6 +132,10 @@ export class RectangleTool implements ToolInterface {
     }
 
     activate(drawService: DrawService): void {
+        const canvas: HTMLCanvasElement | null = drawService.getCanvas();
+        if (canvas) {
+            canvas.style.cursor = 'crosshair';
+        }
         this.tool?.activate();
     }
 }
@@ -175,7 +179,11 @@ export class SelectTool implements ToolInterface {
         };
     }
 
-    activate(_: DrawService): void {
+    activate(drawService: DrawService): void {
+        const canvas: HTMLCanvasElement | null = drawService.getCanvas();
+        if (canvas) {
+            canvas.style.cursor = 'default';
+        }
         this.tool?.activate();
     }
 }
@@ -215,7 +223,11 @@ export class CircleTool implements ToolInterface {
         };
     }
 
-    activate(_: DrawService): void {
+        activate(drawService: DrawService): void {
+            const canvas: HTMLCanvasElement | null = drawService.getCanvas();
+            if (canvas) {
+                canvas.style.cursor = 'crosshair';
+            }
         this.tool?.activate();
     }
 }
@@ -247,7 +259,11 @@ export class LineTool implements ToolInterface {
         };
     }
 
-    activate(_: DrawService): void {
+    activate(drawService: DrawService): void {
+        const canvas: HTMLCanvasElement | null = drawService.getCanvas();
+        if (canvas) {
+            canvas.style.cursor = 'crosshair';
+        }
         this.tool?.activate();
     }
 }
@@ -283,7 +299,11 @@ export class PolylineTool implements ToolInterface {
         };
     }
 
-    activate(_: DrawService): void {
+    activate(drawService: DrawService): void {
+        const canvas: HTMLCanvasElement | null = drawService.getCanvas();
+        if (canvas) {
+            canvas.style.cursor = 'crosshair';
+        }
         this.tool?.activate();
     }
 }
@@ -312,6 +332,10 @@ export class SemicircleTool implements ToolInterface {
     }
 
     activate(drawService: DrawService): void {
+        const canvas: HTMLCanvasElement | null = drawService.getCanvas();
+        if (canvas) {
+            canvas.style.cursor = 'crosshair';
+        }
         this.tool?.activate();
     }
 }
