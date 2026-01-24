@@ -68,7 +68,9 @@ export class DrawService {
     public setZoom(factor: number): void {
         if (!this.scope) return;
         const newZoom = this.zoomFactor * factor;
+        console.log("Setting zoom to:", newZoom);
         if (newZoom < this.zoomBounds.min || newZoom > this.zoomBounds.max) return;
+        console.log("Zoom applied:", newZoom);
         this.zoomFactor = newZoom;
         this.scope.view.zoom = this.zoomFactor;
     }
@@ -77,6 +79,10 @@ export class DrawService {
         if (!this.scope) return;
         this.zoomFactor = 1;
         this.scope.view.zoom = this.zoomFactor;
+        this.scope.view.center = new paper.Point(
+            this.scope.view.size.width / 2, 
+            this.scope.view.size.height / 2
+        );
     }
 
     public setLayer(index: number): void {
