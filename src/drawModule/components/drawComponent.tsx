@@ -7,12 +7,14 @@ import {
     RectangleHorizontal,
     ZoomIn,
     Minus,
-    ZoomOut
+    ZoomOut,
+    LoaderCircle
 } from 'lucide-react';
 
 const toolsBar = [
     { name: "line", label: "Linea", icon: Slash },
     { name: "circle", label: "Circulo", icon: CircleArrowOutUpRight },
+    { name: "semicircle", label: "Semicirculo", icon: LoaderCircle },
     { name: "spline", label: "Polilinea", icon: Spline },
     { name: "rectangle", label: "Rectangulo", icon: RectangleHorizontal },
 ]
@@ -46,8 +48,13 @@ export default function DrawComponent() {
                         variant="outline"
                         className={
                             `flex flex-col justify-around items-center 
-                            border-x-0 first:rounded-l-sm last:rounded-r-sm rounded-none shadow-none
-                            ml-0 w-24 h-24`
+                            border-x-0 first:rounded-l-sm last:rounded-r-sm rounded-none 
+                            shadow-none 
+                            ml-0 w-24 h-24` +
+                            (toolName === tool.name
+                                ? " bg-blue-500 text-white border-blue-500 hover:bg-blue-500 hover:text-white"
+                                : " bg-white text-black border-gray-300"
+                            )
                         }
                         onClick={() => setToolName(tool.name)}>
                         <tool.icon />

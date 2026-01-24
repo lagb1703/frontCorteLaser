@@ -29,7 +29,6 @@ export function useDraw() {
     const [toolName, setToolName] = useState("");
     const saveFile = useSaveFile();
     useEffect(() => {
-        console.log("Canvas ref changed:", canvasRef.current);
         let resizeObserver: ResizeObserver;
         if (canvasRef.current) {
             drawService.current = new DrawService(canvasRef.current);
@@ -49,7 +48,6 @@ export function useDraw() {
                 }
             };
             resizeObserver = new ResizeObserver(() => {
-                console.log("Resizing canvas to fit parent");
                 handleResize();
             });
             if (canvasRef.current.parentElement) {
@@ -75,7 +73,6 @@ export function useDraw() {
     const save = useCallback(() => {
         if (drawService.current) {
             const data = drawService.current.saveFile();
-            console.log(data);
             const formData = new FormData();
             formData.append("file", data, "drawing.dxf");
             // saveFile.mutate(formData);

@@ -159,14 +159,12 @@ export class CircleTool implements ToolInterface {
         this.tool = new scope.Tool();
 
         this.tool.onMouseDown = (event: paper.ToolEvent) => {
-            console.log("dibujando circulo");
             this.path = new scope.Path.Circle({
                 center: event.point,
                 radius: 0,
                 strokeColor: 'black',
             });
         };
-        console.log(this.tool)
 
         this.tool.onMouseDrag = (event: paper.ToolEvent) => {
             if (this.path) {
@@ -186,7 +184,6 @@ export class CircleTool implements ToolInterface {
     }
 
     activate(_: DrawService): void {
-        console.log("activando circulo");
         this.tool?.activate();
     }
 }

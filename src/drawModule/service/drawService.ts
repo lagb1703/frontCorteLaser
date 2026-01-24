@@ -26,7 +26,6 @@ export class DrawService {
 
     public destroy(): void {
         if (this.scope) {
-            console.log("Destroying Paper scope");
             // this.scope.remove();
             this.scope = null;
         }
@@ -58,8 +57,6 @@ export class DrawService {
         if (tool) {
             tool.activate(this);
         }
-        console.log(this.scope?.tools);
-        console.log(this.scope?.tool);
     }
 
     public setZoom(factor: number): void {
