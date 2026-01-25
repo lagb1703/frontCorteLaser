@@ -128,7 +128,7 @@ export class RectangleTool implements ToolInterface {
             }
         };
 
-        this.tool.onMouseUp = (event: paper.ToolEvent) => {
+        this.tool.onMouseUp = (_: paper.ToolEvent) => {
             this.path = null;
         };
     }
@@ -225,11 +225,11 @@ export class CircleTool implements ToolInterface {
         };
     }
 
-        activate(drawService: DrawService): void {
-            const canvas: HTMLCanvasElement | null = drawService.getCanvas();
-            if (canvas) {
-                canvas.style.cursor = 'crosshair';
-            }
+    activate(drawService: DrawService): void {
+        const canvas: HTMLCanvasElement | null = drawService.getCanvas();
+        if (canvas) {
+            canvas.style.cursor = 'crosshair';
+        }
         this.tool?.activate();
     }
 }
@@ -281,7 +281,7 @@ export class PolylineTool implements ToolInterface {
         this.tool.onMouseMove = (event: paper.ToolEvent) => {
             this.state.onMouseMove(event, drawService);
         };
-        
+
         this.tool.onKeyDown = (event: paper.KeyEvent) => {
             if (event.key === 'escape') {
                 if (this.path) {
@@ -335,6 +335,52 @@ export class SemicircleTool implements ToolInterface {
         const canvas: HTMLCanvasElement | null = drawService.getCanvas();
         if (canvas) {
             canvas.style.cursor = 'crosshair';
+        }
+        this.tool?.activate();
+    }
+}
+
+export class EraserTool implements ToolInterface {
+    tool: paper.Tool | null = null;
+
+    constructor() {
+        this.tool = new paper.Tool();
+    }
+
+    createTool(drawService: DrawService): void {
+        const scope: paper.PaperScope | null = drawService.getPaper();
+        if (!scope) return;
+        this.tool = new scope.Tool();
+
+        this.tool.onMouseDown = (event: paper.ToolEvent) => {
+            const hitResult = scope.project.hitTest(event.point, {
+                fill: true,
+                stroke: true,
+                segments: true,
+                tolerance: 5,
+            });
+            if (hitResult && hitResult.item) {
+                hitResult.item.remove();
+            }
+        };
+        this.tool.onMouseDrag = (event: paper.ToolEvent) => {
+            const hitResult = scope.project.hitTest(event.point, {
+                fill: true,
+                stroke: true,
+                segments: true,
+                tolerance: 5,
+            });
+            if (hitResult && hitResult.item) {
+                hitResult.item.remove();
+            }
+        };
+    }
+
+    activate(drawService: DrawService): void {
+        const canvas: HTMLCanvasElement | null = drawService.getCanvas();
+        if (canvas) {
+            const eraserSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eraser-icon lucide-eraser"><path d="M21 21H8a2 2 0 0 1-1.42-.587l-3.994-3.999a2 2 0 0 1 0-2.828l10-10a2 2 0 0 1 2.829 0l5.999 6a2 2 0 0 1 0 2.828L12.834 21"/><path d="m5.082 11.09 8.828 8.828"/></svg>';
+            canvas.style.cursor = `url('data:image/svg+xml;utf8,${eraserSvg}') 0 20, auto`;
         }
         this.tool?.activate();
     }

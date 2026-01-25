@@ -10,7 +10,8 @@ import {
     CircleTool,
     LineTool,
     PolylineTool,
-    SemicircleTool
+    SemicircleTool,
+    EraserTool
 } from "../class/tools";
 
 export function useDraw() {
@@ -24,7 +25,8 @@ export function useDraw() {
         circle: new CircleTool(),
         line: new LineTool(),
         polyline: new PolylineTool(),
-        semicircle: new SemicircleTool()
+        semicircle: new SemicircleTool(),
+        eraser: new EraserTool()
     });
     const [toolName, setToolName] = useState("");
     const saveFile = useSaveFile();
