@@ -1,7 +1,8 @@
 import type { ToolInterface, ToolState } from "../interfaces";
 import { DrawService } from "../service/drawService";
 import { FirstLineState } from "./lineStates";
-import { InitPolylineState, InitSemiCircleState } from "./toolsStates";
+import { InitPolylineState } from "./toolsStates";
+import { InitSemiCircleState } from "./semicircleState";
 import paper from "paper";
 
 export class ZoomTool implements ToolInterface {
@@ -314,12 +315,16 @@ export class SemicircleTool implements ToolInterface {
         this.tool = new scope.Tool();
         this.tool.onMouseDown = (event: paper.ToolEvent) => {
             this.state.onMouseDown(event, drawService);
+            this.state = this.state.nextState();
         };
         this.tool.onMouseMove = (event: paper.ToolEvent) => {
             this.state.onMouseMove(event, drawService);
         };
         this.tool.onKeyDown = (event: paper.KeyEvent) => {
             if (event.key === 'escape') {
+                this.ghostPath?.remove();
+                this.path = null;
+                this.ghostPath = null;
                 this.state = new InitSemiCircleState(this);
             }
         };
