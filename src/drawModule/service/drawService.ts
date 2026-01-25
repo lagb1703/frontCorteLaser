@@ -174,7 +174,7 @@ export class DrawService {
         if (this.gridLayer) {
             this.gridLayer.visible = wasGridVisible;
         }
-        const original = {paths: {} as Record<string, makerjs.IPath>} as makerjs.IModel;
+        const original = {paths: {} as Record<string, makerjs.IPath>, models: {} as Record<string, makerjs.IModel>} as makerjs.IModel;
         if(!original || !original.paths) throw new Error('Error creating makerjs model');
         for(let i = 0; i < svg.children.length; i++){
             const g = svg.children[i];
@@ -182,14 +182,21 @@ export class DrawService {
             for(let j = 0; j < g.children.length; j++){
                 const path = g.children[j];
                 const makerModel = makerjs.importer.fromSVGPathData(path.getAttribute('d') || '');
-                if(!makerModel.paths) continue;
-                const lines = Object.keys(makerModel.paths)
-                for(let k in Object.keys(makerModel.paths)){
-                    original.paths[`path_${i}_${j}`] = makerModel.paths[lines[k]];
+                console.log(makerModel);
+                if(makerModel.paths){
+                    const lines = Object.keys(makerModel.paths)
+                    for(let k = 0; k < lines.length; k++){
+                        original.paths[`path_${i}_${j}_${k}`] = makerModel.paths[lines[k]];
+                    }
+                }
+                if(makerModel.models && original.models){
+                    const curves = Object.keys(makerModel.models)
+                    for(let k = 0; k < curves.length; k++){
+                        original.models[`path_${i}_${j}_${k}`] = makerModel.models[curves[k]];
+                    }
                 }
             }
         }
-        console.log(original);
         const dxfString = makerjs.exporter.toDXF(original, {
              units: makerjs.unitType.Millimeter
         });
