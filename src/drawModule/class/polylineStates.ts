@@ -26,16 +26,7 @@ export class InitPolylineState implements ToolState {
         return;
     }
 
-    onMouseMove(event: paper.ToolEvent, _: DrawService): void {
-        let ghostPath = (this.context as PolylineTool).ghostPath;
-        ghostPath?.remove();
-        ghostPath = new paper.Path({
-            segments: [(this.context as PolylineTool).path?.lastSegment.point!, event.point],
-            strokeColor: 'gray',
-            dashArray: [4, 4],
-            selected: true
-        });
-        (this.context as PolylineTool).ghostPath = ghostPath;
+    onMouseMove(_: paper.ToolEvent, __: DrawService): void {
     }
 
     nextState(): ToolState {
@@ -49,36 +40,42 @@ export class EndPolylineState implements ToolState {
         this.context = context as ToolInterface;
     }
 
-    onMouseDown(event: paper.ToolEvent, _: DrawService): void {
+    onMouseDown(event: paper.ToolEvent, drawService: DrawService): void {
         const tempPath = (this.context as PolylineTool).path;
         if (!tempPath) {
             (this.context as PolylineTool).state = this.nextState();
             return;
         };
+        (this.context as PolylineTool).ghostPath?.remove();
         const startPoint = tempPath.firstSegment.point;
-        if (event.point.getDistance(startPoint) < 10) {
+        if (event.point.getDistance(startPoint) < 20 && tempPath.segments.length > 2) {
+            console.log("Close polyline");
             tempPath.closed = true;
-            tempPath.selected = false; // Deseleccionar al terminar
+            tempPath.selected = false;
             (this.context as PolylineTool).ghostPath?.remove();
-            (this.context as PolylineTool).path = null;
-            (this.context as PolylineTool).ghostPath = null;
-            (this.context as PolylineTool).state = this.nextState();
+            tempPath.add(startPoint);
+            tempPath.strokeColor = drawService.getLayer()?.strokeColor || new paper.Color('black');
+            (this.context as PolylineTool).path = tempPath;
             return;
         }
-        if (tempPath) {
-            const startPoint = tempPath.firstSegment.point;
-            if (event.point.getDistance(startPoint) < 10) {
-                document.body.style.cursor = 'pointer';
-            } else {
-                document.body.style.cursor = 'crosshair';
-            }
-        }
         tempPath.add(event.point);
+        (this.context as PolylineTool).path = tempPath;
     }
 
     onMouseMove(event: paper.ToolEvent, _: DrawService): void {
         let ghostPath = (this.context as PolylineTool).ghostPath;
         ghostPath?.remove();
+        const startPoint = (this.context as PolylineTool).path?.firstSegment.point;
+        if (startPoint && event.point.getDistance(startPoint) < 20 && (this.context as PolylineTool).path!.segments.length > 2) {
+            ghostPath = new paper.Path({
+                segments: [(this.context as PolylineTool).path?.lastSegment.point!, startPoint],
+                strokeColor: 'gray',
+                dashArray: [4, 4],
+                selected: true
+            });
+            (this.context as PolylineTool).ghostPath = ghostPath;
+            return;
+        }
         ghostPath = new paper.Path({
             segments: [(this.context as PolylineTool).path?.lastSegment.point!, event.point],
             strokeColor: 'gray',
@@ -89,6 +86,13 @@ export class EndPolylineState implements ToolState {
     }
 
     nextState(): ToolState {
-        return new InitPolylineState(this.context as PolylineTool);
+        const polyline = this.context as PolylineTool;
+        const path = polyline.path;
+        if (path) {
+            if (path.closed) {
+                return new InitPolylineState(this.context as PolylineTool);
+            }
+        }
+        return new EndPolylineState(this.context as PolylineTool);
     }
 }

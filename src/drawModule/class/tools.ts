@@ -281,10 +281,11 @@ export class PolylineTool implements ToolInterface {
         this.tool.onMouseMove = (event: paper.ToolEvent) => {
             this.state.onMouseMove(event, drawService);
         };
+        
         this.tool.onKeyDown = (event: paper.KeyEvent) => {
             if (event.key === 'escape') {
                 if (this.path) {
-                    this.path.selected = false;
+                    this.path.remove();
                     this.ghostPath?.remove();
                     this.path = null;
                     this.ghostPath = null;
