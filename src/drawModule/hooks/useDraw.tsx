@@ -29,6 +29,7 @@ export function useDraw() {
         eraser: new EraserTool()
     });
     const [toolName, setToolName] = useState("");
+    const [showGrid, setShowGrid] = useState(false);
     const saveFile = useSaveFile();
     useEffect(() => {
         let resizeObserver: ResizeObserver;
@@ -80,12 +81,22 @@ export function useDraw() {
             // saveFile.mutate(formData);
         }
     }, [drawService, saveFile]);
+
+    const toggleGrid = useCallback((checked: boolean) => {
+        setShowGrid(checked);
+        if (drawService.current) {
+            drawService.current.toggleGrid(checked);
+        }
+    }, [drawService]);
+
     return {
         canvasRef,
         toolName,
         setToolName,
         save,
         tools: toolsRef.current,
-        drawService
+        drawService,
+        showGrid,
+        toggleGrid
     };
 }

@@ -15,6 +15,8 @@ export class DrawService {
     public zoomFactor: number = 1;
 
     private layers: paper.Layer[] = [];
+    
+    private gridLayer: paper.Layer | null = null;
 
     private currectLayer: number = 0;
 
@@ -93,6 +95,78 @@ export class DrawService {
 
     public getLayer(): paper.Layer {
         return this.layers[this.currectLayer];
+    }
+
+    public toggleGrid(visible: boolean): void {
+        if (!this.scope) return;
+        if (!this.gridLayer) {
+            this.gridLayer = new this.scope.Layer();
+            this.gridLayer.name = 'grid';
+            this.drawGrid();
+            this.gridLayer.sendToBack();
+            // Reactivar la capa de dibujo principal
+            if (this.layers[this.currectLayer]) {
+                this.layers[this.currectLayer].activate();
+            }
+        }
+        this.gridLayer.visible = visible;
+    }
+
+    private drawGrid(): void {
+        if (!this.scope || !this.gridLayer) return;
+        this.gridLayer.activate();
+
+        // Limpiar cuadrícula existente si hubiera
+        this.gridLayer.removeChildren();
+        
+        // Área de la cuadrícula (ej: 500x500 mm en cada dirección desde el centro)
+        const size = 500;
+        const step = 10; // Celdas grandes cada 10 unidades (cm)
+        const subStep = 1; // Celdas pequeñas cada 1 unidad (mm)
+        
+        // Colores
+        const gridColor = new this.scope.Color('#e0e0e0');
+        const subGridColor = new this.scope.Color('#f0f0f0');
+        
+        // Dibujamos lineas
+        for (let i = -size; i <= size; i += subStep) {
+            // Saltamos las lineas que coinciden con el paso mayor para no sobrescribir o duplicar demasiado
+            if (i % step === 0) continue;
+
+            const vLine = new this.scope.Path.Line(
+                new this.scope.Point(i, -size),
+                new this.scope.Point(i, size)
+            );
+            vLine.strokeColor = subGridColor;
+            vLine.strokeWidth = 0.5;
+            // Optimización: hacerlas guías para que no interfieran en hitTests si fuera necesario, 
+            // aunque al estar en otra capa y bloqueada/fondo suele bastar.
+
+            const hLine = new this.scope.Path.Line(
+                new this.scope.Point(-size, i),
+                new this.scope.Point(size, i)
+            );
+            hLine.strokeColor = subGridColor;
+            hLine.strokeWidth = 0.5;
+        }
+
+        for (let i = -size; i <= size; i += step) {
+             const vLine = new this.scope.Path.Line(
+                new this.scope.Point(i, -size),
+                new this.scope.Point(i, size)
+            );
+            vLine.strokeColor = gridColor;
+            vLine.strokeWidth = 1;
+
+            const hLine = new this.scope.Path.Line(
+                new this.scope.Point(-size, i),
+                new this.scope.Point(size, i)
+            );
+            hLine.strokeColor = gridColor;
+            hLine.strokeWidth = 1;
+        }
+
+        // Ejes opcionales no solicitados, pero útiles. Los omito para ceñirme a "cuadricula" simple.
     }
 
     public saveFile(): Blob{

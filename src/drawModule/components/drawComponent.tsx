@@ -1,5 +1,6 @@
 import { useDraw } from "../hooks";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox"
 import {
     Slash,
     CircleArrowOutUpRight,
@@ -26,7 +27,7 @@ const toolsBar = [
 ]
 
 export default function DrawComponent() {
-    const { canvasRef, toolName, setToolName, drawService, save } = useDraw();
+    const { canvasRef, toolName, setToolName, drawService, save, showGrid, toggleGrid } = useDraw();
     const actionsButtons = [
         { name: "zoomIn", icon: ZoomIn, onclick: ()=>{
             if(drawService.current){
@@ -66,6 +67,21 @@ export default function DrawComponent() {
                         <tool.icon />
                         {tool.label}
                     </Button>))}
+                <div className="flex flex-col items-center justify-center ml-4 h-full border-l pl-4">
+                     <div className="flex items-center space-x-2">
+                        <Checkbox 
+                            id="grid-mode" 
+                            checked={showGrid}
+                            onCheckedChange={(checked) => toggleGrid(checked === true)}
+                        />
+                        <label
+                            htmlFor="grid-mode"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 select-none"
+                        >
+                            Cuadrícula (1mm)
+                        </label>
+                    </div>
+                </div>
             </section>
             <section
                 className="flex w-full justify-center items-center bg-white relative">
@@ -88,8 +104,9 @@ export default function DrawComponent() {
                     ))}
                 </article>
             </section>
-            <div>
-                <Button onClick={save}>Save Drawing</Button>
+            <div
+                className="w-full mt-2 px-5 flex justify-end">
+                <Button onClick={save}>Guardar dibujo</Button>
             </div>
         </main>
     );
