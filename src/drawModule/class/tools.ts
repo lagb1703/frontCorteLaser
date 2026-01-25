@@ -167,7 +167,7 @@ export class SelectTool implements ToolInterface {
                 segments: true,
                 tolerance: 5,
             });
-            if (hitResult && hitResult.item) {
+            if (hitResult && hitResult.item && !hitResult.item.locked && !hitResult.item.layer.locked) {
                 this.selectedItem = hitResult.item;
                 this.selectedItem.selected = true;
                 this.selectedItem.strokeColor = new paper.Color('red');
@@ -359,7 +359,7 @@ export class EraserTool implements ToolInterface {
                 segments: true,
                 tolerance: 5,
             });
-            if (hitResult && hitResult.item) {
+            if (hitResult && hitResult.item && !hitResult.item.locked && !hitResult.item.layer.locked) {
                 hitResult.item.remove();
             }
         };
@@ -370,7 +370,7 @@ export class EraserTool implements ToolInterface {
                 segments: true,
                 tolerance: 5,
             });
-            if (hitResult && hitResult.item) {
+            if (hitResult && hitResult.item && !hitResult.item.locked && !hitResult.item.layer.locked) {
                 hitResult.item.remove();
             }
         };

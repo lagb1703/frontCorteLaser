@@ -10,13 +10,15 @@ export class DrawService {
 
     private scope: paper.PaperScope | null = null;
 
-    public zoomBounds = Object.freeze({ min: 0.1, max: 10 });
+    public zoomBounds = Object.freeze({ min: 0.1, max: 6 });
 
     public zoomFactor: number = 1;
 
     private layers: paper.Layer[] = [];
     
     private gridLayer: paper.Layer | null = null;
+    
+    private lastBounds: paper.Rectangle | null = null;
 
     private currectLayer: number = 0;
 
@@ -24,7 +26,6 @@ export class DrawService {
         this.canvas = canvas;
         this.scope = new paper.PaperScope();
         this.scope.setup(this.canvas);
-        this.scope
     }
 
     public destroy(): void {
@@ -102,83 +103,84 @@ export class DrawService {
         if (!this.gridLayer) {
             this.gridLayer = new this.scope.Layer();
             this.gridLayer.name = 'grid';
-            this.drawGrid();
+            this.gridLayer.locked = true;
             this.gridLayer.sendToBack();
-            // Reactivar la capa de dibujo principal
+            this.scope.view.on('frame', () => {
+                if (this.gridLayer && this.gridLayer.visible) {
+                    this.updateGrid();
+                }
+            });
             if (this.layers[this.currectLayer]) {
                 this.layers[this.currectLayer].activate();
             }
         }
         this.gridLayer.visible = visible;
+        if (visible) {
+            this.updateGrid();
+        }
     }
 
-    private drawGrid(): void {
+    private updateGrid(): void {
         if (!this.scope || !this.gridLayer) return;
-        this.gridLayer.activate();
-
-        // Limpiar cuadrícula existente si hubiera
-        this.gridLayer.removeChildren();
         
-        // Área de la cuadrícula (ej: 500x500 mm en cada dirección desde el centro)
-        const size = 500;
-        const step = 10; // Celdas grandes cada 10 unidades (cm)
-        const subStep = 1; // Celdas pequeñas cada 1 unidad (mm)
-        
-        // Colores
-        const gridColor = new this.scope.Color('#e0e0e0');
-        const subGridColor = new this.scope.Color('#f0f0f0');
-        
-        // Dibujamos lineas
-        for (let i = -size; i <= size; i += subStep) {
-            // Saltamos las lineas que coinciden con el paso mayor para no sobrescribir o duplicar demasiado
-            if (i % step === 0) continue;
-
-            const vLine = new this.scope.Path.Line(
-                new this.scope.Point(i, -size),
-                new this.scope.Point(i, size)
-            );
-            vLine.strokeColor = subGridColor;
-            vLine.strokeWidth = 0.5;
-            // Optimización: hacerlas guías para que no interfieran en hitTests si fuera necesario, 
-            // aunque al estar en otra capa y bloqueada/fondo suele bastar.
-
-            const hLine = new this.scope.Path.Line(
-                new this.scope.Point(-size, i),
-                new this.scope.Point(size, i)
-            );
-            hLine.strokeColor = subGridColor;
-            hLine.strokeWidth = 0.5;
+        const bounds = this.scope.view.bounds;
+        if (this.lastBounds && 
+            Math.abs(this.lastBounds.x - bounds.x) < 1 &&
+            Math.abs(this.lastBounds.y - bounds.y) < 1 &&
+            Math.abs(this.lastBounds.width - bounds.width) < 1 &&
+            Math.abs(this.lastBounds.height - bounds.height) < 1) {
+            return;
         }
-
-        for (let i = -size; i <= size; i += step) {
+        this.lastBounds = bounds.clone();
+        this.gridLayer.removeChildren();
+        const step = 10;
+        const gridColor = new this.scope.Color('#e0e0e0');
+        const expanded = bounds.expand(step * 2);
+        const startX = Math.floor(expanded.left / step) * step;
+        const endX = Math.ceil(expanded.right / step) * step;
+        const startY = Math.floor(expanded.top / step) * step;
+        const endY = Math.ceil(expanded.bottom / step) * step;
+        const lines: paper.Path[] = [];
+        for (let i = startX; i <= endX; i += step) {
              const vLine = new this.scope.Path.Line(
-                new this.scope.Point(i, -size),
-                new this.scope.Point(i, size)
+                new this.scope.Point(i, startY),
+                new this.scope.Point(i, endY)
             );
             vLine.strokeColor = gridColor;
             vLine.strokeWidth = 1;
-
-            const hLine = new this.scope.Path.Line(
-                new this.scope.Point(-size, i),
-                new this.scope.Point(size, i)
+            vLine.locked = true;
+            lines.push(vLine);
+        }
+        for (let i = startY; i <= endY; i += step) {
+             const hLine = new this.scope.Path.Line(
+                new this.scope.Point(startX, i),
+                new this.scope.Point(endX, i)
             );
             hLine.strokeColor = gridColor;
             hLine.strokeWidth = 1;
+            hLine.locked = true;
+            lines.push(hLine);
         }
-
-        // Ejes opcionales no solicitados, pero útiles. Los omito para ceñirme a "cuadricula" simple.
+        this.gridLayer.addChildren(lines);
     }
 
     public saveFile(): Blob{
         if (!this.scope) throw new Error('Paper scope is not initialized');
-        const svgString = this.scope.project.exportSVG({ asString: false }) as SVGElement;
+        const wasGridVisible = this.gridLayer ? this.gridLayer.visible : false;
+        if (this.gridLayer) {
+            this.gridLayer.visible = false;
+        }
+        const svg = this.scope.project.exportSVG({ asString: false }) as SVGElement;
+        if (this.gridLayer) {
+            this.gridLayer.visible = wasGridVisible;
+        }
         const original = {paths: {} as Record<string, makerjs.IPath>} as makerjs.IModel;
         if(!original || !original.paths) throw new Error('Error creating makerjs model');
-        for(let i = 0; i < svgString.children.length; i++){
-            const g = svgString.children[i];
+        for(let i = 0; i < svg.children.length; i++){
+            const g = svg.children[i];
+            if(g.getAttribute("visibility") === "hidden") continue;
             for(let j = 0; j < g.children.length; j++){
                 const path = g.children[j];
-                console.log(path.getAttribute('d'));
                 const makerModel = makerjs.importer.fromSVGPathData(path.getAttribute('d') || '');
                 if(!makerModel.paths) continue;
                 const lines = Object.keys(makerModel.paths)
@@ -187,6 +189,7 @@ export class DrawService {
                 }
             }
         }
+        console.log(original);
         const dxfString = makerjs.exporter.toDXF(original, {
              units: makerjs.unitType.Millimeter
         });
