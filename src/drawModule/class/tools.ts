@@ -102,14 +102,16 @@ export class PanTool implements ToolInterface {
 
 export class RectangleTool implements ToolInterface {
     tool: paper.Tool | null = null;
+    firstPoint: paper.Point | null = null;
 
-    private path: paper.Path | null = null;
+    path: paper.Path | null = null;
 
     createTool(drawService: DrawService): void {
         const scope: paper.PaperScope | null = drawService.getPaper();
         if (!scope) return;
         this.tool = new scope.Tool();
         this.tool.onMouseDown = (event: paper.ToolEvent) => {
+            this.firstPoint = event.point;
             this.path = new scope.Path.Rectangle({
                 point: event.point,
                 size: [0, 0],
@@ -119,7 +121,17 @@ export class RectangleTool implements ToolInterface {
 
         this.tool.onMouseDrag = (event: paper.ToolEvent) => {
             if (this.path) {
-                const rect = new scope.Rectangle(this.path.bounds.topLeft, event.point);
+                let coords = [this.firstPoint!.x, this.firstPoint!.y, event.point.x, event.point.y];
+                if(event.point.x < this.firstPoint!.x){
+                    coords = [event.point.x, coords[1], this.firstPoint!.x, coords[3]];
+                }
+                if(event.point.y < this.firstPoint!.y){
+                    coords = [coords[0], event.point.y, coords[2], this.firstPoint!.y];
+                }
+                const rect = new paper.Rectangle(
+                    new paper.Point(coords[0], coords[1]),
+                    new paper.Point(coords[2], coords[3])
+                );
                 this.path.remove();
                 this.path = new scope.Path.Rectangle({
                     rectangle: rect,
