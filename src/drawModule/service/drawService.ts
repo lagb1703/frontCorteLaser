@@ -181,7 +181,9 @@ export class DrawService {
             if(g.getAttribute("visibility") === "hidden") continue;
             for(let j = 0; j < g.children.length; j++){
                 const path = g.children[j];
-                const makerModel = makerjs.importer.fromSVGPathData(path.getAttribute('d') || '');
+                const makerModel = makerjs.importer.fromSVGPathData(path.getAttribute('d') || '',{
+                    bezierAccuracy: 0.1
+                });
                 console.log(makerModel);
                 if(makerModel.paths){
                     const lines = Object.keys(makerModel.paths)
@@ -200,6 +202,7 @@ export class DrawService {
         const dxfString = makerjs.exporter.toDXF(original, {
              units: makerjs.unitType.Millimeter
         });
+        console.log(dxfString);
         return new Blob([dxfString], { type: 'application/dxf' });
     }
 }
