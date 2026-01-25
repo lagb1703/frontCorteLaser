@@ -1,6 +1,6 @@
 import type { ToolState, ToolInterface } from "../interfaces";
 import type { DrawService } from "../service/drawService";
-import type { PolylineTool, SemicircleTool } from "./tools";
+import type { PolylineTool } from "./tools";
 import paper from "paper";
 
 export class InitPolylineState implements ToolState {

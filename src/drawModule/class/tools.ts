@@ -1,7 +1,7 @@
 import type { ToolInterface, ToolState } from "../interfaces";
 import { DrawService } from "../service/drawService";
 import { FirstLineState } from "./lineStates";
-import { InitPolylineState } from "./toolsStates";
+import { InitPolylineState } from "./polylineStates";
 import { InitSemiCircleState } from "./semicircleState";
 import paper from "paper";
 
