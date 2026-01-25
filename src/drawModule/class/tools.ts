@@ -1,5 +1,6 @@
 import type { ToolInterface, ToolState } from "../interfaces";
 import { DrawService } from "../service/drawService";
+import { FirstLineState } from "./lineStates";
 import { InitPolylineState, InitSemiCircleState } from "./toolsStates";
 import paper from "paper";
 
@@ -234,28 +235,21 @@ export class CircleTool implements ToolInterface {
 
 export class LineTool implements ToolInterface {
     tool: paper.Tool | null = null;
-
-    private path: paper.Path | null = null;
+    public path: paper.Path | null = null;
+    public ghostPath: paper.Path | null = null;
+    public state: ToolState = new FirstLineState(this);
+    public fisrtPoint: paper.Point | null = null;
 
     createTool(drawService: DrawService): void {
         const scope: paper.PaperScope | null = drawService.getPaper();
         if (!scope) return;
         this.tool = new scope.Tool();
         this.tool.onMouseDown = (event: paper.ToolEvent) => {
-            this.path = new scope.Path({
-                segments: [event.point],
-                strokeColor: 'black',
-            });
+            this.state.onMouseDown(event, drawService);
+            this.state = this.state.nextState();
         };
-
-        this.tool.onMouseDrag = (event: paper.ToolEvent) => {
-            if (this.path) {
-                this.path.add(event.point);
-            }
-        };
-
-        this.tool.onMouseUp = (event: paper.ToolEvent) => {
-            this.path = null;
+        this.tool.onMouseMove = (event: paper.ToolEvent) => {
+            this.state.onMouseMove(event, drawService);
         };
     }
 
