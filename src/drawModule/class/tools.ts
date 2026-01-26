@@ -251,6 +251,7 @@ export class LineTool implements ToolInterface {
     public ghostPath: paper.Path | null = null;
     public state: ToolState = new FirstLineState(this);
     public fisrtPoint: paper.Point | null = null;
+    public selectedItem: paper.Item | null = null;
 
     createTool(drawService: DrawService): void {
         const scope: paper.PaperScope | null = drawService.getPaper();
@@ -262,6 +263,19 @@ export class LineTool implements ToolInterface {
         };
         this.tool.onMouseMove = (event: paper.ToolEvent) => {
             this.state.onMouseMove(event, drawService);
+        };
+        
+
+        this.tool.onKeyDown = (event: paper.KeyEvent) => {
+            if (event.key === 'escape') {
+                if (this.path) {
+                    this.path.remove();
+                    this.ghostPath?.remove();
+                    this.path = null;
+                    this.ghostPath = null;
+                    this.state = new InitPolylineState(this);
+                }
+            }
         };
     }
 
