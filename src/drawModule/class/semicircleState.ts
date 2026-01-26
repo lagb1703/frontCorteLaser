@@ -9,7 +9,6 @@ export class InitSemiCircleState implements ToolState {
         this.context = context;
     }
     onMouseDown(event: paper.ToolEvent, _: DrawService): void {
-        console.log("InitSemiCircleState - onMouseDown");
         (this.context as SemicircleTool).points[0] = event.point;
     }
 
@@ -28,7 +27,6 @@ export class SecondClickSemiCircleState implements ToolState {
         this.context = context as ToolInterface;
     }
     onMouseDown(event: paper.ToolEvent, _: DrawService): void {
-        console.log("SecondClickSemiCircleState - onMouseDown");
         (this.context as SemicircleTool).points[1] = event.point;
     }
 
@@ -47,7 +45,6 @@ export class LastCircleState implements ToolState {
         this.context = context;
     }
     onMouseDown(event: paper.ToolEvent, drawService: DrawService): void {
-        console.log("LastCircleState - onMouseDown");
         const points = (this.context as SemicircleTool).points;
         const arc = new paper.Path.Arc(points[0], points[1], event.point);
         arc.strokeColor = drawService.getLayer()?.strokeColor || new paper.Color('black');
@@ -57,7 +54,6 @@ export class LastCircleState implements ToolState {
 
     onMouseMove(event: paper.ToolEvent, drawService: DrawService): void {
         const points = (this.context as SemicircleTool).points;
-        console.log("Points:", [points[0], points[1], event.point]);
         const arc = new paper.Path.Arc(points[0], points[1], event.point);
         arc.strokeColor = new paper.Color('gray');
         arc.dashArray = [4, 4];

@@ -49,7 +49,6 @@ export class EndPolylineState implements ToolState {
         (this.context as PolylineTool).ghostPath?.remove();
         const startPoint = tempPath.firstSegment.point;
         if (event.point.getDistance(startPoint) < 20 && tempPath.segments.length > 2) {
-            console.log("Close polyline");
             tempPath.closed = true;
             tempPath.selected = false;
             (this.context as PolylineTool).ghostPath?.remove();

@@ -60,7 +60,6 @@ export class PanTool implements ToolInterface {
             if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
                 return;
             }
-            console.log("Global Key:", event.code);
             if (event.code === 'Space') {
                 event.preventDefault();
                 if (scope.tool !== this.tool) {

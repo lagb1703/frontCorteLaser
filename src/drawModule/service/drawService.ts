@@ -15,9 +15,9 @@ export class DrawService {
     public zoomFactor: number = 1;
 
     private layers: paper.Layer[] = [];
-    
+
     private gridLayer: paper.Layer | null = null;
-    
+
     private lastBounds: paper.Rectangle | null = null;
 
     private currectLayer: number = 0;
@@ -34,7 +34,7 @@ export class DrawService {
             this.scope.view?.remove();
             this.scope = null;
         }
-        if(this.canvas && this.canvas.parentNode){
+        if (this.canvas && this.canvas.parentNode) {
             const clone = this.canvas.cloneNode(true) as HTMLCanvasElement;
             this.canvas.parentNode.replaceChild(clone, this.canvas);
         }
@@ -71,9 +71,7 @@ export class DrawService {
     public setZoom(factor: number): void {
         if (!this.scope) return;
         const newZoom = this.zoomFactor * factor;
-        console.log("Setting zoom to:", newZoom);
         if (newZoom < this.zoomBounds.min || newZoom > this.zoomBounds.max) return;
-        console.log("Zoom applied:", newZoom);
         this.zoomFactor = newZoom;
         this.scope.view.zoom = this.zoomFactor;
     }
@@ -83,7 +81,7 @@ export class DrawService {
         this.zoomFactor = 1;
         this.scope.view.zoom = this.zoomFactor;
         this.scope.view.center = new paper.Point(
-            this.scope.view.size.width / 2, 
+            this.scope.view.size.width / 2,
             this.scope.view.size.height / 2
         );
     }
@@ -122,9 +120,9 @@ export class DrawService {
 
     private updateGrid(): void {
         if (!this.scope || !this.gridLayer) return;
-        
+
         const bounds = this.scope.view.bounds;
-        if (this.lastBounds && 
+        if (this.lastBounds &&
             Math.abs(this.lastBounds.x - bounds.x) < 1 &&
             Math.abs(this.lastBounds.y - bounds.y) < 1 &&
             Math.abs(this.lastBounds.width - bounds.width) < 1 &&
@@ -142,7 +140,7 @@ export class DrawService {
         const endY = Math.ceil(expanded.bottom / step) * step;
         const lines: paper.Path[] = [];
         for (let i = startX; i <= endX; i += step) {
-             const vLine = new this.scope.Path.Line(
+            const vLine = new this.scope.Path.Line(
                 new this.scope.Point(i, startY),
                 new this.scope.Point(i, endY)
             );
@@ -152,7 +150,7 @@ export class DrawService {
             lines.push(vLine);
         }
         for (let i = startY; i <= endY; i += step) {
-             const hLine = new this.scope.Path.Line(
+            const hLine = new this.scope.Path.Line(
                 new this.scope.Point(startX, i),
                 new this.scope.Point(endX, i)
             );
@@ -164,7 +162,7 @@ export class DrawService {
         this.gridLayer.addChildren(lines);
     }
 
-    public saveFile(): Blob{
+    public saveFile(): Blob {
         if (!this.scope) throw new Error('Paper scope is not initialized');
         const wasGridVisible = this.gridLayer ? this.gridLayer.visible : false;
         if (this.gridLayer) {
@@ -174,35 +172,44 @@ export class DrawService {
         if (this.gridLayer) {
             this.gridLayer.visible = wasGridVisible;
         }
-        const original = {paths: {} as Record<string, makerjs.IPath>, models: {} as Record<string, makerjs.IModel>} as makerjs.IModel;
-        if(!original || !original.paths) throw new Error('Error creating makerjs model');
-        for(let i = 0; i < svg.children.length; i++){
-            const g = svg.children[i];
-            if(g.getAttribute("visibility") === "hidden") continue;
-            for(let j = 0; j < g.children.length; j++){
-                const path = g.children[j];
-                const makerModel = makerjs.importer.fromSVGPathData(path.getAttribute('d') || '',{
-                    bezierAccuracy: 0.1
-                });
-                console.log(makerModel);
-                if(makerModel.paths){
-                    const lines = Object.keys(makerModel.paths)
-                    for(let k = 0; k < lines.length; k++){
-                        original.paths[`path_${i}_${j}_${k}`] = makerModel.paths[lines[k]];
-                    }
+        const original = { paths: {} as Record<string, makerjs.IPath>, models: {} as Record<string, makerjs.IModel> } as makerjs.IModel;
+        if (!original || !original.paths || !original.models) throw new Error('Error creating makerjs model');
+        console.log(svg);
+        const queue: Element[] = Array.from(svg.children);
+        let i = 0;
+        let j = 0;
+        while (queue.length > 0 && i < 10) {
+            const element = queue.pop();
+            if (!element) break;
+            if (element.children && element.children.length > 0) {
+                for (let k = 0; k < element.children.length; k++) {
+                    queue.push(element.children[k]);
                 }
-                if(makerModel.models && original.models){
-                    const curves = Object.keys(makerModel.models)
-                    for(let k = 0; k < curves.length; k++){
-                        original.models[`path_${i}_${j}_${k}`] = makerModel.models[curves[k]];
-                    }
+                i++;
+                continue;
+            }
+            const makerModel = makerjs.importer.fromSVGPathData(element.getAttribute('d') || '', {
+                bezierAccuracy: 0.3
+            });
+            console.log("modelo", makerModel);
+            if (makerModel.paths) {
+                const lines = Object.keys(makerModel.paths)
+                for (let k = 0; k < lines.length; k++) {
+                    original.paths[`path_${i}_${j}_${k}`] = makerModel.paths[lines[k]];
                 }
             }
+            if (makerModel.models) {
+                const curves = Object.keys(makerModel.models)
+                for (let k = 0; k < curves.length; k++) {
+                    original.models[`path_${i}_${j}_${k}`] = makerModel.models[curves[k]];
+                }
+            }
+            j++;
         }
         const dxfString = makerjs.exporter.toDXF(original, {
-             units: makerjs.unitType.Millimeter
+            units: makerjs.unitType.Millimeter
         });
-        console.log(dxfString);
+        console.log("DXF String:", dxfString);
         return new Blob([dxfString], { type: 'application/dxf' });
     }
 }

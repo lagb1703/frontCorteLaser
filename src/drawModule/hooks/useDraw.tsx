@@ -79,8 +79,8 @@ export function useDraw() {
     }, [drawService, toolName]);
     const save = useCallback(() => {
         if (drawService.current) {
+            const id = toast.loading('Guardando DXF...');
             try {
-                const id = toast.loading('Guardando DXF...');
                 const data = drawService.current.saveFile();
                 toast.success('DXF exportado con éxito!', { id });
                 const formData = new FormData();
@@ -100,7 +100,8 @@ export function useDraw() {
                 // a.remove();
                 // window.URL.revokeObjectURL(url);
             } catch (error) {
-                toast.error('Error al exportar el DXF.');
+                console.log("Error exporting DXF", error);
+                toast.error('Error al exportar el DXF.', { id });
             }
         }
     }, [drawService, saveFile]);
