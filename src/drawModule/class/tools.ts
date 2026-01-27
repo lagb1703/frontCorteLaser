@@ -293,6 +293,7 @@ export class PolylineTool implements ToolInterface {
     public state: ToolState = new InitPolylineState(this);
     public path: paper.Path | null = null;
     public ghostPath: paper.Path | null = null;
+    public selectedItem: paper.Item | null = null;
 
     createTool(drawService: DrawService): void {
         const scope: paper.PaperScope | null = drawService.getPaper();
