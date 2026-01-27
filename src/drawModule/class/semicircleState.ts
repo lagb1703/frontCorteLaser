@@ -100,7 +100,7 @@ export class SecondClickSemiCircleState implements ToolState {
         semicircleTool.points[1] = event.point;
     }
 
-    onMouseMove(event: paper.ToolEvent, drawService: DrawService): void {
+    onMouseMove(_: paper.ToolEvent, __: DrawService): void {
         
     }
 
