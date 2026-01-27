@@ -174,7 +174,6 @@ export class DrawService {
         }
         const original = { paths: {} as Record<string, makerjs.IPath>, models: {} as Record<string, makerjs.IModel> } as makerjs.IModel;
         if (!original || !original.paths || !original.models) throw new Error('Error creating makerjs model');
-        console.log(svg);
         const queue: Element[] = Array.from(svg.children);
         let i = 0;
         let j = 0;
@@ -191,7 +190,6 @@ export class DrawService {
             const makerModel = makerjs.importer.fromSVGPathData(element.getAttribute('d') || '', {
                 bezierAccuracy: 0.3
             });
-            console.log("modelo", makerModel);
             if (makerModel.paths) {
                 const lines = Object.keys(makerModel.paths)
                 for (let k = 0; k < lines.length; k++) {
@@ -209,7 +207,6 @@ export class DrawService {
         const dxfString = makerjs.exporter.toDXF(original, {
             units: makerjs.unitType.Millimeter
         });
-        console.log("DXF String:", dxfString);
         return new Blob([dxfString], { type: 'application/dxf' });
     }
 }

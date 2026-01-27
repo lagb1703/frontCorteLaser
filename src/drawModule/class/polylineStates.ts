@@ -151,7 +151,6 @@ export class EndPolylineState implements ToolState {
                         closestSegment = seg;
                     }
                 }
-                console.log(closestSegment);
                 if (closestSegment) {
                     tempPath.closed = true;
                     tempPath.selected = false;

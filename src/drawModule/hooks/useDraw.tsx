@@ -100,7 +100,6 @@ export function useDraw() {
                 // a.remove();
                 // window.URL.revokeObjectURL(url);
             } catch (error) {
-                console.log("Error exporting DXF", error);
                 toast.error('Error al exportar el DXF.', { id });
             }
         }
