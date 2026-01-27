@@ -335,6 +335,7 @@ export class SemicircleTool implements ToolInterface {
     public path: paper.Path | null = null;
     public ghostPath: paper.Path | null = null;
     public points: paper.Point[] = [new paper.Point(0, 0), new paper.Point(0, 0)];
+    public selectedItem: paper.Item | null = null;
     createTool(drawService: DrawService): void {
         const scope: paper.PaperScope | null = drawService.getPaper();
         if (!scope) return;
