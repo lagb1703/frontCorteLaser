@@ -31,8 +31,7 @@ export default function BackgroundParticles() {
                     interactivity: {
                         events: {
                             onClick: {
-                                enable: true,
-                                mode: "push",
+                                enable: false,
                             },
                             onHover: {
                                 enable: true,

@@ -4,6 +4,7 @@ import UpdatePage from '@/fileService/pages/updatePage';
 import FilesPage from '@/fileService/pages/filesPage';
 import PaymentPage from '@/paymentModule/pages/paymentPage';
 import QuoterManyPage from '@/fileService/pages/quoterManyPage';
+import DrawPage from '@/drawModule/pages/drawPage';
 
 export const PrivateRoutes = [
     {
@@ -29,5 +30,9 @@ export const PrivateRoutes = [
     {
         path: "/payments",
         element: <PaymentPage />
+    },
+    {
+        path: "/draw",
+        element: <DrawPage />
     }
 ];
