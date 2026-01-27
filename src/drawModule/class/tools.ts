@@ -156,6 +156,7 @@ export class RectangleTool implements ToolInterface {
 export class SelectTool implements ToolInterface {
     tool: paper.Tool | null = null;
     private selectedItem: paper.Item | null = null;
+    private selectedSegment: paper.Segment | null = null;
 
     constructor() {
         this.tool = new paper.Tool();
@@ -167,26 +168,45 @@ export class SelectTool implements ToolInterface {
         this.tool = new scope.Tool();
 
         this.tool.onMouseDown = (event: paper.ToolEvent) => {
-            if (this.selectedItem) {
-                this.selectedItem.selected = false;
-                this.selectedItem.strokeColor = new paper.Color('black');
-                this.selectedItem = null;
-            }
             const hitResult = scope.project.hitTest(event.point, {
                 fill: true,
                 stroke: true,
                 segments: true,
                 tolerance: 5,
             });
-            if (hitResult && hitResult.item && !hitResult.item.locked && !hitResult.item.layer.locked) {
-                this.selectedItem = hitResult.item;
-                this.selectedItem.selected = true;
-                this.selectedItem.strokeColor = new paper.Color('red');
+
+            if (!hitResult) {
+                if (this.selectedItem) {
+                    this.selectedItem.selected = false;
+                    this.selectedItem.strokeColor = new paper.Color('black');
+                    this.selectedItem = null;
+                }
+                this.selectedSegment = null;
                 return;
             }
+
+            if (hitResult.item.locked || hitResult.item.layer.locked) return;
+
+            if (this.selectedItem && this.selectedItem !== hitResult.item) {
+                this.selectedItem.selected = false;
+                this.selectedItem.strokeColor = new paper.Color('black');
+            }
+
+            this.selectedItem = hitResult.item;
+            this.selectedItem.selected = true;
+            this.selectedItem.strokeColor = new paper.Color('red');
+
+            if (hitResult.type === 'segment') {
+                this.selectedSegment = hitResult.segment;
+            } else {
+                this.selectedSegment = null;
+            }
         };
+
         this.tool.onMouseDrag = (event: paper.ToolEvent) => {
-            if (this.selectedItem) {
+            if (this.selectedSegment) {
+                this.selectedSegment.point = this.selectedSegment.point.add(event.delta);
+            } else if (this.selectedItem) {
                 this.selectedItem.position = this.selectedItem.position.add(event.delta);
             }
         };
