@@ -1,9 +1,8 @@
 
 import { Button } from "@/components/ui/button"
-import { ArrowUpDown, ChevronDown, Plus } from "lucide-react"
-import type { Material } from "@/materialModule/validators/materialValidators"
-import type { Thickness } from "@/materialModule/validators/thicknessValidators"
+import { ChevronDown, Plus } from "lucide-react"
 import {
+    type CellContext,
     type ColumnDef,
     type ColumnFiltersState,
     flexRender,
@@ -11,6 +10,7 @@ import {
     getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
+    type RowSelectionState,
     type SortingState,
     useReactTable,
     type VisibilityState,
@@ -33,7 +33,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect, useMemo } from "react"
 import { useOpenClose } from "@/utilities/hooks"
 import {
     Table,
@@ -43,10 +43,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { useForm } from "react-hook-form"
-import type { Resolver } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { materialSchema } from "@/materialModule/validators/materialValidators"
+import type { FieldValues, UseFormReturn, Path } from "react-hook-form"
 import {
     Form,
     FormControl,
@@ -56,22 +53,24 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 
-interface AlertDialogProps {
+interface AlertDialogProps<T extends FieldValues> {
     isOpen: boolean;
     open: () => void;
     close: () => void;
     toggle: () => void;
     setIsOpen: (isOpen: boolean) => void;
-    rowData?: Partial<Material> | Partial<Thickness>;
+    form?: UseFormReturn<T, any, T>;
+    excemptColumns?: (keyof T)[];
+    spanishNames?: Record<string, string>;
+    rowData?: Partial<T>;
     buttonName: string;
-    onConfirm: (() => Promise<void>) | ((data: any) => Promise<void>);
+    onConfirm: (() => Promise<void>) | ((data: Partial<T>) => Promise<void>);
     icon?: React.ReactNode;
     variant?: "default" | "destructive" | "outline" | "ghost";
     status: any;
-    hasWeight?: boolean;
 }
 
-function DeleteAlertDialog({ isOpen, buttonName, icon, variant, close, toggle, onConfirm, status }: AlertDialogProps) {
+function DeleteAlertDialog<T extends FieldValues>({ isOpen, rowData, buttonName, icon, variant, close, toggle, onConfirm, status }: AlertDialogProps<T>) {
     return (
         <AlertDialog open={isOpen} onOpenChange={toggle}>
             <AlertDialogTrigger asChild>
@@ -95,7 +94,7 @@ function DeleteAlertDialog({ isOpen, buttonName, icon, variant, close, toggle, o
                         <Button
                             variant="destructive"
                             onClick={async () => {
-                                await onConfirm("");
+                                await onConfirm(rowData!);
                                 close();
                             }}
                         >
@@ -108,16 +107,22 @@ function DeleteAlertDialog({ isOpen, buttonName, icon, variant, close, toggle, o
     );
 }
 
-function SaveAlertDialog({ isOpen, buttonName, toggle, icon, variant, onConfirm, status, rowData, hasWeight }: AlertDialogProps) {
-    const form = useForm<Material | Thickness>({
-        resolver: zodResolver(materialSchema) as Resolver<Material | Thickness>,
-        mode: "onChange",
-        defaultValues: {
-            name: rowData?.name || "",
-            price: rowData?.price || 0,
-            weight: (rowData as Material)?.weight || 0
-        },
-    })
+function SaveAlertDialog<T extends FieldValues>({ isOpen, excemptColumns, spanishNames, buttonName, form, toggle, icon, variant, onConfirm, status, rowData }: AlertDialogProps<T>) {
+    const keys = useMemo(() => Object.keys(rowData || {}).map((key) => {
+        if (!excemptColumns) return key;
+        return excemptColumns.includes(key as keyof T) ? null : key;
+    }).filter((key) => key !== null) as (keyof T)[], [rowData, excemptColumns]);
+    useEffect(() => {
+        if (isOpen && form && rowData) {
+            keys.forEach((k) => {
+                const key = String(k);
+                form.setValue(key as Path<T>, rowData[key as keyof T] as any);
+            })
+        }
+    }, [isOpen, form, rowData, keys]);
+    if (!form) {
+        throw new Error("Form is required for SaveAlertDialog");
+    }
     return (
         <AlertDialog open={isOpen} onOpenChange={toggle}>
             <AlertDialogTrigger asChild>
@@ -135,63 +140,41 @@ function SaveAlertDialog({ isOpen, buttonName, toggle, icon, variant, onConfirm,
                 </AlertDialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onConfirm)} className="space-y-8">
-                        <FormField
-                            control={form.control}
-                            name="name"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Nombre</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Nombre" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="price"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Precio</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            type="number"
-                                            placeholder="Precio"
-                                            {...field}
-                                            onChange={(e) => {
-                                                const v = (e.target as HTMLInputElement).value
-                                                field.onChange(v === "" ? undefined : Number(v))
-                                            }}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        {hasWeight && (
-                            <FormField
-                                control={form.control}
-                                name="weight"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Peso</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type="number"
-                                                placeholder="Peso"
-                                                {...field}
-                                                onChange={(e) => {
-                                                    const v = (e.target as HTMLInputElement).value
-                                                    field.onChange(v === "" ? undefined : Number(v))
-                                                }}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        )}
+                        {
+                            keys.map((k) => {
+                                const key = String(k);
+                                return (
+                                    <FormField
+                                        control={form.control}
+                                        name={key as Path<T>}
+                                        key={key}
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>{spanishNames ? spanishNames[key] || key : key}</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type={typeof rowData![key] === "number" ? "number" : "text"}
+                                                        placeholder={key}
+                                                        {...field}
+                                                        onChange={(e) => {
+                                                            const v = e.target.value;
+                                                            const isNumber = typeof rowData![key] === "number";
+                                                            if (isNumber) {
+                                                                const num = Number(v);
+                                                                field.onChange(v === "" || isNaN(num) ? 0 : num);
+                                                            } else {
+                                                                field.onChange(v);
+                                                            }
+                                                        }}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                );
+                            })
+                        }
                         <AlertDialogFooter>
                             <AlertDialogCancel asChild>
                                 <Button variant="outline">Cancelar</Button>
@@ -212,23 +195,25 @@ function SaveAlertDialog({ isOpen, buttonName, toggle, icon, variant, onConfirm,
     );
 }
 
-interface TableProps {
-    data: (Material | Thickness)[];
+interface TableProps<T extends FieldValues> {
+    data: T[];
     idName: string;
+    form?: UseFormReturn<T, any, T>;
+    spanishNames?: Record<string, string>;
+    excemptColumns?: (keyof T)[];
     useAdminData: (refect?: (() => void) | undefined) => {
-        onSave: (data: Material | Thickness) => Promise<void>;
-        onEdit: (id: number | null, data: Material | Thickness) => Promise<void>;
+        onSave: (data: T) => Promise<void>;
+        onEdit: (id: number | null, data: T) => Promise<void>;
         onDelete: (id: number | null) => Promise<void>;
         status: any;
     };
     refetch?: (() => void) | undefined;
 }
 
-export function ItemTable({ data, idName, useAdminData, refetch }: TableProps) {
+export function ItemTable<T extends FieldValues>({ data, idName, form, spanishNames, excemptColumns, useAdminData, refetch }: TableProps<T>) {
     const { onSave, onEdit, onDelete } = useAdminData(refetch);
-    const hasWeight = idName === "materialId" || (data[0] as Material)?.weight !== undefined;
-
-    const columns: ColumnDef<Material | Thickness>[] = [
+    const keys = Object.keys(data[0] || {}) as (keyof T)[];
+    const columns: ColumnDef<T>[] = [
         {
             accessorKey: idName,
             header: "id",
@@ -236,67 +221,47 @@ export function ItemTable({ data, idName, useAdminData, refetch }: TableProps) {
                 <div className="capitalize">{row.getValue(idName)}</div>
             ),
         },
-        {
-            accessorKey: "name",
-            header: ({ column }) => {
-                return (
-                    <Button
-                        variant="ghost"
-                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    >
-                        Nombre
-                        <ArrowUpDown />
-                    </Button>
-                )
-            },
-            cell: ({ row }) => <div className="">{row.getValue("name")}</div>,
-        },
-        {
-            accessorKey: "price",
-            header: () => <div className="text-right">Precio</div>,
-            cell: ({ row }) => {
-                return <div className="text-right font-medium">{row.getValue("price")}</div>
-            },
-        },
-        {
-            accessorKey: "lastModification",
-            header: () => <div className="text-right">Ultima Modificación</div>,
-            cell: ({ row }) => {
-                return <div className="text-right font-medium">{(row.getValue("lastModification") as string)?.split("T")[0]}</div>
-            },
-        }
+        ...keys.map((k) => {
+            let key = String(k);
+            if (key === idName) return null;
+            return {
+                accessorKey: key,
+                header: spanishNames ? (spanishNames[key] || key) : key,
+                cell: ({ row }: CellContext<T, unknown>) => {
+                    const value = row.getValue(key);
+                    return (
+                        <div className="capitalize">{String(value)}</div>
+                    )
+                },
+                enableSorting: true,
+                enableColumnFilter: true,
+            }
+        }).filter(i => i !== null),
     ];
-    if (hasWeight) {
-        columns.push({
-            accessorKey: "weight",
-            header: () => <div className="text-right">Peso (gramos)</div>,
-            cell: ({ row }) => {
-                return <div className="text-right font-medium">{row.getValue("weight")}</div>
-            },
-        });
-    }
     columns.push({
         id: "save",
         enableHiding: false,
-        cell: ({ row }) => {
+        cell: ({ row }: CellContext<T, unknown>) => {
             const { isOpen, open, setIsOpen, toggle, close } = useOpenClose();
             const data = row.original as any;
-            const onConfirm = useCallback(async (formData: Material | Thickness) => {
-                await onEdit(data[idName], formData);
+            const onConfirm = useCallback(async (formData: Partial<T>) => {
+                await onEdit(data[idName], formData as T);
             }, [data, idName]);
             return (
                 <div className="flex justify-end">
-                    <SaveAlertDialog
+                    <SaveAlertDialog<T>
                         buttonName="Editar"
                         isOpen={isOpen}
+                        form={form}
                         open={open}
                         setIsOpen={setIsOpen}
                         toggle={toggle}
                         close={close}
                         rowData={data}
+                        excemptColumns={excemptColumns}
                         onConfirm={onConfirm}
-                        status={{ isLoading: false }} // Placeholder for status
-                        hasWeight={hasWeight}
+                        spanishNames={spanishNames}
+                        status={{ isLoading: false }}
                     />
                 </div>
             )
@@ -320,7 +285,7 @@ export function ItemTable({ data, idName, useAdminData, refetch }: TableProps) {
                         onConfirm={async () => {
                             await onDelete(id);
                         }}
-                        status={{ isLoading: false }} // Placeholder for status
+                        status={{ isLoading: false }}
                     />
                 </div>
             )
@@ -331,23 +296,36 @@ export function ItemTable({ data, idName, useAdminData, refetch }: TableProps) {
         enableHiding: false,
         header: () => {
             const { isOpen, open, toggle, setIsOpen, close } = useOpenClose();
-            const onConfirm = useCallback(async (data: Material | Thickness) => {
-                await onSave(data);
+            const onConfirm = useCallback(async (data: Partial<T>) => {
+                await onSave(data as T);
             }, []);
+            const keys = Object.keys(data[0] || {}) as (keyof T)[];
+            const d = {} as T;
+            keys.forEach((k) => {
+                const key = String(k);
+                if (typeof data[0][key] === "string") {
+                    (d as any)[key] = "";
+                    return;
+                }
+                (d as any)[key] = 0;
+            });
             return (
                 <div className="flex justify-end">
-                    <SaveAlertDialog
+                    <SaveAlertDialog<T>
                         buttonName=""
                         isOpen={isOpen}
                         open={open}
+                        form={form}
                         setIsOpen={setIsOpen}
                         toggle={toggle}
                         close={close}
                         onConfirm={onConfirm}
+                        excemptColumns={excemptColumns}
+                        rowData={d}
                         icon={<Plus />}
                         variant="ghost"
-                        status={{ isLoading: false }} // Placeholder for status
-                        hasWeight={hasWeight}
+                        spanishNames={spanishNames}
+                        status={{ isLoading: false }}
                     />
                 </div>
             )
@@ -359,7 +337,7 @@ export function ItemTable({ data, idName, useAdminData, refetch }: TableProps) {
         []
     )
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-    const [rowSelection, setRowSelection] = useState({})
+    const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
     const table = useReactTable({
         data,
         columns,

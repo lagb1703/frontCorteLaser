@@ -46,6 +46,7 @@ export function useAdminMaterial(refect?: () => void) {
     }, [changeMaterialMutation, refect]);
 
     const onSave = useCallback(async (data: Material) => {
+        
         const toastId = toast.loading("Guardando material...");
         try {
             await addMaterialMutation.mutateAsync(data);
