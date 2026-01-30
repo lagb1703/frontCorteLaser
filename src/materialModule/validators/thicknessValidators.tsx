@@ -3,7 +3,7 @@ import { z } from "zod"
 export const thicknessSchema = z.object({
     thicknessId: z.union([z.string(), z.number()]).optional().nullable(),
     name: z.string(),
-    price: z.number().int(),
+    price: z.number().int().min(0),
     lastModification: z.string().optional().nullable(),
 })
 
