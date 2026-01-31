@@ -196,6 +196,7 @@ export default function PriceCalculatorChange() {
       <div
         className="w-full flex justify-center lg:justify-end lg:p-10">
         <Button className="mt-4 p-7" onClick={() => {
+          console.log("New Expression:", getSematicalTree());
           open();
         }}>Guardar Cambios</Button>
       </div>

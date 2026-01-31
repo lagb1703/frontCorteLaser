@@ -42,9 +42,14 @@ export const variables: CollapsibleItem[] = [{
   symbol: "amount",
 },
 {
+  title: "speed",
+  symbol: "speed",
+},
+{
   title: "number",
   symbol: "number",
-}];
+}
+];
 
 export const operations: CollapsibleItem[] = [
   { title: "Suma", symbol: "+", nridad: "*" },
