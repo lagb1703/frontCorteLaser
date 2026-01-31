@@ -117,8 +117,8 @@ export class MaterialService {
         }
         return;
     }
-    public async addMaterialThickness(materialId: string | number, thicknessId: string | number): Promise<void>{
-        const result = await this.fetchWrapper.send(`/material/mt/${materialId}/${thicknessId}`, {
+    public async addMaterialThickness(materialId: string | number, thicknessId: string | number, speed: number): Promise<void>{
+        const result = await this.fetchWrapper.send(`/material/mt/${materialId}/${thicknessId}?speed=${speed}`, {
             method: 'POST'
         });
         if (result.status !== 201) {
