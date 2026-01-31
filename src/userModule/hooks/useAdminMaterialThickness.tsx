@@ -43,6 +43,10 @@ export function useAdminMaterialThickness() {
     const handleChangeSpeed = useCallback(async (thicknessId: string | number, speed: number) => {
         if (materialId === null)
             return
+        if(speed <= 0){
+            toast.error("La velocidad debe ser mayor a 0");
+            return;
+        }
         console.log("Changing speed for materialId:", materialId, "thicknessId:", thicknessId, "to speed:", speed);
         const id = toast.loading("Cambiando velocidad...");
         try {

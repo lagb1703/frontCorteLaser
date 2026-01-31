@@ -35,7 +35,7 @@ interface ItemProps {
 
 const Item = React.memo(function Item({ id, changeSpeed }: ItemProps) {
     const thickness = useMemo(() => JSON.parse(id as string) as Thickness, [id]);
-    const [speed, setSpeed] = useState<number>(thickness.speed ?? 0);
+    const [speed, setSpeed] = useState<number>(thickness.speed ?? 1);
     return (
         <Card>
             <CardHeader className="text-center w-full">
@@ -48,9 +48,10 @@ const Item = React.memo(function Item({ id, changeSpeed }: ItemProps) {
                             <div>Velocidad: </div>
                             <Input
                                 type="number"
-                                defaultValue={speed}
+                                value={speed}
                                 onChange={(e) => {
                                     const newSpeed = Number(e.target.value);
+                                    if(newSpeed <= 0) return;
                                     setSpeed(newSpeed);
                                 }}
                             />
