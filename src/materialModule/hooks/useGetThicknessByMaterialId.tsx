@@ -16,6 +16,6 @@ export function useGetThicknessByMaterialId(id: string | number | null): UseQuer
             }
             return await materialService.current.getThicknessByMaterial(id);
         },
-        staleTime: 2 * 60 * 1000,
+        staleTime: 0,
     });
 }

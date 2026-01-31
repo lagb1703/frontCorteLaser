@@ -20,34 +20,72 @@ import {
 import { arrayMove } from "@dnd-kit/sortable";
 import { type Material } from "@/materialModule/validators/materialValidators";
 import { type Thickness } from "@/materialModule/validators/thicknessValidators";
-import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardContent, CardTitle, CardFooter } from "@/components/ui/card";
 import { useGetMaterials } from "@/materialModule/hooks";
 import { useAdminMaterialThickness } from "../hooks/useAdminMaterialThickness";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
 
-const Item = React.memo(function Item(props: { id: string | number }) {
-    const { id } = props;
+interface ItemProps {
+    id: string | number;
+    changeSpeed?: (thicknessId: string | number, speed: number) => void;
+}
+
+const Item = React.memo(function Item({ id, changeSpeed }: ItemProps) {
     const thickness = useMemo(() => JSON.parse(id as string) as Thickness, [id]);
-
+    const [speed, setSpeed] = useState<number>(thickness.speed ?? 0);
     return (
         <Card>
             <CardHeader className="text-center w-full">
                 {thickness.name}
             </CardHeader>
+            {
+                changeSpeed ? (
+                    <>
+                        <CardContent className="flex flex-col gap-2">
+                            <div>Velocidad: </div>
+                            <Input
+                                type="number"
+                                defaultValue={speed}
+                                onChange={(e) => {
+                                    const newSpeed = Number(e.target.value);
+                                    setSpeed(newSpeed);
+                                }}
+                            />
+                        </CardContent>
+                        <CardFooter className="text-center w-full">
+                            <Button 
+                                variant="default" 
+                                className="w-full"
+                                onClick={() => {
+                                    changeSpeed(thickness.thicknessId!, speed);
+                                }}
+                                >
+                                Guardar
+                            </Button>
+                        </CardFooter>
+                    </>
+                ) : null
+            }
         </Card>
     );
 });
 
-const SortableItem = React.memo(function SortableItem(props: { id: string }) {
+interface SortableItemProps {
+    id: string;
+    changeSpeed?: (thicknessId: string | number, speed: number) => void;
+}
+
+const SortableItem = React.memo(function SortableItem({ id, changeSpeed }: SortableItemProps) {
     const {
         attributes,
         listeners,
         setNodeRef,
         transform,
         transition
-    } = useSortable({ id: props.id });
+    } = useSortable({ id: id });
 
     const style: React.CSSProperties = {
         transform: transform ? CSS.Transform.toString(transform) : undefined,
@@ -56,17 +94,19 @@ const SortableItem = React.memo(function SortableItem(props: { id: string }) {
 
     return (
         <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-            <Item id={props.id} />
+            <Item id={id} changeSpeed={changeSpeed} />
         </div>
     );
 });
 
+interface ContainerProps {
+    id: string;
+    items: string[];
+    changeSpeed?: (thicknessId: string | number, speed: number) => void;
+}
 
-function Container(props: { id: string; items: string[] }) {
-    const { id, items } = props;
-
+function Container({ id, items, changeSpeed }: ContainerProps) {
     const { setNodeRef } = useDroppable({ id });
-
     return (
         <SortableContext id={id} items={items} strategy={verticalListSortingStrategy}>
             <Card className="m-2.5 flex-1">
@@ -78,7 +118,7 @@ function Container(props: { id: string; items: string[] }) {
                 </CardHeader>
                 <CardContent ref={setNodeRef} className="bg-[#fafafa] p-2">
                     {items.map((itemId) => (
-                        <SortableItem key={itemId} id={itemId} />
+                        <SortableItem key={itemId} id={itemId} changeSpeed={changeSpeed} />
                     ))}
                 </CardContent>
             </Card>
@@ -98,9 +138,10 @@ export default function ThicknessMaterialList() {
         linkedThicknesses,
         unlinkedThicknesses,
         handleAddThickness,
+        handleChangeSpeed,
         handleDeleteThickness
     } = useAdminMaterialThickness();
-    useEffect(()=>{
+    useEffect(() => {
         setItems({
             mt: linkedThicknesses,
             thickness: unlinkedThicknesses,
@@ -108,7 +149,11 @@ export default function ThicknessMaterialList() {
     }, [linkedThicknesses, unlinkedThicknesses]);
     const [activeId, setActiveId] = useState<string | null>(null);
     const sensors = useSensors(
-        useSensor(PointerSensor),
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        }),
         useSensor(KeyboardSensor, {
             coordinateGetter: sortableKeyboardCoordinates
         })
@@ -134,7 +179,7 @@ export default function ThicknessMaterialList() {
                         <CardContent>
                             {isLoading ? (
                                 <div className="space-y-2">
-                                    {[1,2,3].map(i => <Skeleton key={i} className="h-4 w-full" />)}
+                                    {[1, 2, 3].map(i => <Skeleton key={i} className="h-4 w-full" />)}
                                 </div>
                             ) : (
                                 materials?.map((material: Material) => (
@@ -151,11 +196,8 @@ export default function ThicknessMaterialList() {
                         </CardContent>
                     </Card>
                 </div>
-
-                {Object.keys(items).map((containerId) => (
-                    <Container key={containerId} id={containerId} items={items[containerId]} />
-                ))}
-
+                <Container id={"mt"} items={items["mt"]} changeSpeed={handleChangeSpeed} />
+                <Container id={"thickness"} items={items["thickness"]} />
                 <DragOverlay>{activeId ? <Item id={activeId} /> : null}</DragOverlay>
             </DndContext>
         </div>
@@ -248,10 +290,10 @@ export default function ThicknessMaterialList() {
 
         const activeIndex = items[activeContainer].indexOf(id);
         const overIndex = items[overContainer].indexOf(overId as string);
-        if(activeContainer === "mt"){
+        if (activeContainer === "mt") {
             handleAddThickness(JSON.parse(id));
         }
-        else{
+        else {
             handleDeleteThickness(JSON.parse(id));
         }
         if (activeIndex !== overIndex) {
