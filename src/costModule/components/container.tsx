@@ -1,7 +1,7 @@
 import {
   useDroppable,
 } from "@dnd-kit/core";
-import { Fragment } from "react";
+import { Fragment, type Dispatch, type SetStateAction } from "react";
 import {
   SortableContext,
   horizontalListSortingStrategy,
@@ -16,10 +16,12 @@ import { useSymbol } from "../hoocks";
 
 interface Props {
   item: Node;
+  root: Node;
+  setRoot: Dispatch<SetStateAction<Node | null>>;
 }
 
-export function Variable({ item }: Props) {
-  const { symbol, setSymbol } = useSymbol(item);
+export function Variable({ item, root, setRoot }: Props) {
+  const { symbol, setSymbol } = useSymbol(item, root, setRoot);
   return (
     <Card>
       <CardContent className="p-3 pt-0">
@@ -59,7 +61,7 @@ export function OperatorOverlay({ item }: Props) {
   )
 }
 
-function Operator({ item }: Props) {
+function Operator({ item, root, setRoot }: Props) {
   const { setNodeRef, isOver, active } = useDroppable({ id: item.getId() });
 
   if (!(item instanceof Composite)) {
@@ -79,7 +81,7 @@ function Operator({ item }: Props) {
             }
             return <Fragment key={child.getId()}>
               {nridad === 1 && <span className="self-center text-gray-400 mx-1"> {item.symbol} </span>}
-              <CrossComponent item={child} />
+              <CrossComponent item={child} root={root} setRoot={setRoot} />
               {index < children.length - 1 && nridad > 1 && <span className="self-center text-gray-400 mx-1"> {item.symbol} </span>}
             </Fragment>
           })}
@@ -89,7 +91,7 @@ function Operator({ item }: Props) {
   )
 }
 
-function CrossComponent({ item }: Props) {
+function CrossComponent({ item, root, setRoot }: Props) {
   const {
     attributes,
     listeners,
@@ -103,7 +105,7 @@ function CrossComponent({ item }: Props) {
     transition
   };
 
-  const content = item instanceof Leaf ? <Variable item={item} /> : <Operator item={item} />;
+  const content = item instanceof Leaf ? <Variable item={item} root={root} setRoot={setRoot} /> : <Operator item={item} root={root} setRoot={setRoot} />;
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="touch-none">
@@ -112,10 +114,13 @@ function CrossComponent({ item }: Props) {
   );
 }
 
+interface ContainerProps {
+  id: string;
+  item: Node | null;
+  setRoot: Dispatch<SetStateAction<Node | null>>
+}
 
-
-export default function Container(props: { id: string; item: Node | null }) {
-  const { id, item } = props;
+export default function Container({ id, item, setRoot }: ContainerProps) {
 
   const { setNodeRef, isOver } = useDroppable({ id });
 
@@ -128,7 +133,7 @@ export default function Container(props: { id: string; item: Node | null }) {
           </CardTitle>
         </CardHeader>
         <CardContent ref={setNodeRef} className={`p-2 h-full rounded-b-lg ${isOver ? 'bg-blue-100/50' : 'bg-[#fafafa]'}`}>
-          {item ? <CrossComponent item={item} /> : (
+          {item ? <CrossComponent item={item} root={item} setRoot={setRoot} /> : (
             <div className="flex items-center justify-center h-40 m-2 border-2 border-dashed border-gray-300 rounded-lg bg-white/50">
               <span className="text-gray-400 font-medium">Arrastra una variable u operación aquí para comenzar</span>
             </div>

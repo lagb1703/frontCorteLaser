@@ -183,13 +183,13 @@ export default function PriceCalculatorChange() {
             <SelectionList />
           </div>
           <div className="basis-full lg:basis-[70%]">
-            <Container id="canvas-area" item={root} />
+            <Container id="canvas-area" item={root} setRoot={setRoot}/>
           </div>
         </section>
         <DragOverlay>
           {activeSidebarItem ? <ItemCard item={activeSidebarItem} /> : null}
-          {activeNode ? (
-            activeNode instanceof Leaf ? <Variable item={activeNode} /> : <OperatorOverlay item={activeNode} />
+          {activeNode && root ? (
+            activeNode instanceof Leaf ? <Variable item={activeNode} root={root} setRoot={setRoot} /> : <OperatorOverlay item={activeNode} root={root} setRoot={setRoot} />
           ) : null}
         </DragOverlay>
       </DndContext>
