@@ -5,10 +5,10 @@ export interface Path {
     id: string;
     parameters: Record<string, Parameters>;
     paths: Path[];
-    cords: number[];
+    cords: (number | "start" | "center" | "end")[];
     isRelative: boolean;
     parent: Path | null;
     draw(scope: paper.PaperScope): void;
-    getParameters(): Record<string, any>;
+    getParameters(): Record<string, Parameters>;
     destroy(): void;
 }

@@ -5,6 +5,8 @@ import FilesPage from '@/fileService/pages/filesPage';
 import PaymentPage from '@/paymentModule/pages/paymentPage';
 import QuoterManyPage from '@/fileService/pages/quoterManyPage';
 import DrawPage from '@/drawModule/pages/drawPage';
+import Shapes from '@/shapeModule/pages/shapesPage';
+import ShapeRenderPage from '@/shapeModule/pages/shapeRenderPage';
 
 export const PrivateRoutes = [
     {
@@ -34,5 +36,13 @@ export const PrivateRoutes = [
     {
         path: "/draw",
         element: <DrawPage />
+    },
+    {
+        path: "/shapes",
+        element: <Shapes />
+    },
+    {
+        path: "/shapes/:shapeId",
+        element: <ShapeRenderPage />
     }
 ];
