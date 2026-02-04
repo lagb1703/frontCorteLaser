@@ -11,5 +11,6 @@ export interface Path {
     update(scope: paper.PaperScope): void;
     draw(scope: paper.PaperScope): void;
     getParameters(): Record<string, Parameters>;
+    getPosition(scope: paper.PaperScope): number[];
     destroy(): void;
 }

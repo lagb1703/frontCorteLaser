@@ -23,7 +23,7 @@ export class CircumferencePath extends BasicPath {
     }
     update(scope: paper.PaperScope): void {
         this.path?.remove();
-        const position = this.getPosition(scope);  
+        const position = this.getPosition(scope);
         const radiusParam = this.parameters["radius"];
         const radius = typeof radiusParam.getValue() === "number" ? radiusParam.getValue() as number : parseFloat(radiusParam.getValue() as string);
         this.path = new scope.Path.Circle({
@@ -41,12 +41,28 @@ export class RadiusParameter extends Parameters {
         super(value, path);
     }
 
-    min(): number | string {
-        return 0;
+    min(scope?: paper.PaperScope): number {
+        return 1;
     }
 
-    max(): number | string {
-        return Infinity;
+    max(scope?: paper.PaperScope): number {
+        if (!scope) return 100;
+        let parentWidthParam = scope.view.size.width;
+        let parentHeightParam = scope.view.size.height;
+        let parentCords = [scope.view.size.width / 2, scope.view.size.height / 2];
+        if (this.path.parent) {
+            parentWidthParam = Number(this.path.parent.parameters["width"].getValue());
+            parentHeightParam = Number(this.path.parent.parameters["height"].getValue());
+            parentCords = this.path.parent.getPosition(scope);
+        }
+        const leftLimit = parentCords[0] - parentWidthParam / 2;
+        const rightLimit = parentCords[0] + parentWidthParam / 2;
+        const topLimit = parentCords[1] - parentHeightParam / 2;
+        const bottomLimit = parentCords[1] + parentHeightParam / 2;
+        const [centerX, centerY] = this.path.getPosition(scope);
+        const maxRadiusX = Math.min(centerX - leftLimit, rightLimit - centerX);
+        const maxRadiusY = Math.min(centerY - topLimit, bottomLimit - centerY);
+        return Math.min(maxRadiusX, maxRadiusY);
     }
 
     getValue(): number | string {
@@ -55,7 +71,17 @@ export class RadiusParameter extends Parameters {
 
     setValue(value: number | string, scope: paper.PaperScope): void {
         console.log("Setting radius value to:", value);
+        const widthParameter = this.path.parameters["width"];
+        const heightParameter = this.path.parameters["height"];
+        if (widthParameter) {
+            widthParameter.setValue(2 * Number(value));
+        }
+        if (heightParameter) {
+            heightParameter.setValue(2 * Number(value));
+        }
         this.value = value;
-        this.path.update(scope);
+        if (scope) {
+            this.path.update(scope);
+        }
     }
 }

@@ -81,13 +81,14 @@ export class WidthParameter extends Parameters {
 
     constructor(value: number | string, path: Path) {
         super(value, path);
+        this.willChange = false;
     }
 
-    min(): number | string {
+    min(): number {
         return 0;
     }
 
-    max(): number | string {
+    max(): number {
         return Infinity;
     }
 
@@ -95,9 +96,10 @@ export class WidthParameter extends Parameters {
         return this.value;
     }
 
-    setValue(value: number | string, scope: paper.PaperScope): void {
+    setValue(value: number | string, scope?: paper.PaperScope): void {
         this.value = value;
-        this.path.update(scope);
+        if (scope)
+            this.path.update(scope);
     }
 }
 
@@ -105,13 +107,14 @@ export class HeightParameter extends Parameters {
 
     constructor(value: number | string, path: Path) {
         super(value, path);
+        this.willChange = false;
     }
 
-    min(): number | string {
+    min(): number {
         return 0;
     }
 
-    max(): number | string {
+    max(): number {
         return Infinity;
     }
 
@@ -119,8 +122,9 @@ export class HeightParameter extends Parameters {
         return this.value;
     }
 
-    setValue(value: number | string, scope: paper.PaperScope): void {
+    setValue(value: number | string, scope?: paper.PaperScope): void {
         this.value = value;
-        this.path.update(scope);
+        if (scope)
+            this.path.update(scope);
     }
 }
