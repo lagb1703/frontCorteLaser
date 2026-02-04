@@ -1,19 +1,21 @@
 import { useState, useCallback } from "react";
 import { useGetShape, useRender } from "../hooks";
-import type { Parameters } from "../interfaces";
+import type { Parameters } from "../class/paths/parameters";
 import { Input } from "@/components/ui/input";
+import _ from "paper";
 
 interface InputShapeProps {
     parameter: Parameters;
+    scope: paper.PaperScope;
 }
 
-function InputShape({ parameter }: InputShapeProps) {
-    const [value, setValue] = useState(parameter.value);
+function InputShape({ parameter, scope }: InputShapeProps) {
+    const [value, setValue] = useState(parameter.getValue());
     const onChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = e.target.value;
         setValue(newValue);
-        parameter.setValue(isNaN(Number(newValue)) ? newValue : Number(newValue));
-    }, [parameter]);
+        parameter.setValue(newValue, scope);
+    }, [parameter, scope]);
     return (
         <Input type="number" value={value} onChange={onChange} />
     );
@@ -21,23 +23,27 @@ function InputShape({ parameter }: InputShapeProps) {
 
 export function ShapeRender() {
     const { shape } = useGetShape();
-    const { canvas } = useRender(shape);
+    const { canvas, scope } = useRender(shape);
 
     return (
-        <main>
-            <canvas className="" ref={canvas} />
-            {shape && shape.getPaths().map((path) => {
+        <main className="w-full h-full flex flex-col">
+            <div className="flex-1 w-full relative">
+                <canvas className="w-full h-full absolute inset-0" ref={canvas} />
+            </div>
+            <div className="p-4">
+                {shape && shape.getPaths().map((path) => {
                 const params = path.getParameters();
                 return <>
                     <h2 key={path.id}>{path.id}</h2>
                     {Object.entries(params).map(([key, parameter]) => (
                         <div key={key}>
                             <label>{key}:</label>
-                            <InputShape parameter={parameter} />
+                            <InputShape parameter={parameter} scope={scope.current!}/>
                         </div>
                     ))}
                 </>
             })}
+            </div>
         </main>
     );
 }

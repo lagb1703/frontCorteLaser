@@ -6,7 +6,7 @@ export class CircleShape implements Shape {
     constructor() {
         this.id = "circle";
         this.paths = [
-            new CircumferencePath(`circumference`, 5)
+            new CircumferencePath(`circumference`, ["center", "center"], 5, true)
         ];
     }
     getPaths(): CircumferencePath[] {
