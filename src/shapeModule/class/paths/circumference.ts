@@ -4,8 +4,8 @@ import { Parameters } from "../paths/parameters";
 import _ from "paper";
 
 export class CircumferencePath extends BasicPath {
-    constructor(id: string, cords: (number | "start" | "center" | "end")[], radius: number, isRelative: boolean = false, parent: BasicPath | null = null) {
-        super(id, isRelative, parent);
+    constructor(id: string, cords: (number | "start" | "center" | "end")[], radius: number, parent: BasicPath | null = null) {
+        super(id, parent);
         this.cords = cords;
         this.parameters["radius"] = new RadiusParameter(radius, this);
     }

@@ -38,10 +38,9 @@ export abstract class BasicPath implements Path {
     parameters: Record<string, Parameters>;
     paths: Path[];
     cords: (number | "start" | "center" | "end")[];
-    isRelative: boolean;
     parent: BasicPath | null;
     path: paper.Path | null = null;
-    constructor(id: string, isRelative: boolean = false, parent: BasicPath | null = null) {
+    constructor(id: string, parent: BasicPath | null = null) {
         this.id = id;
         this.parameters = {
             "width": new WidthParameter(1, this),
@@ -49,27 +48,22 @@ export abstract class BasicPath implements Path {
         };
         this.paths = [];
         this.cords = [0, 0];
-        this.isRelative = isRelative;
         this.parent = parent;
     }
     abstract update(scope: paper.PaperScope): void;
     abstract draw(scope: paper.PaperScope): void;
     getPosition(scope: paper.PaperScope): number[] {
-        if (this.isRelative && this.parent) {
+        if (this.parent) {
             const parentCords = this.parent.getPosition(scope);
             const width: number = Number(this.parameters["width"].getValue());
             const height: number = Number(this.parameters["height"].getValue());
             const [x, y] = getPosition(this.cords, width, height);
             return [parentCords[0] + x, parentCords[1] + y];
         }
-        if(this.isRelative){
-            const width = scope.view.size.width;
-            const height = scope.view.size.height;
-            const [x, y] = getPosition(this.cords, width, height);
-            return [x, y];
-        }
-        console.log("Absolute path, calculating position based on cords and view size");
-        return this.cords.map(cord => typeof cord === "number" ? cord : 0);
+        const width = scope.view.size.width;
+        const height = scope.view.size.height;
+        const [x, y] = getPosition(this.cords, width, height);
+        return [x, y];
     }
     getParameters(): Record<string, Parameters> {
         return this.parameters;

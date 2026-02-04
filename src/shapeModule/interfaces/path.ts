@@ -6,7 +6,6 @@ export interface Path {
     parameters: Record<string, Parameters>;
     paths: Path[];
     cords: (number | "start" | "center" | "end")[];
-    isRelative: boolean;
     parent: Path | null;
     path: paper.Path | null;
     update(scope: paper.PaperScope): void;
