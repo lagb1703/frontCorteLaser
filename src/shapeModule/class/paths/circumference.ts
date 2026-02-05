@@ -41,7 +41,7 @@ export class RadiusParameter extends Parameters {
         super(value, path);
     }
 
-    min(scope?: paper.PaperScope): number {
+    min(_?: paper.PaperScope): number {
         return 1;
     }
 

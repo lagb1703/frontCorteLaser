@@ -6,6 +6,5 @@ export interface Shape {
     paths: Path[];
     getPaths(): Path[];
     draw(scope: paper.PaperScope): void;
-    getPosition(scope: paper.PaperScope): number[];
     destroy(): void;
 }
