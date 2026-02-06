@@ -4,6 +4,8 @@ import { Parameters } from "../paths/parameters";
 import _ from "paper";
 
 export class CircumferencePath extends BasicPath {
+    redLine: paper.Path | null = null;
+    radiusText: paper.PointText | null = null;
     constructor(id: string, cords: (number | "start" | "center" | "end")[], radius: number, parent: BasicPath | null = null) {
         super(id, parent);
         this.cords = cords;
@@ -30,6 +32,19 @@ export class CircumferencePath extends BasicPath {
             center: new scope.Point(position[0], position[1]),
             radius: radius,
             strokeColor: 'black'
+        });
+        this.redLine?.remove();
+        this.radiusText?.remove();
+        this.redLine = new scope.Path.Line({
+            from: new scope.Point(position[0], position[1]),
+            to: new scope.Point(position[0] + radius, position[1]),
+            strokeColor: 'red'
+        });
+        this.radiusText = new scope.PointText({
+            point: new scope.Point(position[0] + (radius / 30)**2, position[1] - 10),
+            content: `r: ${radius}`,
+            fillColor: 'red',
+            fontSize: 20
         });
         this.paths.forEach(path => path.update(scope));
     }
