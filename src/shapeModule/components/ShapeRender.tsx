@@ -38,27 +38,29 @@ export function ShapeRender() {
     const { canvas, scope } = useRender(shape);
 
     return (
-        <main className="w-full h-full flex flex-col">
-            <div className="flex-1 w-full relative">
-                <canvas className="w-full h-full absolute inset-0" ref={canvas} />
+        <div className="w-full h-full flex flex-row flex-wrap justify-center items-start">
+            <div className="flex min-w-[400px] basis-full lg:max-w-[70%] h-[500px] lg:h-full justify-center items-center px-2">
+                <div className="w-[90%] h-[90%]">
+                    <canvas className="w-full h-full border border-black rounded-md inset-0" ref={canvas} />
+                </div>
             </div>
-            <div className="p-4">
+            <section className="basis-full lg:basis-[20%] lg:mt-10 lg:h-full justify-center items-start overflow-y-auto">
                 {shape && shape.getPaths().map((path) => {
                     const params = path.getParameters();
-                    return <>
-                        <h2 key={path.id}>{path.id}</h2>
+                    return <article key={path.id} className="px-20 lg:px-0">
+                        <h2>{path.id}</h2>
                         {Object.entries(params).map(([key, parameter]) => {
                             if (!parameter.willChange) return null;
                             return (
-                                <div key={key}>
+                                <div key={key} className="mb-2">
                                     <label>{key}:</label>
                                     <InputShape parameter={parameter} scope={scope.current!} />
                                 </div>
                             )
                         })}
-                    </>
+                    </article>
                 })}
-            </div>
-        </main>
+            </section>
+        </div>
     );
 }
