@@ -99,7 +99,7 @@ export class RadiusParameter extends Parameters {
         const center = this.path.getPosition(scope);
         const maxRadiusX = Math.min(center[0] - minX, maxX - center[0]);
         const maxRadiusY = Math.min(center[1] - minY, maxY - center[1]);
-        return Math.min(maxRadiusX, maxRadiusY);
+        return Math.min(maxRadiusX, maxRadiusY, 1);
     }
 
     max(scope?: paper.PaperScope): number {
@@ -119,7 +119,7 @@ export class RadiusParameter extends Parameters {
         const [centerX, centerY] = this.path.getPosition(scope);
         const maxRadiusX = Math.min(centerX - leftLimit, rightLimit - centerX);
         const maxRadiusY = Math.min(centerY - topLimit, bottomLimit - centerY);
-        return Math.min(maxRadiusX, maxRadiusY);
+        return Math.min(maxRadiusX, maxRadiusY, 1);
     }
 
     getValue(): number | string {
