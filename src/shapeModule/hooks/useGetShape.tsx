@@ -1,21 +1,22 @@
 import { useParams } from "react-router";
 import type { Shape } from "../interfaces";
-import { CircleShape } from "../class/shapes";
-import { useEffect, useState } from "react";
-
-const shapes: Shape[] = [
-    new CircleShape(),
-];
+import { CircleShape, RectangleShape, RingShape } from "../class/shapes";
+import { useEffect, useState, useRef } from "react";
 
 export function useGetShape() {
     const { shapeId } = useParams<{ shapeId: string }>();
     const [shape, setShape] = useState<Shape | null>(null);
-    useEffect(()=>{
-        const foundShape = shapes.find(s => s.id === shapeId) || null;
+    const shapes = useRef<Shape[]>([
+        new CircleShape(),
+        new RectangleShape(),
+        new RingShape(),
+    ]);
+    useEffect(() => {
+        const foundShape = shapes.current.find(s => s.id === shapeId) || null;
         setShape(foundShape);
     }, [shapeId]);
     return {
         shape,
-        shapes
+        shapes: shapes.current
     };
 }

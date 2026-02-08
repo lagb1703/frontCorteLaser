@@ -13,4 +13,7 @@ export abstract class Parameters {
     abstract max(scope?: paper.PaperScope): number;
     abstract getValue(): number | string;
     abstract setValue(value: number | string, scope?: paper.PaperScope): void;
+    displayMeasure(parameter: string, scope: paper.PaperScope): void {
+        this.path.displayMeasure(parameter, scope);
+    }
 }
