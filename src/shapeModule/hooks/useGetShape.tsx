@@ -1,6 +1,6 @@
 import { useParams } from "react-router";
 import type { Shape } from "../interfaces";
-import { CircleShape, RingShape } from "../class/shapes";
+import { CircleShape, RectangleShape, RingShape } from "../class/shapes";
 import { useEffect, useState, useRef } from "react";
 
 export function useGetShape() {
@@ -8,6 +8,7 @@ export function useGetShape() {
     const [shape, setShape] = useState<Shape | null>(null);
     const shapes = useRef<Shape[]>([
         new CircleShape(),
+        new RectangleShape(),
         new RingShape(),
     ]);
     useEffect(() => {
