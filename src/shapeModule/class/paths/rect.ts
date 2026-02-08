@@ -22,10 +22,13 @@ export class RectPath extends BasicPath {
         const heightParam = this.parameters["height"];
         const width = typeof widthParam.getValue() === "number" ? widthParam.getValue() as number : parseFloat(widthParam.getValue() as string);
         const height = typeof heightParam.getValue() === "number" ? heightParam.getValue() as number : parseFloat(heightParam.getValue() as string);
+        const borderParam = this.parameters["border"];
+        const border = typeof borderParam.getValue() === "number" ? borderParam.getValue() as number : parseFloat(borderParam.getValue() as string);
         this.path = new scope.Path.Rectangle({
             point: new scope.Point(position[0] - width / 2, position[1] - height / 2),
             size: new scope.Size(width, height),
-            strokeColor: 'black'
+            strokeColor: 'black',
+            radius: border
         });
     }
     update(scope: paper.PaperScope): void {
@@ -42,7 +45,7 @@ export class RectPath extends BasicPath {
             size: new scope.Size(width, height),
             strokeColor: 'black',
             strokeJoin: 'round',
-            
+            radius: border
         });
     }
 
@@ -51,10 +54,8 @@ export class RectPath extends BasicPath {
         const position = this.getPosition(scope);
         const widthParam = this.parameters["width"];
         const heightParam = this.parameters["height"];
-        const borderParam = this.parameters["border"];
         const width = typeof widthParam.getValue() === "number" ? widthParam.getValue() as number : parseFloat(widthParam.getValue() as string);
         const height = typeof heightParam.getValue() === "number" ? heightParam.getValue() as number : parseFloat(heightParam.getValue() as string);
-        const border = typeof borderParam.getValue() === "number" ? borderParam.getValue() as number : parseFloat(borderParam.getValue() as string);
         switch (parameter) {
             case "width":
                 this.line?.remove();
@@ -111,6 +112,11 @@ class BorderRect extends Parameters {
     }
 
     max(_?: paper.PaperScope): number {
+        const height = this.path.parameters["height"];
+        const width = this.path.parameters["width"];
+        if (typeof height.getValue() === "number" && typeof width.getValue() === "number") {
+            return Math.min(height.getValue() as number, width.getValue() as number) / 2;
+        }
         return Infinity;
     }
 
