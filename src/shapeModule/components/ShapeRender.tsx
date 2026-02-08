@@ -7,10 +7,14 @@ import _ from "paper";
 interface InputShapeProps {
     parameter: Parameters;
     scope: paper.PaperScope;
+    name: string;
 }
 
-function InputShape({ parameter, scope }: InputShapeProps) {
+function InputShape({ parameter, scope, name }: InputShapeProps) {
     const [value, setValue] = useState(parameter.getValue());
+    const onClick = useCallback(() => {
+        parameter.displayMeasure(name, scope);
+    }, [parameter, name, scope]);
     const onChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const max = parameter.max(scope) - 1;
         const min = parameter.min(scope);
@@ -27,9 +31,10 @@ function InputShape({ parameter, scope }: InputShapeProps) {
         }
         setValue(newValue);
         parameter.setValue(newValue, scope);
-    }, [parameter, scope]);
+        parameter.displayMeasure(name, scope);
+    }, [parameter, name, scope]);
     return (
-        <Input type="number" value={value} onChange={onChange} />
+        <Input type="number" value={value} onChange={onChange} onClick={onClick}/>
     );
 }
 
@@ -51,10 +56,11 @@ export function ShapeRender() {
                         <h2>{path.id}</h2>
                         {Object.entries(params).map(([key, parameter]) => {
                             if (!parameter.willChange) return null;
+                            const name = key.includes('---') ? key.split('---')[1] : key;
                             return (
                                 <div key={key} className="mb-2">
-                                    <label>{key}:</label>
-                                    <InputShape parameter={parameter} scope={scope.current!} />
+                                    <label>{name}:</label>
+                                    <InputShape parameter={parameter} name={name} scope={scope.current!} />
                                 </div>
                             )
                         })}

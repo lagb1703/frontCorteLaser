@@ -40,6 +40,7 @@ export abstract class BasicPath implements Path {
     cords: (number | "start" | "center" | "end")[];
     parent: BasicPath | null;
     path: paper.Path | null = null;
+    selectParameter: string = "";
     constructor(id: string, parent: BasicPath | null = null) {
         this.id = id;
         this.parameters = {
@@ -52,13 +53,14 @@ export abstract class BasicPath implements Path {
     }
     abstract update(scope: paper.PaperScope): void;
     abstract draw(scope: paper.PaperScope): void;
+    abstract displayMeasure(parameter: string, scope: paper.PaperScope): void;
     getPosition(scope: paper.PaperScope): number[] {
         if (this.parent) {
             const parentCords = this.parent.getPosition(scope);
             const width: number = Number(this.parameters["width"].getValue());
             const height: number = Number(this.parameters["height"].getValue());
             const [x, y] = getPosition(this.cords, width, height);
-            return [parentCords[0] + x, parentCords[1] + y];
+            return [parentCords[0] + x - width / 2, parentCords[1] + y - height / 2];
         }
         const width = scope.view.size.width;
         const height = scope.view.size.height;
