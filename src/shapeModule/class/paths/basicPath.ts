@@ -86,12 +86,34 @@ export class WidthParameter extends Parameters {
         this.willChange = false;
     }
 
-    min(): number {
-        return 0;
+    min(scope?: paper.PaperScope): number {
+        if(!scope) return 0;
+        let minX = Infinity;
+        let maxX = -Infinity;
+        this.path.paths.forEach(subPath => {
+            const position = subPath.getPosition(scope);
+            const width = Number(subPath.parameters["width"].getValue());
+            if (position[0] - width < minX) minX = position[0] - width;
+            if (position[0] + width > maxX) maxX = position[0] + width;
+        });
+        const center = this.path.getPosition(scope);
+        const maxRadiusX = Math.min(center[0] - minX, maxX - center[0]);
+        return maxRadiusX;
     }
 
-    max(): number {
-        return Infinity;
+    max(scope?: paper.PaperScope): number {
+        if (!scope) return 100;
+        let parentWidthParam = scope.view.size.width;
+        let parentCords = [scope.view.size.width / 2, scope.view.size.height / 2];
+        if (this.path.parent) {
+            parentWidthParam = Number(this.path.parent.parameters["width"].getValue());
+            parentCords = this.path.parent.getPosition(scope);
+        }
+        const leftLimit = parentCords[0] - parentWidthParam / 2;
+        const rightLimit = parentCords[0] + parentWidthParam / 2;
+        const [centerX, _] = this.path.getPosition(scope);
+        const maxRadiusX = Math.min(centerX - leftLimit, rightLimit - centerX);
+        return maxRadiusX;
     }
 
     getValue(): number | string {
@@ -112,12 +134,35 @@ export class HeightParameter extends Parameters {
         this.willChange = false;
     }
 
-    min(): number {
-        return 0;
+    min(scope?: paper.PaperScope): number {
+        if (!scope) return 0;
+        let minY = Infinity;
+        let maxY = -Infinity;
+        this.path.paths.forEach(subPath => {
+            const position = subPath.getPosition(scope);
+            const height = Number(subPath.parameters["height"].getValue());
+            if (position[1] - height < minY) minY = position[1] - height;
+            if (position[1] + height > maxY) maxY = position[1] + height;
+        });
+        const center = this.path.getPosition(scope);
+        const maxRadiusY = Math.min(center[1] - minY, maxY - center[1]);
+        console.log("MinY:", minY, "MaxY:", maxY, "centerY:", center[1], "maxRadiusY:", maxRadiusY); // Debugging line
+        return maxRadiusY
     }
 
-    max(): number {
-        return Infinity;
+    max(scope?: paper.PaperScope): number {
+        if (!scope) return 100;
+        let parentHeightParam = scope.view.size.height;
+        let parentCords = [scope.view.size.width / 2, scope.view.size.height / 2];
+        if (this.path.parent) {
+            parentHeightParam = Number(this.path.parent.parameters["height"].getValue());
+            parentCords = this.path.parent.getPosition(scope);
+        }
+        const topLimit = parentCords[1] - parentHeightParam / 2;
+        const bottomLimit = parentCords[1] + parentHeightParam / 2;
+        const [_, centerY] = this.path.getPosition(scope);
+        const maxRadiusY = Math.min(centerY - topLimit, bottomLimit - centerY);
+        return maxRadiusY;
     }
 
     getValue(): number | string {

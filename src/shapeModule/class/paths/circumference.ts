@@ -119,7 +119,7 @@ export class RadiusParameter extends Parameters {
         const [centerX, centerY] = this.path.getPosition(scope);
         const maxRadiusX = Math.min(centerX - leftLimit, rightLimit - centerX);
         const maxRadiusY = Math.min(centerY - topLimit, bottomLimit - centerY);
-        return Math.min(maxRadiusX, maxRadiusY, 1);
+        return Math.min(maxRadiusX, maxRadiusY);
     }
 
     getValue(): number | string {
