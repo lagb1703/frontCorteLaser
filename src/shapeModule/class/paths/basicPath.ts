@@ -60,6 +60,7 @@ export abstract class BasicPath implements Path {
             const width: number = Number(this.parameters["width"].getValue());
             const height: number = Number(this.parameters["height"].getValue());
             const [x, y] = getPosition(this.cords, width, height);
+            // console.log("Parent cords:", parentCords, {x, y, width, height}); // Debugging line
             return [parentCords[0] + x - width / 2, parentCords[1] + y - height / 2];
         }
         const width = scope.view.size.width;

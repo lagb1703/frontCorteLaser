@@ -1,6 +1,12 @@
 import { useParams } from "react-router";
 import type { Shape } from "../interfaces";
-import { CircleShape, RectangleShape, RingShape, RectangleRingShape } from "../class/shapes";
+import { 
+    CircleShape, 
+    RectangleShape, 
+    RingShape, 
+    RectangleRingShape, 
+    CircuferencesShape 
+} from "../class/shapes";
 import { useEffect, useState, useRef } from "react";
 
 export function useGetShape() {
@@ -10,7 +16,8 @@ export function useGetShape() {
         new CircleShape(),
         new RectangleShape(),
         new RingShape(),
-        new RectangleRingShape()
+        new RectangleRingShape(),
+        new CircuferencesShape()
     ]);
     useEffect(() => {
         const foundShape = shapes.current.find(s => s.id === shapeId) || null;
