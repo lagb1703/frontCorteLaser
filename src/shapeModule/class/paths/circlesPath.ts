@@ -34,15 +34,6 @@ export class CirclesPath extends BasicPath {
             circlePath.draw(scope);
             this.paths.push(circlePath);
         }
-        const widthParam = this.parameters["width"];
-        const heightParam = this.parameters["height"];
-        const width = typeof widthParam.getValue() === "number" ? widthParam.getValue() as number : parseFloat(widthParam.getValue() as string);
-        const height = typeof heightParam.getValue() === "number" ? heightParam.getValue() as number : parseFloat(heightParam.getValue() as string);
-        new scope.Path.Rectangle({
-            point: new scope.Point(position[0] - width / 2, position[1] - height / 2),
-            size: new scope.Size(width, height),
-            strokeColor: 'red',
-        });
     }
     update(scope: paper.PaperScope): void {
         this.path?.remove();
@@ -118,11 +109,21 @@ export class CircleNumberParameter extends Parameters {
     }
 
     min(_?: paper.PaperScope): number {
-        return 1;
+        return 2;
     }
 
     max(_?: paper.PaperScope): number {
-        return 6;
+        const circlesGapParameter = this.path.parameters["circlesGap"];
+        const radiusParameter = this.path.parameters["circlesRadius"];
+        let radius = 0;
+        let radiusGap = 1;
+        if (typeof radiusParameter.getValue() === "number") {
+            radius = radiusParameter.getValue() as number;
+        }
+        if (typeof circlesGapParameter.getValue() === "number") {
+            radiusGap = circlesGapParameter.getValue() as number;
+        }
+        return Math.floor(Math.PI / Math.asin(radius / radiusGap));
     }
 
     getValue(): number | string {
@@ -181,7 +182,7 @@ export class CirclesRadiusParameter extends Parameters {
         if (typeof circlesGapParameter.getValue() === "number") {
             radiusGap = circlesGapParameter.getValue() as number;
         }
-        return Math.min(Math.ceil(radiusGap * Math.sin(Math.PI / circlesNumber)), Math.floor((parentWidth - 2 * radiusGap) / 2), Math.floor((parentHeight - 2 * radiusGap) / 2));
+        return Math.min(Math.floor(radiusGap * Math.sin(Math.PI / circlesNumber)), Math.floor((parentWidth - 2 * radiusGap) / 2), Math.floor((parentHeight - 2 * radiusGap) / 2));
     }
 
     getValue(): number | string {
@@ -219,25 +220,44 @@ export class CirclesGapParameter extends Parameters {
         const circlesNumberParameter = this.path.parameters["circlesNumber"];
         let radius = 0;
         let circlesNumber = 1;
-        const radiusGap = Number(this.value);
         if (typeof radiusParameter.getValue() === "number") {
             radius = radiusParameter.getValue() as number;
         }
         if (typeof circlesNumberParameter.getValue() === "number") {
             circlesNumber = circlesNumberParameter.getValue() as number;
         }
-        const angleStep = 2 * Math.PI / circlesNumber;
-        const h = Math.sqrt(
-            radiusGap ** 2 * (
-                Math.pow(Math.cos(angleStep) - Math.cos(angleStep + 1.5 * Math.PI), 2) *
-                Math.pow(Math.sin(angleStep) - Math.sin(angleStep + 1.5 * Math.PI), 2)
-            )
-        );
-        return 1;
+        return Math.ceil(radius / Math.sin(Math.PI / circlesNumber));
     }
 
-    max(_?: paper.PaperScope): number {
-        return Infinity;
+    max(scope?: paper.PaperScope): number {
+        if (!scope) {
+            return Infinity;
+        }
+        const parentWidthParameter = this.path.parent?.parameters["width"];
+        const parentHeightParameter = this.path.parent?.parameters["height"];
+        let parentWidth = Infinity;
+        let parentHeight = Infinity;
+        if (parentWidthParameter) {
+            if (typeof parentWidthParameter.getValue() === "number") {
+                parentWidth = parentWidthParameter.getValue() as number;
+            } else {
+                parentWidth = parseFloat(parentWidthParameter.getValue() as string);
+            }
+        }
+        if (parentHeightParameter) {
+            if (typeof parentHeightParameter.getValue() === "number") {
+                parentHeight = parentHeightParameter.getValue() as number;
+            } else {
+                parentHeight = parseFloat(parentHeightParameter.getValue() as string);
+            }
+        }
+        const radiusParameter = this.path.parameters["circlesRadius"];
+        let radius = 0;
+        if (typeof radiusParameter.getValue() === "number") {
+            radius = radiusParameter.getValue() as number;
+        }
+        console.log((parentHeight/2)-radius, (parentWidth/2)-radius)
+        return Math.min((parentHeight/2)-radius, (parentWidth/2)-radius);
     }
 
     getValue(): number | string {
