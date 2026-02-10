@@ -1,3 +1,9 @@
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from "@/components/ui/collapsible"
+import { ChevronDown } from "lucide-react";
 import { useState, useCallback, useEffect } from "react";
 import { useGetShape, useRender } from "../hooks";
 import type { Parameters } from "../class/paths/parameters";
@@ -24,12 +30,12 @@ function InputShape({ parameter, scope, name }: InputShapeProps) {
         const max = parameter.max(scope) - 1;
         const min = parameter.min(scope);
         const newValue = Number(e.target.value);
-        if(max < newValue) {
+        if (max < newValue) {
             setValue(max);
             parameter.setValue(max, scope);
             return;
         }
-        if(min > newValue) {
+        if (min > newValue) {
             setValue(min);
             parameter.setValue(min, scope);
             return;
@@ -39,13 +45,14 @@ function InputShape({ parameter, scope, name }: InputShapeProps) {
         parameter.displayMeasure(name, scope);
     }, [parameter, name, scope]);
     return (
-        <Input type="number" value={value} onChange={onChange} onClick={onClick}/>
+        <Input type="number" value={value} onChange={onChange} onClick={onClick} />
     );
 }
 
 export function ShapeRender() {
     const { shape } = useGetShape();
     const { canvas, scope } = useRender(shape);
+    const [collapsibleOpen, setCollapsibleOpen] = useState("");
 
     return (
         <div className="w-full h-full flex flex-row flex-wrap justify-center items-start">
@@ -54,22 +61,34 @@ export function ShapeRender() {
                     <canvas className="w-full h-full border border-black rounded-md inset-0" ref={canvas} />
                 </div>
             </div>
-            <section className="basis-full lg:basis-[20%] lg:mt-10 lg:h-full justify-center items-start overflow-y-auto">
+            <section className="basis-full mb-10 md:mb-0 lg:basis-[20%] lg:mt-10 max-h-[550px] lg:h-full lg:max-h-[650px] justify-center items-start overflow-y-auto">
                 {shape && shape.getPaths().map((path) => {
                     const params = path.getParameters();
-                    return <article key={path.id} className="px-20 lg:px-0">
-                        <h2>{path.id}</h2>
-                        {Object.entries(params).map(([key, parameter]) => {
-                            if (!parameter.willChange) return null;
-                            const name = key.includes('---') ? key.split('---')[1] : key;
-                            return (
-                                <div key={key} className="mb-2">
-                                    <label>{name}:</label>
-                                    <InputShape parameter={parameter} name={name} scope={scope.current!} />
-                                </div>
-                            )
-                        })}
-                    </article>
+                    return <Collapsible
+                        key={path.id}
+                        className="max-h-[600px] px-20 lg:px-0 overflow-y-auto"
+                        open={collapsibleOpen === path.id}
+                        onOpenChange={(open) => setCollapsibleOpen(open ? path.id : "")}>
+                        <CollapsibleTrigger
+                            className="w-full flex justify-between items-center bg-gray-200 px-4 py-2 rounded-md hover:bg-gray-300 mb-2">
+                            {path.id}
+                            <ChevronDown
+                                className={`transition-transform duration-200 ${collapsibleOpen === path.id ? "rotate-180" : ""}`}
+                            />
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                            {Object.entries(params).map(([key, parameter]) => {
+                                if (!parameter.willChange) return null;
+                                const name = key.includes('---') ? key.split('---')[1] : key;
+                                return (
+                                    <div key={key} className="mb-2">
+                                        <label>{name}:</label>
+                                        <InputShape parameter={parameter} name={name} scope={scope.current!} />
+                                    </div>
+                                )
+                            })}
+                        </CollapsibleContent>
+                    </Collapsible>
                 })}
             </section>
         </div>
