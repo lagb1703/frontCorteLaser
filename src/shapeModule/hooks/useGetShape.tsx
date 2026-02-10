@@ -5,7 +5,8 @@ import {
     RectangleShape, 
     RingShape, 
     RectangleRingShape, 
-    CircuferencesShape 
+    CircuferencesShape,
+    TriangleShape
 } from "../class/shapes";
 import { useEffect, useState, useRef } from "react";
 
@@ -17,7 +18,8 @@ export function useGetShape() {
         new RectangleShape(),
         new RingShape(),
         new RectangleRingShape(),
-        new CircuferencesShape()
+        new CircuferencesShape(),
+        new TriangleShape()
     ]);
     useEffect(() => {
         const foundShape = shapes.current.find(s => s.id === shapeId) || null;
