@@ -228,9 +228,6 @@ class BorderRect extends Parameters {
     }
 
     setValue(value: number | string, scope: paper.PaperScope): void {
-        this.value = value;
-        if (scope) {
-            this.path.update(scope);
-        }
+        super.setValue(value, scope);
     }
 }

@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useGetShape, useRender } from "../hooks";
 import type { Parameters } from "../class/paths/parameters";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,11 @@ interface InputShapeProps {
 
 function InputShape({ parameter, scope, name }: InputShapeProps) {
     const [value, setValue] = useState(parameter.getValue());
+    useEffect(() => {
+        parameter.setCallback((val: number | string) => {
+            setValue(val);
+        });
+    }, [parameter, setValue]);
     const onClick = useCallback(() => {
         parameter.displayMeasure(name, scope);
     }, [parameter, name, scope]);
