@@ -60,7 +60,6 @@ export abstract class BasicPath implements Path {
             const width: number = Number(this.parameters["width"].getValue());
             const height: number = Number(this.parameters["height"].getValue());
             const [x, y] = getPosition(this.cords, width, height);
-            // console.log("Parent cords:", parentCords, {x, y, width, height}); // Debugging line
             return [parentCords[0] + x - width / 2, parentCords[1] + y - height / 2];
         }
         const width = scope.view.size.width;
@@ -99,7 +98,7 @@ export class WidthParameter extends Parameters {
         });
         const center = this.path.getPosition(scope);
         const maxRadiusX = Math.min(center[0] - minX, maxX - center[0]);
-        return maxRadiusX;
+        return Math.max(maxRadiusX, 5);
     }
 
     max(scope?: paper.PaperScope): number {
@@ -113,7 +112,7 @@ export class WidthParameter extends Parameters {
         const leftLimit = parentCords[0] - parentWidthParam / 2;
         const rightLimit = parentCords[0] + parentWidthParam / 2;
         const [centerX, _] = this.path.getPosition(scope);
-        const maxRadiusX = Math.min(centerX - leftLimit, rightLimit - centerX);
+        const maxRadiusX = 2 * Math.min(centerX - leftLimit, rightLimit - centerX);
         return maxRadiusX;
     }
 
@@ -147,8 +146,7 @@ export class HeightParameter extends Parameters {
         });
         const center = this.path.getPosition(scope);
         const maxRadiusY = Math.min(center[1] - minY, maxY - center[1]);
-        console.log("MinY:", minY, "MaxY:", maxY, "centerY:", center[1], "maxRadiusY:", maxRadiusY); // Debugging line
-        return maxRadiusY
+        return Math.max(maxRadiusY, 5)
     }
 
     max(scope?: paper.PaperScope): number {
@@ -162,7 +160,7 @@ export class HeightParameter extends Parameters {
         const topLimit = parentCords[1] - parentHeightParam / 2;
         const bottomLimit = parentCords[1] + parentHeightParam / 2;
         const [_, centerY] = this.path.getPosition(scope);
-        const maxRadiusY = Math.min(centerY - topLimit, bottomLimit - centerY);
+        const maxRadiusY = 2 * Math.min(centerY - topLimit, bottomLimit - centerY);
         return maxRadiusY;
     }
 
