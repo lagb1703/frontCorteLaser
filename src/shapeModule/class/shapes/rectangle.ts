@@ -7,7 +7,7 @@ export class RectangleShape implements Shape {
     constructor() {
         this.id = "rectangle";
         this.paths = [
-            new RectPath(`Rectangulo`, ["center", "center"], 80, 50)
+            new RectPath(`Rectangulo`, ["center", "center"], 80, 50, 10)
         ];
     }
     getPaths(): RectPath[] {
