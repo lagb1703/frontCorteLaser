@@ -1,20 +1,19 @@
 import type { Shape } from "../../interfaces";
 import type { Path } from "../../interfaces";
 import { RectPath } from "../paths/rect";
-import { CircumferencePath } from "../paths/circumference";
 
 export class RectangleRingShape implements Shape {
     id: string;
     paths: Path[];
     constructor() {
         this.id = "rectangle-ring";
-        const rect = new RectPath(`Rectangulo`, ["center", "center"], 80, 50);
-        const circumference = new CircumferencePath(`Circunferencia`, ["center", "center"], 15);
-        circumference.parent = rect;
-        rect.paths.push(circumference);
+        const rect = new RectPath(`Rectangulo externo`, ["center", "center"], 80, 50);
+        const innerRect = new RectPath(`Rectangulo interno`, ["center", "center"], 50, 30);
+        innerRect.parent = rect;
+        rect.paths.push(innerRect);
         this.paths = [
             rect,
-            circumference
+            innerRect
         ];
     }
     getPaths(): Path[] {
