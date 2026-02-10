@@ -10,6 +10,7 @@ export abstract class Parameters {
         this.value = value;
         this.path = path;
     }
+    options?: string[];
     abstract min(scope?: paper.PaperScope): number;
     abstract max(scope?: paper.PaperScope): number;
     abstract getValue(): number | string;

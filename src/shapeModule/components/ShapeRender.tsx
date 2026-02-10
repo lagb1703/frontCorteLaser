@@ -3,6 +3,15 @@ import {
     CollapsibleContent,
     CollapsibleTrigger,
 } from "@/components/ui/collapsible"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { ChevronDown } from "lucide-react";
 import { useState, useCallback, useEffect } from "react";
 import { useGetShape, useRender } from "../hooks";
@@ -44,6 +53,25 @@ function InputShape({ parameter, scope, name }: InputShapeProps) {
         parameter.setValue(newValue, scope);
         parameter.displayMeasure(name, scope);
     }, [parameter, name, scope]);
+    if(parameter.options) {
+        return (
+            <Select onValueChange={(value) => parameter.setValue(value, scope)}>
+                <SelectTrigger className="w-full">
+                    <SelectValue placeholder={String(parameter.getValue())} />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                        <SelectLabel>{name}</SelectLabel>
+                        {parameter.options.map((option) => (
+                            <SelectItem key={option} value={option}>
+                                {option}
+                            </SelectItem>
+                        ))}
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
+        );
+    }
     return (
         <Input type="number" value={value} onChange={onChange} onClick={onClick} />
     );
