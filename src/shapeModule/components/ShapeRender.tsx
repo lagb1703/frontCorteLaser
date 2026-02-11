@@ -84,17 +84,17 @@ export function ShapeRender() {
 
     return (
         <div className="w-full h-full flex flex-row flex-wrap justify-center items-start">
-            <div className="flex min-w-[400px] basis-full lg:max-w-[70%] h-[500px] lg:h-full justify-center items-center px-2">
+            <div className="flex mb-30 min-w-[400px] basis-full lg:max-w-[70%] h-[500px] lg:h-full max-h-[400px] lg:max-h-[500px] justify-center items-center px-2">
                 <div className="w-[90%] h-[90%]">
                     <canvas className="w-full h-full border border-black rounded-md inset-0" ref={canvas} />
                 </div>
             </div>
-            <section className="basis-full mb-10 md:mb-0 lg:basis-[20%] lg:mt-10 max-h-[550px] lg:h-full lg:max-h-[650px] justify-center items-start overflow-y-auto">
+            <section className="basis-full mb-10 md:mb-0 lg:basis-[20%] lg:mt-10 max-h-full lg:h-full lg:max-h-[500px] justify-center items-start">
                 {shape && shape.getPaths().map((path) => {
                     const params = path.getParameters();
                     return <Collapsible
                         key={path.id}
-                        className="max-h-[600px] px-20 lg:px-0 overflow-y-auto"
+                        className="px-20 lg:px-0"
                         open={collapsibleOpen === path.id}
                         onOpenChange={(open) => setCollapsibleOpen(open ? path.id : "")}>
                         <CollapsibleTrigger
@@ -104,7 +104,8 @@ export function ShapeRender() {
                                 className={`transition-transform duration-200 ${collapsibleOpen === path.id ? "rotate-180" : ""}`}
                             />
                         </CollapsibleTrigger>
-                        <CollapsibleContent>
+                        <CollapsibleContent
+                            className="max-h-[300px] overflow-y-auto">
                             {Object.entries(params).map(([key, parameter]) => {
                                 if (!parameter.willChange) return null;
                                 const name = key.includes('---') ? key.split('---')[1] : key;
