@@ -11,21 +11,56 @@ import {
 } from "../class/shapes";
 import { useEffect, useState, useRef } from "react";
 
+interface ShapePresentation {
+    shape: Shape;
+    shapeSpanishName: string;
+    imageUrl: string;
+}
+
 export function useGetShape() {
     const { shapeId } = useParams<{ shapeId: string }>();
     const [shape, setShape] = useState<Shape | null>(null);
-    const shapes = useRef<Shape[]>([
-        new CircleShape(),
-        new RectangleShape(),
-        new RingShape(),
-        new RectangleRingShape(),
-        new CircuferencesShape(),
-        new TriangleShape(),
-        new PoligonShape()
+    const shapes = useRef<ShapePresentation[]>([
+        {
+            shape: new CircleShape(),
+            shapeSpanishName: "Círculo",
+            imageUrl: "/shapes/circulo.png"
+        },
+        {
+            shape: new RectangleShape(),
+            shapeSpanishName: "Rectángulo",
+            imageUrl: "/shapes/rectangulo.png"
+        },
+        {
+            shape: new RingShape(),
+            shapeSpanishName: "Anillo",
+            imageUrl: "/shapes/anillo.png"
+        },
+        {
+            shape: new RectangleRingShape(),
+            shapeSpanishName: "Anillo Rectangular",
+            imageUrl: "/shapes/rectangulos.png"
+        },
+        {
+            shape: new CircuferencesShape(),
+            shapeSpanishName: "Circunferencias",
+            imageUrl: "/shapes/circulos.png"
+        },
+        {
+            shape: new TriangleShape(),
+            shapeSpanishName: "Triángulo",
+            imageUrl: "/shapes/triangulo.png"
+        },
+        {
+            shape: new PoligonShape(),
+            shapeSpanishName: "Polígono",
+            imageUrl: "/shapes/poligono.png"
+        }
     ]);
     useEffect(() => {
-        const foundShape = shapes.current.find(s => s.id === shapeId) || null;
-        setShape(foundShape);
+        const foundShape = shapes.current.find(s => s.shape.id === shapeId) || null;
+        if (foundShape)
+        setShape(foundShape.shape);
     }, [shapeId]);
     return {
         shape,
