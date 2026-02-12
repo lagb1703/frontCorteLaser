@@ -9,7 +9,8 @@ import {
     TriangleShape,
     PoligonShape,
     RectangleWithRectBorder,
-    RingWithCircles
+    RingWithCircles,
+    RectangleRingWithCircles
 } from "../class/shapes";
 import { useEffect, useState, useRef } from "react";
 
@@ -67,6 +68,11 @@ export function useGetShape() {
             shape: new RingWithCircles(),
             shapeSpanishName: "Anillo con círculos",
             imageUrl: "/shapes/anillo_con_circulos.png"
+        },
+        {
+            shape: new RectangleRingWithCircles(),
+            shapeSpanishName: "Anillo rectangular con círculos",
+            imageUrl: "/shapes/anillo_rectangular_con_circulos.png"
         }
     ]);
     useEffect(() => {
