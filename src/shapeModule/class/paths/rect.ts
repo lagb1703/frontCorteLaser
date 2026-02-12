@@ -3,11 +3,13 @@ import { Parameters } from "./parameters";
 import { BasicPath } from "./basicPath";
 import paper from "paper";
 
+type BorderType = "rounded" | "plain" | "rect";
+
 export class RectPath extends BasicPath {
     line: paper.Path | null = null;
     text: paper.PointText | null = null;
     timeoutId: number | null = null;
-    constructor(id: string, cords: (number | "start" | "center" | "end")[], width: number, height: number, borderRadius?: number | null, parent: BasicPath | null = null) {
+    constructor(id: string, cords: (number | "start" | "center" | "end")[], width: number, height: number, borderRadius?: number | null, borderType: BorderType = "rounded", parent: BasicPath | null = null) {
         super(id, parent);
         this.cords = cords;
         this.parameters["width"].setValue(width);
@@ -19,50 +21,87 @@ export class RectPath extends BasicPath {
         this.parameters["borderTopRight"] = new BorderRect(borderRadius ?? 0, this);
         this.parameters["borderBottomLeft"] = new BorderRect(borderRadius ?? 0, this);
         this.parameters["borderBottomRight"] = new BorderRect(borderRadius ?? 0, this);
-        this.parameters["borderType"] = new BorderTypeRect("rounded", this);
+        this.parameters["borderType"] = new BorderTypeRect(borderType, this);
     }
     draw(scope: paper.PaperScope): void {
+        this.path?.remove();
         const position = this.getPosition(scope);
         const widthParam = this.parameters["width"];
         const heightParam = this.parameters["height"];
         const width = typeof widthParam.getValue() === "number" ? widthParam.getValue() as number : parseFloat(widthParam.getValue() as string);
         const height = typeof heightParam.getValue() === "number" ? heightParam.getValue() as number : parseFloat(heightParam.getValue() as string);
-        const borderParam = this.parameters["borders"];
-        const border = typeof borderParam.getValue() === "number" ? borderParam.getValue() as number : parseFloat(borderParam.getValue() as string);
+        const borderTopLeftParam = this.parameters["borderTopLeft"];
+        const borderTopRightParam = this.parameters["borderTopRight"];
+        const borderBottomLeftParam = this.parameters["borderBottomLeft"];
+        const borderBottomRightParam = this.parameters["borderBottomRight"];
+        const borderTypeParam = this.parameters["borderType"];
+        const borderType = borderTypeParam.getValue() as BorderType;
+        const borderTopLeft = borderTopLeftParam.getValue() as number;
+        const borderTopRight = borderTopRightParam.getValue() as number;
+        const borderBottomLeft = borderBottomLeftParam.getValue() as number;
+        const borderBottomRight = borderBottomRightParam.getValue() as number;
+        const angle = (sign: number, borderType: BorderType) => {
+            if (borderType === "plain")
+                return Math.PI / 2;
+            if (sign > 0)
+                return Math.PI / 4;
+            return 5 * Math.PI / 4;
+        };
+        const offset = (sign: number) => (sign > 0) ? Math.abs(sign) : 0;
         const p = new scope.Path({ strokeColor: 'black', closed: true })
-        p.moveTo(new scope.Point(position[0] - width / 2 + border, position[1] - height / 2));
-        p.lineTo(new scope.Point(position[0] + width / 2 - border, position[1] - height / 2));
-        p.arcTo(
-            new paper.Point(
-                position[0] + (width / 2) + border * Math.cos(Math.PI / 4) - border,
-                position[1] - (height / 2) - border * Math.sin(Math.PI / 4) + border
-            ),
-            new paper.Point(position[0] + width / 2, position[1] - height / 2 + border)
-        )
-        p.lineTo(new scope.Point(position[0] + width / 2, position[1] + height / 2 - border));
-        p.arcTo(
-            new paper.Point(
-                position[0] + (width / 2) + border * Math.cos(Math.PI / 4) - border,
-                position[1] + (height / 2) + border * Math.sin(Math.PI / 4) - border
-            ),
-            new paper.Point(position[0] + width / 2 - border, position[1] + height / 2)
-        )
-        p.lineTo(new scope.Point(position[0] - width / 2 + border, position[1] + height / 2));
-        p.arcTo(
-            new paper.Point(
-                position[0] - (width / 2) - border * Math.cos(Math.PI / 4) + border,
-                position[1] + (height / 2) + border * Math.sin(Math.PI / 4) - border
-            ),
-            new paper.Point(position[0] - width / 2, position[1] + height / 2 - border)
-        )
-        p.lineTo(new scope.Point(position[0] - width / 2, position[1] - height / 2 + border));
-        p.arcTo(
-            new paper.Point(
-                position[0] - (width / 2) - border * Math.cos(Math.PI / 4) + border,
-                position[1] - (height / 2) - border * Math.sin(Math.PI / 4) + border
-            ),
-            new paper.Point(position[0] - width / 2 + border, position[1] - height / 2)
-        )
+        p.moveTo(new scope.Point(position[0] - width / 2 + Math.abs(borderTopLeft), position[1] - height / 2));
+        p.lineTo(new scope.Point(position[0] + width / 2 - Math.abs(borderTopRight), position[1] - height / 2));
+        if (borderType === "rect") {
+            p.lineTo(new scope.Point(position[0] + width / 2 - Math.abs(borderTopRight), position[1] - height / 2 + Math.abs(borderTopRight)));
+            p.lineTo(new scope.Point(position[0] + width / 2, position[1] - height / 2 + Math.abs(borderTopRight)));
+        } else {
+            p.arcTo(
+                new paper.Point(
+                    position[0] + (width / 2) + Math.abs(borderTopRight) * Math.cos(angle(borderTopRight, borderType)) - offset(borderTopRight),
+                    position[1] - (height / 2) - Math.abs(borderTopRight) * Math.sin(angle(borderTopRight, borderType)) + offset(borderTopRight)
+                ),
+                new paper.Point(position[0] + width / 2, position[1] - height / 2 + Math.abs(borderTopRight))
+            )
+        }
+        p.lineTo(new scope.Point(position[0] + width / 2, position[1] + height / 2 - Math.abs(borderBottomRight)));
+        if (borderType === "rect") {
+            p.lineTo(new scope.Point(position[0] + width / 2 - Math.abs(borderBottomRight), position[1] + height / 2 - Math.abs(borderBottomRight)));
+            p.lineTo(new scope.Point(position[0] + width / 2 - Math.abs(borderBottomRight), position[1] + height / 2));
+        } else {
+            p.arcTo(
+                new paper.Point(
+                    position[0] + (width / 2) + Math.abs(borderBottomRight) * Math.cos(angle(borderBottomRight, borderType)) - offset(borderBottomRight),
+                    position[1] + (height / 2) + Math.abs(borderBottomRight) * Math.sin(angle(borderBottomRight, borderType)) - offset(borderBottomRight)
+                ),
+                new paper.Point(position[0] + width / 2 - Math.abs(borderBottomRight), position[1] + height / 2)
+            )
+        }
+        p.lineTo(new scope.Point(position[0] - width / 2 + Math.abs(borderBottomLeft), position[1] + height / 2));
+        if (borderType === "rect") {
+            p.lineTo(new scope.Point(position[0] - width / 2 + Math.abs(borderBottomLeft), position[1] + height / 2 - Math.abs(borderBottomLeft)));
+            p.lineTo(new scope.Point(position[0] - width / 2, position[1] + height / 2 - Math.abs(borderBottomLeft)));
+        } else {
+            p.arcTo(
+                new paper.Point(
+                    position[0] - (width / 2) - Math.abs(borderBottomLeft) * Math.cos(angle(borderBottomLeft, borderType)) + offset(borderBottomLeft),
+                    position[1] + (height / 2) + Math.abs(borderBottomLeft) * Math.sin(angle(borderBottomLeft, borderType)) - offset(borderBottomLeft)
+                ),
+                new paper.Point(position[0] - width / 2, position[1] + height / 2 - Math.abs(borderBottomLeft))
+            )
+        }
+        p.lineTo(new scope.Point(position[0] - width / 2, position[1] - height / 2 + Math.abs(borderTopLeft)));
+        if (borderType === "rect") {
+            p.lineTo(new scope.Point(position[0] - width / 2 + Math.abs(borderTopLeft), position[1] - height / 2 + Math.abs(borderTopLeft)));
+            p.lineTo(new scope.Point(position[0] - width / 2 + Math.abs(borderTopLeft), position[1] - height / 2));
+        } else {
+            p.arcTo(
+                new paper.Point(
+                    position[0] - (width / 2) - Math.abs(borderTopLeft) * Math.cos(angle(borderTopLeft, borderType)) + offset(borderTopLeft),
+                    position[1] - (height / 2) - Math.abs(borderTopLeft) * Math.sin(angle(borderTopLeft, borderType)) + offset(borderTopLeft)
+                ),
+                new paper.Point(position[0] - width / 2 + Math.abs(borderTopLeft), position[1] - height / 2)
+            )
+        }
         this.path = p;
     }
     update(scope: paper.PaperScope): void {
@@ -77,12 +116,12 @@ export class RectPath extends BasicPath {
         const borderBottomLeftParam = this.parameters["borderBottomLeft"];
         const borderBottomRightParam = this.parameters["borderBottomRight"];
         const borderTypeParam = this.parameters["borderType"];
-        const borderType = borderTypeParam.getValue() as "rounded" | "plain" | "rect";
+        const borderType = borderTypeParam.getValue() as BorderType;
         const borderTopLeft = borderTopLeftParam.getValue() as number;
         const borderTopRight = borderTopRightParam.getValue() as number;
         const borderBottomLeft = borderBottomLeftParam.getValue() as number;
         const borderBottomRight = borderBottomRightParam.getValue() as number;
-        const angle = (sign: number, borderType: "rounded" | "plain" | "rect") => {
+        const angle = (sign: number, borderType: BorderType) => {
             if (borderType === "plain")
                 return Math.PI / 2;
             if (sign > 0)
@@ -228,7 +267,7 @@ class BordersRect extends Parameters {
         const height = this.path.parameters["height"];
         const width = this.path.parameters["width"];
         const borderTypeParam = this.path.parameters["borderType"];
-        const borderType = borderTypeParam.getValue() as "rounded" | "plain" | "rect";
+        const borderType = borderTypeParam.getValue() as BorderType;
         const center = this.path.getPosition(scope!);
         let minY = Infinity;
         let maxY = -Infinity;
@@ -286,7 +325,7 @@ class BorderRect extends Parameters {
         const height = this.path.parameters["height"];
         const width = this.path.parameters["width"];
         const borderTypeParam = this.path.parameters["borderType"];
-        const borderType = borderTypeParam.getValue() as "rounded" | "plain" | "rect";
+        const borderType = borderTypeParam.getValue() as BorderType;
         if (borderType === "plain" || borderType === "rect")
             return 0;
         if (typeof height.getValue() === "number" && typeof width.getValue() === "number") {
@@ -344,7 +383,7 @@ class BorderTypeRect extends Parameters {
 
     options?: string[] = ["rounded", "plain", "rect"];
 
-    constructor(value: "rounded" | "plain" | "rect", path: Path) {
+    constructor(value: BorderType, path: Path) {
         super(value, path);
     }
 

@@ -7,7 +7,8 @@ import {
     RectangleRingShape, 
     CircuferencesShape,
     TriangleShape,
-    PoligonShape
+    PoligonShape,
+    RectangleWithRectBorder,
 } from "../class/shapes";
 import { useEffect, useState, useRef } from "react";
 
@@ -55,6 +56,11 @@ export function useGetShape() {
             shape: new PoligonShape(),
             shapeSpanishName: "Polígono",
             imageUrl: "/shapes/poligono.png"
+        },
+        {
+            shape: new RectangleWithRectBorder(),
+            shapeSpanishName: "Rectángulo con borde rectangular",
+            imageUrl: "/shapes/rectangulo_con_borde.png"
         }
     ]);
     useEffect(() => {
