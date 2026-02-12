@@ -206,11 +206,16 @@ class BordersRect extends Parameters {
         super(value, path);
     }
 
-    min(_?: paper.PaperScope): number {
+    min(scope?: paper.PaperScope): number {
         const height = this.path.parameters["height"];
         const width = this.path.parameters["width"];
+        const maxRadiusX = this.path.parameters["borderTopLeft"].max(scope);
+        const maxRadiusY = this.path.parameters["borderTopLeft"].max(scope);
         const borderTypeParam = this.path.parameters["borderType"];
         const borderType = borderTypeParam.getValue() as "rounded" | "plain" | "rect";
+        if (Number(width.getValue()) + 2 * Number(this.value) > maxRadiusX || Number(height.getValue()) + 2 * Number(this.value) > maxRadiusY) {
+            return 0;
+        }
         if (borderType === "plain" || borderType === "rect")
             return 0;
         if (typeof height.getValue() === "number" && typeof width.getValue() === "number") {
@@ -219,14 +224,39 @@ class BordersRect extends Parameters {
         return 0;
     }
 
-    max(_?: paper.PaperScope): number {
+    max(scope?: paper.PaperScope): number {
         const height = this.path.parameters["height"];
         const width = this.path.parameters["width"];
         const borderTypeParam = this.path.parameters["borderType"];
         const borderType = borderTypeParam.getValue() as "rounded" | "plain" | "rect";
-        if (borderType === "plain" || borderType === "rect")
+        const center = this.path.getPosition(scope!);
+        let minY = Infinity;
+        let maxY = -Infinity;
+        let minX = Infinity;
+        let maxX = -Infinity;
+        this.path.paths.forEach(subPath => {
+            const position = subPath.getPosition(scope!);
+            const height = Number(subPath.parameters["height"].getValue());
+            const width = Number(subPath.parameters["width"].getValue());
+            if (position[1] - height / 2 < minY) minY = position[1] - height / 2;
+            if (position[1] + height / 2 > maxY) maxY = position[1] + height / 2;
+            if (position[0] - width / 2 < minX) minX = position[0] - width / 2;
+            if (position[0] + width / 2 > maxX) maxX = position[0] + width / 2;
+        });
+        const maxBorder = Math.abs(
+            Math.min(
+                center[1] + (height.getValue() as number) / 2 - minY,
+                maxY - center[1] - (height.getValue() as number) / 2,
+                center[0] + (width.getValue() as number) / 2 - minX,
+                maxX - center[0] - (width.getValue() as number) / 2
+            )
+        );
+        if (maxBorder === Infinity) {
+            if (borderType === "rounded")
+                return Math.min(height.getValue() as number, width.getValue() as number) / 2;
             return Math.min(height.getValue() as number, width.getValue() as number) / 4;
-        return Math.min(height.getValue() as number, width.getValue() as number) / 2;
+        }
+        return maxBorder;
     }
 
     getValue(): number | string {
@@ -265,14 +295,39 @@ class BorderRect extends Parameters {
         return 0;
     }
 
-    max(_?: paper.PaperScope): number {
+    max(scope?: paper.PaperScope): number {
         const height = this.path.parameters["height"];
         const width = this.path.parameters["width"];
         const borderTypeParam = this.path.parameters["borderType"];
         const borderType = borderTypeParam.getValue() as "rounded" | "plain" | "rect";
-        if (borderType === "plain" || borderType === "rect")
+        const center = this.path.getPosition(scope!);
+        let minY = Infinity;
+        let maxY = -Infinity;
+        let minX = Infinity;
+        let maxX = -Infinity;
+        this.path.paths.forEach(subPath => {
+            const position = subPath.getPosition(scope!);
+            const height = Number(subPath.parameters["height"].getValue());
+            const width = Number(subPath.parameters["width"].getValue());
+            if (position[1] - height / 2 < minY) minY = position[1] - height / 2;
+            if (position[1] + height / 2 > maxY) maxY = position[1] + height / 2;
+            if (position[0] - width / 2 < minX) minX = position[0] - width / 2;
+            if (position[0] + width / 2 > maxX) maxX = position[0] + width / 2;
+        });
+        const maxBorder = Math.abs(
+            Math.min(
+                center[1] + (height.getValue() as number) / 2 - minY,
+                maxY - center[1] - (height.getValue() as number) / 2,
+                center[0] + (width.getValue() as number) / 2 - minX,
+                maxX - center[0] - (width.getValue() as number) / 2
+            )
+        );
+        if (maxBorder === Infinity) {
+            if (borderType === "rounded")
+                return Math.min(height.getValue() as number, width.getValue() as number) / 2;
             return Math.min(height.getValue() as number, width.getValue() as number) / 4;
-        return Math.min(height.getValue() as number, width.getValue() as number) / 2;
+        }
+        return maxBorder;
     }
 
     getValue(): number | string {

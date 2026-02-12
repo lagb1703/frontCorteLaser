@@ -95,7 +95,7 @@ export class WidthParameter extends Parameters {
             this.path.parameters["borderBottomRight"]
         ]
         const border = Math.abs(borders.reduce((max, param) => {
-            const value = Number(param.getValue());
+            const value = 2 * Math.abs(Number(param.getValue()));
             return value > max ? value : max;
         }, 0));
         const center = this.path.getPosition(scope);
@@ -108,13 +108,6 @@ export class WidthParameter extends Parameters {
             if (position[0] + width > maxX) maxX = position[0] + width;
         });
         const maxRadiusX = Math.abs(Math.min(center[0] - minX, maxX - center[0])) + border;
-        console.log({
-            center,
-            minX,
-            maxX,
-            border,
-            maxRadiusX
-        })
         return Math.max(maxRadiusX, 5);
     }
 
@@ -153,7 +146,6 @@ export class HeightParameter extends Parameters {
 
     min(scope?: paper.PaperScope): number {
         if (!scope) return 0;
-
         const borders = [
             this.path.parameters["borderTopLeft"],
             this.path.parameters["borderTopRight"],
@@ -161,7 +153,7 @@ export class HeightParameter extends Parameters {
             this.path.parameters["borderBottomRight"]
         ]
         const border = borders.reduce((max, param) => {
-            const value = Number(param.getValue());
+            let value = 2 * Math.abs(Number(param.getValue()));
             return value > max ? value : max;
         }, 0);
         const center = this.path.getPosition(scope);
