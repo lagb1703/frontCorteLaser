@@ -87,17 +87,34 @@ export class WidthParameter extends Parameters {
     }
 
     min(scope?: paper.PaperScope): number {
-        if(!scope) return 0;
-        let minX = Infinity;
-        let maxX = -Infinity;
+        if (!scope) return 0;
+        const borders = [
+            this.path.parameters["borderTopLeft"],
+            this.path.parameters["borderTopRight"],
+            this.path.parameters["borderBottomLeft"],
+            this.path.parameters["borderBottomRight"]
+        ]
+        const border = Math.abs(borders.reduce((max, param) => {
+            const value = Number(param.getValue());
+            return value > max ? value : max;
+        }, 0));
+        const center = this.path.getPosition(scope);
+        let minX = 2 * border + center[0];
+        let maxX = -2 * border + center[0];
         this.path.paths.forEach(subPath => {
             const position = subPath.getPosition(scope);
             const width = Number(subPath.parameters["width"].getValue());
             if (position[0] - width < minX) minX = position[0] - width;
             if (position[0] + width > maxX) maxX = position[0] + width;
         });
-        const center = this.path.getPosition(scope);
-        const maxRadiusX = Math.min(center[0] - minX, maxX - center[0]);
+        const maxRadiusX = Math.abs(Math.min(center[0] - minX, maxX - center[0])) + border;
+        console.log({
+            center,
+            minX,
+            maxX,
+            border,
+            maxRadiusX
+        })
         return Math.max(maxRadiusX, 5);
     }
 
@@ -136,16 +153,27 @@ export class HeightParameter extends Parameters {
 
     min(scope?: paper.PaperScope): number {
         if (!scope) return 0;
-        let minY = Infinity;
-        let maxY = -Infinity;
+
+        const borders = [
+            this.path.parameters["borderTopLeft"],
+            this.path.parameters["borderTopRight"],
+            this.path.parameters["borderBottomLeft"],
+            this.path.parameters["borderBottomRight"]
+        ]
+        const border = borders.reduce((max, param) => {
+            const value = Number(param.getValue());
+            return value > max ? value : max;
+        }, 0);
+        const center = this.path.getPosition(scope);
+        let minY = 2 * border + center[1];
+        let maxY = -2 * border + center[1];
         this.path.paths.forEach(subPath => {
             const position = subPath.getPosition(scope);
             const height = Number(subPath.parameters["height"].getValue());
             if (position[1] - height < minY) minY = position[1] - height;
             if (position[1] + height > maxY) maxY = position[1] + height;
         });
-        const center = this.path.getPosition(scope);
-        const maxRadiusY = Math.min(center[1] - minY, maxY - center[1]);
+        const maxRadiusY = Math.abs(Math.min(center[1] - minY, maxY - center[1])) + border;
         return Math.max(maxRadiusY, 5)
     }
 
