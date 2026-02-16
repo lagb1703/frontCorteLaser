@@ -11,7 +11,8 @@ import {
     RectangleWithRectBorder,
     RingWithCircles,
     RectangleRingWithCircles,
-    RectangleDoubleRingWithCircles
+    RectangleDoubleRingWithCircles,
+    BandShape
 } from "../class/shapes";
 import { useEffect, useState, useRef } from "react";
 
@@ -79,6 +80,11 @@ export function useGetShape() {
             shape: new RectangleDoubleRingWithCircles(),
             shapeSpanishName: "Anillo rectangular doble con círculos",
             imageUrl: "/shapes/anillo_rectangular_doble_con_circulos.png"
+        },
+        {
+            shape: new BandShape(),
+            shapeSpanishName: "Banda",
+            imageUrl: "/shapes/banda.png"
         }
     ]);
     useEffect(() => {
