@@ -2,7 +2,6 @@ import LoginPage from '../autentification/pages/loginPage';
 import RegisterPage from '../userModule/pages/registerPage';
 import HomePage from '@/utilities/pages/homePage';
 import Shapes from '@/shapeModule/pages/shapesPage';
-import ShapeRenderPage from '@/shapeModule/pages/shapeRenderPage';
 
 export const PublicRoutes = [
     {
@@ -24,9 +23,5 @@ export const PublicRoutes = [
     {
         path: "/shapes",
         element: <Shapes />
-    },
-    {
-        path: "/shapes/:shapeId",
-        element: <ShapeRenderPage />
     }
 ];
