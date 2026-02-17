@@ -132,7 +132,7 @@ export default function HomePage() {
                     <p className='mt-0 mb-2.5 lg:p-[3%] rounded-4xl grid text-justify lg:text-[1.2vw]'>
                         En el contexto del corte por láser, el término "corte" se refiere al ancho del material eliminado o vaporizado durante el proceso. Básicamente, la ranura es el espacio que se crea cuando el rayo láser corta el material.
                         <br /> <br />
-                        En Cortelazer, nos dedicamos a brindar soluciones de corte láser de primera categoría para satisfacer las necesidades más exigentes de nuestros clientes. Nos destacamos como líderes en la industria gracias a nuestra combinación única de tecnología avanzada, experiencia especializada y un compromiso inquebrantable con la calidad.
+                        En Metal Cortes, nos dedicamos a brindar soluciones de corte láser de primera categoría para satisfacer las necesidades más exigentes de nuestros clientes. Nos destacamos como líderes en la industria gracias a nuestra combinación única de tecnología avanzada, experiencia especializada y un compromiso inquebrantable con la calidad.
                     </p>
                 </div>
                 <div

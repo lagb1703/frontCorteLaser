@@ -82,10 +82,10 @@ export default function Header({ user, token }: Props) {
                             <span
                                 className="transition-colors duration-750"
                                 style={{ color }}>
-                                Corte
+                                Metal
                             </span>
                             <span>
-                                Laser
+                                Cortes
                             </span>
                         </Link>
                     </Button>
@@ -139,7 +139,7 @@ export default function Header({ user, token }: Props) {
                     <aside className="relative w-64 max-w-full bg-background border-r p-4">
                         <div className="flex items-center justify-between mb-4">
                             <Button variant="ghost" size="sm" asChild>
-                                <Link to="/" onClick={close} className="text-lg font-semibold">CorteLaser</Link>
+                                <Link to="/" onClick={close} className="text-lg font-semibold">Metal Cortes</Link>
                             </Button>
                             <Button variant="ghost" size="sm" onClick={close} aria-label="Cerrar menú">
                                 <X className="size-5" />
