@@ -24,6 +24,7 @@ export class CircumferencePath extends BasicPath {
     }
     update(scope: paper.PaperScope): void {
         this.path?.remove();
+        console.log(scope)
         const position = this.getPosition(scope);
         const radiusParam = this.parameters["radius"];
         const radius = typeof radiusParam.getValue() === "number" ? radiusParam.getValue() as number : parseFloat(radiusParam.getValue() as string);

@@ -88,7 +88,7 @@ export function useRender(shape: Shape | null) {
         setTimeout(() => {
             navigate('/files');
         }, 1000);
-    }, [shape, canvas, scope]);
+    }, [shape, canvas, scope, saveFile, navigate]);
     return {
         canvas,
         scope,
