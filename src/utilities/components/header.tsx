@@ -79,14 +79,10 @@ export default function Header({ user, token }: Props) {
                     }
                     <Button variant="ghost" asChild>
                         <Link to="/" className="text-lg font-semibold">
-                            <span
-                                className="transition-colors duration-750"
-                                style={{ color }}>
-                                Metal
-                            </span>
-                            <span>
-                                Cortes
-                            </span>
+                            <img 
+                                src="/Logo-hd-rgb.svg" 
+                                alt="Logo" 
+                                className="w-full h-40" />
                         </Link>
                     </Button>
 
@@ -139,7 +135,9 @@ export default function Header({ user, token }: Props) {
                     <aside className="relative w-64 max-w-full bg-background border-r p-4">
                         <div className="flex items-center justify-between mb-4">
                             <Button variant="ghost" size="sm" asChild>
-                                <Link to="/" onClick={close} className="text-lg font-semibold">Metal Cortes</Link>
+                                <Link to="/" onClick={close} className="text-lg font-semibold">
+                                    <img src="/Logo-hd-rgb.svg" alt="Logo" className="w-6 h-6 mr-2" />
+                                </Link>
                             </Button>
                             <Button variant="ghost" size="sm" onClick={close} aria-label="Cerrar menú">
                                 <X className="size-5" />
