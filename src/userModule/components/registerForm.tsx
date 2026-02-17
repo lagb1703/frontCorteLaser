@@ -14,8 +14,9 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { useCallback } from "react"
+import { useCallback, useState } from "react"
 import { useNavigate } from "react-router"
+import { Eye, EyeClosed } from 'lucide-react'
 import {
     Select,
     SelectContent,
@@ -144,29 +145,45 @@ export default function RegisterForm() {
                 <FormField
                     control={form.control}
                     name="password"
-                    render={({ field }) => (
-                        <FormItem className="min-w-[210px]">
-                            <FormLabel className="text-sm">Contraseña</FormLabel>
-                            <FormControl>
-                                <Input id="password" type="password" placeholder="Contraseña" autoComplete="current-password" className="h-8 text-sm" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
+                    render={({ field }) => {
+                        const [showPassword, setShowPassword] = useState(false)
+                        return (
+                            <FormItem className="min-w-[210px]">
+                                <FormLabel className="text-sm">Contraseña</FormLabel>
+                                <FormControl>
+                                    <div className="relative">
+                                        <Input id="password" type={showPassword ? "text" : "password"} placeholder="Contraseña" autoComplete="current-password" className="h-8 text-sm pr-9" {...field} />
+                                        <button type="button" aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"} onClick={() => setShowPassword((s) => !s)} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground">
+                                            {!showPassword ? <EyeClosed size={16} /> : <Eye size={16} />}
+                                        </button>
+                                    </div>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )
+                    }}
                 />
 
                 <FormField
                     control={form.control}
                     name="confirmPassword"
-                    render={({ field }) => (
-                        <FormItem className="min-w-[210px]">
-                            <FormLabel className="text-sm">Confirmar contraseña</FormLabel>
-                            <FormControl>
-                                <Input id="confirmPassword" type="password" placeholder="Confirmar contraseña" autoComplete="new-password" className="h-8 text-sm" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
+                    render={({ field }) => {
+                        const [showConfirm, setShowConfirm] = useState(false)
+                        return (
+                            <FormItem className="min-w-[210px]">
+                                <FormLabel className="text-sm">Confirmar contraseña</FormLabel>
+                                <FormControl>
+                                    <div className="relative">
+                                        <Input id="confirmPassword" type={showConfirm ? "text" : "password"} placeholder="Confirmar contraseña" autoComplete="new-password" className="h-8 text-sm pr-9" {...field} />
+                                        <button type="button" aria-label={showConfirm ? "Ocultar contraseña" : "Mostrar contraseña"} onClick={() => setShowConfirm((s) => !s)} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground">
+                                            {!showConfirm ? <EyeClosed size={16} /> : <Eye size={16} />}
+                                        </button>
+                                    </div>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )
+                    }}
                 />
 
                 <div
