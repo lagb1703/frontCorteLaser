@@ -4,14 +4,15 @@ import {
     CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
 } from "@/components/ui/select"
+import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { useState, useCallback, useEffect } from "react";
 import { useGetShape, useRender } from "../hooks";
@@ -53,7 +54,7 @@ function InputShape({ parameter, scope, name }: InputShapeProps) {
         parameter.setValue(newValue, scope);
         parameter.displayMeasure(name, scope);
     }, [parameter, name, scope]);
-    if(parameter.options) {
+    if (parameter.options) {
         return (
             <Select onValueChange={(value) => parameter.setValue(value, scope)}>
                 <SelectTrigger className="w-full">
@@ -79,7 +80,7 @@ function InputShape({ parameter, scope, name }: InputShapeProps) {
 
 export function ShapeRender() {
     const { shape } = useGetShape();
-    const { canvas, scope } = useRender(shape);
+    const { canvas, scope, save } = useRender(shape);
     const [collapsibleOpen, setCollapsibleOpen] = useState("");
 
     return (
@@ -89,7 +90,7 @@ export function ShapeRender() {
                     <canvas className="w-full h-full border border-black rounded-md inset-0" ref={canvas} />
                 </div>
             </div>
-            <section className="basis-full mb-10 md:mb-0 lg:basis-[20%] lg:mt-10 max-h-full lg:h-full lg:max-h-[500px] justify-center items-start">
+            <section className="basis-full mb-30 md:mb-0 lg:basis-[20%] lg:mt-10 max-h-full lg:h-full lg:max-h-[500px] justify-center items-start">
                 {shape && shape.getPaths().map((path) => {
                     const params = path.getParameters();
                     return <Collapsible
@@ -119,6 +120,15 @@ export function ShapeRender() {
                         </CollapsibleContent>
                     </Collapsible>
                 })}
+                <article
+                    className=" mb-10 lg:mb-0 px-20 lg:px-0">
+                    <Button
+                        variant="default"
+                        className="w-full"
+                        onClick={save}>
+                        Guardar DXF
+                    </Button>
+                </article>
             </section>
         </div>
     );

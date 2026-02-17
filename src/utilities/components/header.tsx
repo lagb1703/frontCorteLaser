@@ -103,6 +103,9 @@ export default function Header({ user, token }: Props) {
                                 <Button variant="ghost" size="sm" asChild>
                                     <Link to="/draw">Dibujar</Link>
                                 </Button>
+                                <Button variant="ghost" size="sm" asChild>
+                                    <Link to="/shapes" onClick={close}>Fabicar</Link>
+                                </Button>
                             </>
                         )}
                     </nav>
@@ -151,6 +154,9 @@ export default function Header({ user, token }: Props) {
                                     </Button>
                                     <Button variant="ghost" size="sm" asChild>
                                         <Link to="/files" onClick={close}>Mis archivos</Link>
+                                    </Button>
+                                    <Button variant="ghost" size="sm" asChild>
+                                        <Link to="/draw" onClick={close}>Fabicar</Link>
                                     </Button>
                                 </>
                             )}
