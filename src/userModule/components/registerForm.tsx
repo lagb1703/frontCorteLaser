@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form"
 import type { Resolver } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRegister, useGetAllIdentificationTypes } from "../hooks"
-import { userSchema, type User } from "../validators/userValidators"
+import { registerSchema, type RegisterFormValues, type User } from "../validators/userValidators"
 import {
     Form,
     FormControl,
@@ -28,8 +28,8 @@ import {
 
 export default function RegisterForm() {
     const { data: identificationTypes } = useGetAllIdentificationTypes();
-    const form = useForm<User>({
-        resolver: zodResolver(userSchema) as Resolver<User>,
+    const form = useForm<RegisterFormValues>({
+        resolver: zodResolver(registerSchema) as Resolver<RegisterFormValues>,
         mode: "onChange",
         defaultValues: {
             names: "",
@@ -38,6 +38,7 @@ export default function RegisterForm() {
             address: "",
             phone: "",
             password: "",
+            confirmPassword: "",
             isAdmin: false,
             identification: "",
             identificationTypeId: "",
@@ -48,10 +49,11 @@ export default function RegisterForm() {
 
     const registerMutation = useRegister()
 
-    const onSubmit = useCallback(async (data: User) => {
+    const onSubmit = useCallback(async (data: RegisterFormValues) => {
         const toastId = toast.loading("Creando usuario...");
         try {
-            await registerMutation.mutateAsync(data);
+            const { confirmPassword, ...payload } = data as any
+            await registerMutation.mutateAsync(payload as User);
             toast.success("Usuario creado exitosamente", { id: toastId });
             setTimeout(() => {
                 navigate("/login")
@@ -147,6 +149,20 @@ export default function RegisterForm() {
                             <FormLabel className="text-sm">Contraseña</FormLabel>
                             <FormControl>
                                 <Input id="password" type="password" placeholder="Contraseña" autoComplete="current-password" className="h-8 text-sm" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="confirmPassword"
+                    render={({ field }) => (
+                        <FormItem className="min-w-[210px]">
+                            <FormLabel className="text-sm">Confirmar contraseña</FormLabel>
+                            <FormControl>
+                                <Input id="confirmPassword" type="password" placeholder="Confirmar contraseña" autoComplete="new-password" className="h-8 text-sm" {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
