@@ -16,4 +16,18 @@ export const userSchema = z.object({
     identificationType: z.string().optional().nullable(),
 })
 
+export const registerSchema = userSchema.extend({
+    confirmPassword: z.string().min(8, "La confirmación de la contraseña debe tener al menos 8 caracteres"),
+}).superRefine((data, ctx) => {
+    if (data.password !== data.confirmPassword) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Las contraseñas no coinciden",
+            path: ["confirmPassword"],
+        })
+    }
+})
+
+export type RegisterFormValues = z.infer<typeof registerSchema>
+
 export type User = z.infer<typeof userSchema>

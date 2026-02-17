@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form"
 import type { Resolver } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useRegister, useGetAllIdentificationTypes } from "../hooks"
-import { userSchema, type User } from "../validators/userValidators"
+import { registerSchema, type RegisterFormValues, type User } from "../validators/userValidators"
 import {
     Form,
     FormControl,
@@ -14,8 +14,9 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { useCallback } from "react"
+import { useCallback, useState } from "react"
 import { useNavigate } from "react-router"
+import { Eye, EyeClosed } from 'lucide-react'
 import {
     Select,
     SelectContent,
@@ -28,8 +29,8 @@ import {
 
 export default function RegisterForm() {
     const { data: identificationTypes } = useGetAllIdentificationTypes();
-    const form = useForm<User>({
-        resolver: zodResolver(userSchema) as Resolver<User>,
+    const form = useForm<RegisterFormValues>({
+        resolver: zodResolver(registerSchema) as Resolver<RegisterFormValues>,
         mode: "onChange",
         defaultValues: {
             names: "",
@@ -38,6 +39,7 @@ export default function RegisterForm() {
             address: "",
             phone: "",
             password: "",
+            confirmPassword: "",
             isAdmin: false,
             identification: "",
             identificationTypeId: "",
@@ -48,10 +50,11 @@ export default function RegisterForm() {
 
     const registerMutation = useRegister()
 
-    const onSubmit = useCallback(async (data: User) => {
+    const onSubmit = useCallback(async (data: RegisterFormValues) => {
         const toastId = toast.loading("Creando usuario...");
         try {
-            await registerMutation.mutateAsync(data);
+            const { confirmPassword, ...payload } = data as any
+            await registerMutation.mutateAsync(payload as User);
             toast.success("Usuario creado exitosamente", { id: toastId });
             setTimeout(() => {
                 navigate("/login")
@@ -142,15 +145,45 @@ export default function RegisterForm() {
                 <FormField
                     control={form.control}
                     name="password"
-                    render={({ field }) => (
-                        <FormItem className="min-w-[210px]">
-                            <FormLabel className="text-sm">Contraseña</FormLabel>
-                            <FormControl>
-                                <Input id="password" type="password" placeholder="Contraseña" autoComplete="current-password" className="h-8 text-sm" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
+                    render={({ field }) => {
+                        const [showPassword, setShowPassword] = useState(false)
+                        return (
+                            <FormItem className="min-w-[210px]">
+                                <FormLabel className="text-sm">Contraseña</FormLabel>
+                                <FormControl>
+                                    <div className="relative">
+                                        <Input id="password" type={showPassword ? "text" : "password"} placeholder="Contraseña" autoComplete="current-password" className="h-8 text-sm pr-9" {...field} />
+                                        <button type="button" aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"} onClick={() => setShowPassword((s) => !s)} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground">
+                                            {!showPassword ? <EyeClosed size={16} /> : <Eye size={16} />}
+                                        </button>
+                                    </div>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )
+                    }}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="confirmPassword"
+                    render={({ field }) => {
+                        const [showConfirm, setShowConfirm] = useState(false)
+                        return (
+                            <FormItem className="min-w-[210px]">
+                                <FormLabel className="text-sm">Confirmar contraseña</FormLabel>
+                                <FormControl>
+                                    <div className="relative">
+                                        <Input id="confirmPassword" type={showConfirm ? "text" : "password"} placeholder="Confirmar contraseña" autoComplete="new-password" className="h-8 text-sm pr-9" {...field} />
+                                        <button type="button" aria-label={showConfirm ? "Ocultar contraseña" : "Mostrar contraseña"} onClick={() => setShowConfirm((s) => !s)} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground">
+                                            {!showConfirm ? <EyeClosed size={16} /> : <Eye size={16} />}
+                                        </button>
+                                    </div>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )
+                    }}
                 />
 
                 <div
