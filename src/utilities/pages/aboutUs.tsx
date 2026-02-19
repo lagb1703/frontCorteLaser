@@ -8,7 +8,8 @@ import { useChangeColor } from '@/utilities/hooks/useChangeColor';
 import {
     Flag,
     CircleCheck,
-    File
+    File,
+    Copy
 } from 'lucide-react';
 import {
     Carousel,
@@ -16,8 +17,15 @@ import {
     CarouselItem
 } from "@/components/ui/carousel"
 import AutoPlay from "embla-carousel-autoplay"
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, useCallback } from 'react'
 import { Button } from "@/components/ui/button";
+import Typed from 'typed.js';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+    TooltipProvider
+} from "@/components/ui/tooltip"
 
 const carouselItems = [
     {
@@ -146,9 +154,33 @@ function CarouselSection() {
 
 export default function AboutUs() {
     const color = useChangeColor();
-    console.log(color)
+    const textRef = useRef<HTMLParagraphElement>(null);
+    useEffect(() => {
+        const typed = new Typed(textRef.current, {
+            strings: ['El <i>mejor</i> servicio.', 'Nuestro compromiso.'],
+            typeSpeed: 50,
+            loop: true,
+        });
+
+        return () => {
+            typed.destroy();
+        };
+    }, []);
+    const handleCopyAddress = useCallback(() => {
+        const address = 'Calle 18 # 16b-09';
+        if (navigator?.clipboard?.writeText) {
+            navigator.clipboard.writeText(address);
+            return;
+        }
+        const tempInput = document.createElement('input');
+        tempInput.value = address;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        tempInput.remove();
+    }, []);
     return (
-        <>
+        <TooltipProvider>
             <main
                 className="
                     w-full p-5 
@@ -156,7 +188,9 @@ export default function AboutUs() {
                     my-10
                     ">
                 <h1 className="text-9xl font-bold mb-8">Nosotros</h1>
-                <p>El mejor servicio nuestro compromiso</p>
+                <div className="flex">
+                    <p ref={textRef} className=""></p>
+                </div>
                 <Button
                     variant="default"
                     onClick={() => {
@@ -261,18 +295,36 @@ export default function AboutUs() {
             <section
                 className="w-full flex flex-col items-center gap-4 mt-8">
                 <h2 className="text-2xl font-bold mb-4">Nuestra Ubicación</h2>
-                <div className="w-full max-w-[800px] h-[400px] lg:h-[500px]">
-                    <iframe
-                        title="ubicacion-metal-cortes"
-                        src={"https://www.google.com/maps?q=Calle+18+%2316b-09&output=embed"}
-                        className="w-full h-full border-0"
-                        allowFullScreen
-                        loading="lazy"
-                        referrerPolicy="no-referrer-when-downgrade"
-                    ></iframe>
-                </div>
-                <p className="mt-2">Dirección: Calle 18 # 16b-09</p>
+                <article
+                    className="w-full flex flex-wrap flex-row p-5 justify-around items-center my-6 lg:my-0 lg:mb-10">
+                    <div className="basis-full max-w-[1000px] h-[500px] lg:h-[500px]">
+                        <iframe
+                            title="ubicacion-metal-cortes"
+                            src={"https://www.google.com/maps?q=Calle+18+%2316b-09&output=embed"}
+                            className="w-full h-full border-0"
+                            allowFullScreen
+                            loading="lazy"
+                            referrerPolicy="no-referrer-when-downgrade"
+                        ></iframe>
+                    </div>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <p
+                                className="
+                                text-lg font-medium 
+                                flex items-center gap-2 cursor-pointer
+                                "
+                                onClick={handleCopyAddress}>
+                                <Copy className="inline mr-2" />
+                                <span className="">Calle 18 # 16b-09</span>
+                            </p>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            Copiar
+                        </TooltipContent>
+                    </Tooltip>
+                </article>
             </section>
-        </>
+        </TooltipProvider>
     );
 }
