@@ -183,11 +183,11 @@ export default function AboutUs() {
         <TooltipProvider>
             <main
                 className="
-                    w-full p-5 
+                    w-full md:p-5 
                     flex flex-col items-center
                     my-10
                     ">
-                <h1 className="text-9xl font-bold mb-8">Nosotros</h1>
+                <h1 className="text-4xl md:text-9xl font-bold mb-8">Nosotros</h1>
                 <div className="flex">
                     <p ref={textRef} className=""></p>
                 </div>
@@ -211,14 +211,15 @@ export default function AboutUs() {
             <section
                 className="
                     w-full 
-                    flex flex-row justify-around flex-wrap gap-10 lg
+                    flex flex-col md:flex-row justify-around flex-wrap gap-10 lg
                     mt-8 p-5
                     ">
                 <Card
                     className="
                         basis-[40%] 
-                        min-w-[500px] 
-                        min-h-[300px]
+                        min-w-[100px] 
+                        md:min-w-[500px] 
+                        md:min-h-[300px]
                         transition-all duration-750
                         "
                     style={{
@@ -243,7 +244,12 @@ export default function AboutUs() {
                     </CardContent>
                 </Card>
                 <Card
-                    className="basis-[40%] min-w-[500px] min-h-[300px] transition-all duration-750"
+                    className="
+                        basis-[40%] 
+                        min-w-[200px] 
+                        md:min-w-[500px] 
+                        md:min-h-[300px]
+                        transition-all duration-750"
                     style={{
                         border: `2px solid ${color}`,
                         boxShadow: `0 0 20px ${color}40`
@@ -296,8 +302,8 @@ export default function AboutUs() {
                 className="w-full flex flex-col items-center gap-4 mt-8">
                 <h2 className="text-2xl font-bold mb-4">Nuestra Ubicación</h2>
                 <article
-                    className="w-full flex flex-wrap flex-row p-5 justify-around items-center my-6 lg:my-0 lg:mb-10">
-                    <div className="basis-full max-w-[1000px] h-[500px] lg:h-[500px]">
+                    className="w-full flex flex-wrap flex-row p-0 md:p-5 justify-around items-center my-6 lg:my-0 lg:mb-10">
+                    <div className="basis-full h-[300px] md:max-w-[1000px] md:h-[500px] lg:h-[500px]">
                         <iframe
                             title="ubicacion-metal-cortes"
                             src={"https://www.google.com/maps?q=Calle+18+%2316b-09&output=embed"}
