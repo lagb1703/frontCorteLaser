@@ -231,13 +231,10 @@ export default function AboutUs() {
                     </CardHeader>
                     <CardContent>
                         <p>
-                            Somos una empresa que satisface las necesidades de sus clientes
-                            prestando el mejor servicio en la comercialización de láminas,
-                            procesos de mecanizado, corte plasma, cizalla, doblado y rolado.
-                            Enfocándose en brindar a la industria y al público en general
-                            asesoría y respuesta oportuna, apoyados en nuestro personal
-                            calificado, maquinaria de alta tecnología y el mejoramiento
-                            continuo de los procesos.
+                            SOMOS UNA EMPRESA DEL EJE CAFETERO, COMPROMETIDA EN OFRECER A SUS CLIENTES LAS MEJORES SOLUCIONES DE CORTE LASER, 
+                            PLASMA, CIZALLA, DOBLADO, ROLADO, MECANIZADO Y ENSAMBLE PARA MATERIALES FERROSOS Y NO FERROSOS, APOYADOS EN 
+                            MAQUINARIA DE ALTA TECNOLOGIA, SOFTWARE ESPECIALIZADO Y UN EQUIPO DE TRABAJO PREPARADO CON AMPLIA EXPERIENCIA 
+                            PARA ASESORAR SUS PROYECTOS.
                         </p>
                     </CardContent>
                 </Card>
@@ -258,13 +255,8 @@ export default function AboutUs() {
                     </CardHeader>
                     <CardContent>
                         <p>
-                            <strong>METAL CORTES RISARALDA S.A.S</strong> seguirá trabajando para consolidar
-                            un liderazgo a nivel departamental, reconocidos por la calidad
-                            y los servicios en sus procesos con láminas y desarrollo de
-                            proyectos personalizados, enfocados en alcanzar reconocimiento
-                            y expansión regional, siempre comprometidos en brindar un excelente
-                            servicio y una adecuada asesoría pensando en la calidad, puntualidad
-                            y la mejora continua de sus procesos, planta y equipos.
+                            SER UNA EMPRESA LIDER EN LA TRANSFORMACION DE METALES QUE AYUDE A CREAR Y DESARROLLAR LAS IDEAS DE SUS CLIENTES 
+                            A TRAVES DE NUESTRA ASESORIA, APOYADOS EN PROCESOS GESTIONADOS CON CALIDAD.
                         </p>
                     </CardContent>
                 </Card>

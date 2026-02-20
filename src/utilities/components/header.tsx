@@ -13,7 +13,6 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useLogOut } from "../hooks/useLogOut";
-import { useChangeColor } from "../hooks/useChangeColor";
 
 interface DropDownMenuHeaderProps {
     user: User | null;
@@ -62,7 +61,6 @@ interface Props {
 export default function Header({ user, token }: Props) {
     const { logOut } = useLogOut();
     const [open, setOpen] = useState(false);
-    const color = useChangeColor();
 
     const close = () => setOpen(false);
 
