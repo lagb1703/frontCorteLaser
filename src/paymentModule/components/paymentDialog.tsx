@@ -41,7 +41,8 @@ export default function PaymentDialog({ isOpen, onClose, items }: PaymentDialogP
     const accept_personal_auth = useWatch({ control, name: "accept_personal_auth" }) as string
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            <DialogContent>
+            <DialogContent
+                className="max-h-[600px] overflow-y-auto custom-scrollbar">
                 <DialogHeader>
                     <DialogTitle>Información de pago</DialogTitle>
                     <DialogDescription>
