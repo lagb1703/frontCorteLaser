@@ -81,7 +81,7 @@ function CarouselSection() {
     const [api, setApi] = useState<any>(null)
     const [current, setCurrent] = useState(0)
     const [count, setCount] = useState(0)
-    const [visibleCount, setVisibleCount] = useState(1)
+    const [_, setVisibleCount] = useState(1)
 
     useEffect(() => {
         if (!api) {
@@ -91,8 +91,6 @@ function CarouselSection() {
         const updateCarousel = () => {
             const snapList = api.scrollSnapList()
             const slideSize = api.slideNodes().length
-
-            // Calcular cuántas imágenes se muestran actualmente
             const visibleSlides = Math.ceil(slideSize / Math.max(1, Math.ceil(slideSize / snapList.length)))
             setVisibleCount(visibleSlides)
             setCount(snapList.length)
@@ -109,7 +107,7 @@ function CarouselSection() {
     }, [api])
 
     return (
-        <div className="flex justify-center w-full flex-col items-center gap-4">
+        <div className="flex justify-center w-full flex-col items-center gap-0 lg:gap-4">
             <Carousel
                 opts={{
                     align: "center",
@@ -118,7 +116,7 @@ function CarouselSection() {
                 }}
                 setApi={setApi}
                 plugins={[plugin.current]}
-                className="w-full sm:h-[220px] md:h-[280px] lg:h-[350px]"
+                className="w-[300px] sm:w-full sm:h-[220px] md:h-[280px] lg:h-[350px]"
             >
                 <CarouselContent>
                     {carouselItems.map((item, index) => (
@@ -137,7 +135,7 @@ function CarouselSection() {
                     ))}
                 </CarouselContent>
             </Carousel>
-            <div className="flex gap-2 justify-center">
+            <div className="flex gap-2 justify-center mt-10 lg:mt-0">
                 {Array.from({ length: count }).map((_, index) => (
                     <button
                         key={index}
@@ -276,7 +274,7 @@ export default function AboutUs() {
                 <article
                     className="w-full flex flex-wrap flex-row p-5 justify-around items-center my-6 lg:my-0 lg:mb-10">
                     <div
-                        className="basis-1/3">
+                        className="basis-full lg:basis-1/3">
                         <h2 className="text-4xl lg:text-5xl mb-10 lg:mb-0">Nuestra Historia</h2>
                         <p
                             className="mt-0 mb-2.5 lg:p-[3%] rounded-4xl grid text-justify lg:text-[1.2vw]">
@@ -294,7 +292,7 @@ export default function AboutUs() {
                     </div>
                 </article>
             </section>
-            <section className="p-5">
+            <section className="p-0 lg:p-5">
                 <h2 className="text-2xl font-bold mb-4">Nuestros clientes</h2>
                 <CarouselSection />
             </section>
