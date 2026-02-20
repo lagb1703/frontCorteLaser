@@ -79,16 +79,16 @@ export default function Header({ user, token }: Props) {
                     }
                     <Button variant="ghost" asChild>
                         <Link to="/" className="text-lg font-semibold">
-                            <img 
-                                src="/Logo-hd-rgb.svg" 
-                                alt="Logo" 
+                            <img
+                                src="/Logo-hd-rgb.svg"
+                                alt="Logo"
                                 className="w-full h-40" />
                         </Link>
                     </Button>
 
                     <nav className="hidden sm:flex items-center gap-2">
 
-                        {(user && token) && (
+                        {(user && token) ? (
                             <>
                                 <Button variant="ghost" size="sm" asChild>
                                     <Link to="/update">Subir archivo</Link>
@@ -103,6 +103,10 @@ export default function Header({ user, token }: Props) {
                                     <Link to="/shapes" onClick={close}>Fabicar</Link>
                                 </Button>
                             </>
+                        ) : (
+                            <Button variant="ghost" size="sm" asChild>
+                                <Link to="/about-us" onClick={close}>Nosotros</Link>
+                            </Button>
                         )}
                     </nav>
                 </div>
