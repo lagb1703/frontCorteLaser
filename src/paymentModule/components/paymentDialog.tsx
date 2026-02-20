@@ -11,12 +11,18 @@ import {
 import { useWatch } from "react-hook-form"
 import {
     Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
 } from "@/components/ui/form"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useManageData } from "../hoocks"
 import PaymentChoice from "./paymentChoise"
 import { Label } from "@/components/ui/label"
 import type { ReferenceType } from "../validators/paymentValidators"
+import { Input } from "@/components/ui/input"
 
 type PaymentDialogProps = {
     isOpen: boolean
@@ -57,6 +63,53 @@ export default function PaymentDialog({ isOpen, onClose, items }: PaymentDialogP
                         paymentMethods={paymentMethods}
                         isLoadingPaymentMethods={isLoadingPaymentMethods}
                     />
+                    <div
+                        className="flex flex-col w-full">
+                        <FormLabel
+                            className="text-md font-semibold mb-1"
+                            >
+                                Datos de facturación
+                        </FormLabel>
+                        <FormField
+                            control={control}
+                            name="billing.name"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Nombre</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} value={field.value ?? ""} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={control}
+                            name="billing.email"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Correo electrónico</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} value={field.value ?? ""} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={control}
+                            name="billing.identification"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Identificacion</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} value={field.value ?? ""} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
                     <div
                         className="flex justify-between items-center mb-4"
                     >
