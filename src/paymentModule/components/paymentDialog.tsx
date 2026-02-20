@@ -48,7 +48,7 @@ export default function PaymentDialog({ isOpen, onClose, items }: PaymentDialogP
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <DialogContent
-                className="max-h-[600px] overflow-y-auto custom-scrollbar">
+                className="max-h-[520px] overflow-y-auto custom-scrollbar">
                 <DialogHeader>
                     <DialogTitle>Información de pago</DialogTitle>
                     <DialogDescription>
