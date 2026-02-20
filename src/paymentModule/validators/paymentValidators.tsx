@@ -1,5 +1,11 @@
 import { z } from "zod"
 
+export const billingSchema = z.object({
+    name: z.string(),
+    email: z.string().email(),
+    identification: z.string(),
+})
+
 export const paymentMethodSchema = z.object({
     id: z.union([z.number(), z.string()]).optional().nullable(),
     name: z.string(),
@@ -65,6 +71,8 @@ export const paymentTypeSchema = z.object({
     payment_method: paymentMethodWompiSchemaValidated,
     card: wompiTokenizerSchema.optional().nullable(),
     items: z.array(ReferenceTypeSchema).min(1),
+    billing: billingSchema,
+    address: z.string()
 }).superRefine((val, ctx) => {
     const type = typeof val.payment_method?.type === 'string' ? val.payment_method.type : String(val.payment_method?.type)
     if (type === 'CARD') {
