@@ -1,5 +1,4 @@
 import type { Control, UseFormSetValue, UseFormReset } from "react-hook-form"
-import { useWatch } from "react-hook-form"
 import type { PaymentType, PaymentMethodType } from "../validators/paymentValidators"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
@@ -12,7 +11,6 @@ import {
 } from "@/components/ui/form"
 import { useState } from "react"
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@radix-ui/react-label"
 interface Props {
@@ -25,15 +23,13 @@ interface Props {
 
 export default function PaymentChoice(
   {
-    reset,
     control,
     setValue,
     paymentMethods,
     isLoadingPaymentMethods
   }: Props
 ) {
-  const [isCreditCard, setIsCreditCard] = useState<boolean>(false) // null = unknown
-  const selectedType = useWatch({ control, name: "payment_method.type" }) as string | undefined
+  const [isCreditCard, setIsCreditCard] = useState<boolean>(false)
   if (isLoadingPaymentMethods) {
     return <div>Cargando métodos de pago...</div>
   }
