@@ -12,7 +12,7 @@ export default function UpdatePage() {
                 <div>
                     <p
                         className="text-center text-lg mt-4">
-                        Sube tus archivos en formato dxf para comenzar a cotizar tu proyecto de corte láser.
+                        Sube tus archivos en formato dxf o zip para comenzar a cotizar tu proyecto de corte láser.
                     </p>
                 </div>
             </div>
