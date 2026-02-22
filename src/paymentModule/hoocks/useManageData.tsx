@@ -18,6 +18,9 @@ export function useManageData({ items, onClose }: InputData) {
     const [departamentId, setDepartamentId] = useState<number | undefined>();
     const { data: cities } = useGetCitiesByDepartamentId(departamentId);
     const [cityId, setCityId] = useState<number | undefined>();
+    useEffect(() => {
+        setCityId(undefined);
+    }, [departamentId]);
     const navigate = useNavigate();
     const {
         data: paymentMethods, 
