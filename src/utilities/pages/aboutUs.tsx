@@ -155,7 +155,7 @@ export default function AboutUs() {
     const textRef = useRef<HTMLParagraphElement>(null);
     useEffect(() => {
         const typed = new Typed(textRef.current, {
-            strings: ['El <i>mejor</i> servicio.', 'Nuestro compromiso.'],
+            strings: ['<i>transformamos</i> metal.', 'creamos ideas.'],
             typeSpeed: 50,
             loop: true,
         });
@@ -209,7 +209,7 @@ export default function AboutUs() {
             <section
                 className="
                     w-full 
-                    flex flex-col md:flex-row justify-around flex-wrap gap-10 lg
+                    flex flex-col md:flex-row justify-around gap-10 lg
                     mt-8 p-5
                     ">
                 <Card
@@ -217,7 +217,7 @@ export default function AboutUs() {
                         basis-[40%] 
                         min-w-[100px] 
                         md:min-w-[500px] 
-                        md:min-h-[300px]
+                        sm:min-h-[350px]
                         transition-all duration-750
                         "
                     style={{
@@ -243,7 +243,7 @@ export default function AboutUs() {
                         basis-[40%] 
                         min-w-[200px] 
                         md:min-w-[500px] 
-                        md:min-h-[300px]
+                        sm:min-h-[350px]
                         transition-all duration-750"
                     style={{
                         border: `2px solid ${color}`,

@@ -76,7 +76,7 @@ export default function Header({ user, token }: Props) {
                         </div>
                     }
                     <Button variant="ghost" asChild>
-                        <Link to="/" className="text-lg font-semibold">
+                        <Link to="/" className="w-full max-w-[200px] text-lg font-semibold">
                             <img
                                 src="/Logo-hd-rgb.svg"
                                 alt="Logo"
