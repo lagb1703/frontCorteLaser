@@ -18,11 +18,21 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Checkbox } from "@/components/ui/checkbox"
-import { useManageData } from "../hoocks"
+import { useManageData, useGetDepartaments, useGetCitiesByDepartamentId } from "../hoocks"
 import PaymentChoice from "./paymentChoise"
 import { Label } from "@/components/ui/label"
 import type { ReferenceType } from "../validators/paymentValidators"
 import { Input } from "@/components/ui/input"
+import { Switch } from "@/components/ui/switch"
+import { useEffect, useState } from "react"
+import {
+    Combobox,
+    ComboboxContent,
+    ComboboxEmpty,
+    ComboboxInput,
+    ComboboxItem,
+    ComboboxList,
+} from "@/components/ui/combobox"
 
 type PaymentDialogProps = {
     isOpen: boolean
@@ -31,6 +41,10 @@ type PaymentDialogProps = {
 }
 
 export default function PaymentDialog({ isOpen, onClose, items }: PaymentDialogProps) {
+    const { data: departaments } = useGetDepartaments();
+    const [departamentId, setDepartamentId] = useState<number | undefined>();
+    const { data: cities } = useGetCitiesByDepartamentId(departamentId);
+    const [cityId, setCityId] = useState<number | undefined>();
     const {
         form,
         control,
@@ -43,6 +57,11 @@ export default function PaymentDialog({ isOpen, onClose, items }: PaymentDialogP
         isLoadingPaymentMethods,
         submitHandler,
     } = useManageData({ items, onClose });
+    const [isDirectionDisabled, setIsDirectionDisabled] = useState<boolean>(false);
+    useEffect(() => {
+        if (isDirectionDisabled)
+            setValue("address", "");
+    }, [isDirectionDisabled])
     const acceptance_token = useWatch({ control, name: "acceptance_token" }) as string
     const accept_personal_auth = useWatch({ control, name: "accept_personal_auth" }) as string
     return (
@@ -64,11 +83,11 @@ export default function PaymentDialog({ isOpen, onClose, items }: PaymentDialogP
                         isLoadingPaymentMethods={isLoadingPaymentMethods}
                     />
                     <div
-                        className="flex flex-col w-full">
+                        className="flex flex-col w-full gap-2">
                         <FormLabel
-                            className="text-md font-semibold mb-1"
-                            >
-                                Datos de facturación
+                            className="text-md font-semibold"
+                        >
+                            Datos de facturación
                         </FormLabel>
                         <FormField
                             control={control}
@@ -109,6 +128,85 @@ export default function PaymentDialog({ isOpen, onClose, items }: PaymentDialogP
                                 </FormItem>
                             )}
                         />
+                        <div
+                            className="mt-4">
+                            <div
+                                className="flex justify-start items-center gap-2 mb-2">
+                                <Switch
+                                    id="address-toggle"
+                                    checked={!!isDirectionDisabled}
+                                    onCheckedChange={(checked) => setIsDirectionDisabled(!!checked)}
+                                />
+                                <Label htmlFor="address-toggle" className="text-sm">
+                                    Recoger en la oficina
+                                </Label>
+                            </div>
+                            {!isDirectionDisabled && (
+                                <div
+                                    className="flex flex-col gap-2">
+                                    <Combobox
+                                        id="departament-combobox"
+                                        items={departaments?.map((d) => d.name) ?? []}
+                                        value={departaments?.find((d) => d.id === departamentId)?.name ?? ""}
+                                        onValueChange={
+                                            (value) => {
+                                                const selected = departaments?.find((d) => d.name === value);
+                                                setDepartamentId(selected?.id);
+                                            }
+                                        }
+                                    >
+                                        <ComboboxInput placeholder="Seleccionar departamento..." />
+                                        <ComboboxContent>
+                                            <ComboboxEmpty>No se encontraron departamentos</ComboboxEmpty>
+                                            <ComboboxList>
+                                                {(item) => (
+                                                    <ComboboxItem key={item} value={item}>
+                                                        {item}
+                                                    </ComboboxItem>
+                                                )}
+                                            </ComboboxList>
+                                        </ComboboxContent>
+                                    </Combobox>
+                                    <Combobox
+                                        id="cities-combobox"
+                                        items={cities?.map((d) => d.name) ?? []}
+                                        value={cities?.find((d) => d.id === cityId)?.name ?? ""}
+                                        onValueChange={
+                                            (value) => {
+                                                const selected = cities?.find((d) => d.name === value);
+                                                setCityId(selected?.id);
+                                            }
+                                        }
+                                    >
+                                        <ComboboxInput placeholder="Seleccionar ciudad..." />
+                                        <ComboboxContent>
+                                            <ComboboxEmpty>No se encontraron ciudades</ComboboxEmpty>
+                                            <ComboboxList>
+                                                {(item) => (
+                                                    <ComboboxItem key={item} value={item}>
+                                                        {item}
+                                                    </ComboboxItem>
+                                                )}
+                                            </ComboboxList>
+                                        </ComboboxContent>
+                                    </Combobox>
+                                    <FormField
+                                        control={control}
+                                        name="address"
+                                        disabled={!departamentId || !cityId}
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Dirección</FormLabel>
+                                                <FormControl>
+                                                    <Input {...field} value={field.value ?? ""} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                            )}
+                        </div>
                     </div>
                     <div
                         className="flex justify-between items-center mb-4"
@@ -146,7 +244,10 @@ export default function PaymentDialog({ isOpen, onClose, items }: PaymentDialogP
                         <Button
                             type="button"
                             onClick={form.handleSubmit(submitHandler)}
-                            disabled={!form.formState.isValid || form.formState.isSubmitting}
+                            disabled={
+                                !form.formState.isValid ||
+                                (form.getValues("address") === "" && !isDirectionDisabled) ||
+                                form.formState.isSubmitting}
                         >
                             Enviar pago
                         </Button>
