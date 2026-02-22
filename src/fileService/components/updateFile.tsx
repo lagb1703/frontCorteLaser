@@ -45,6 +45,10 @@ export default function UpdateFile() {
                 toast.error(error.message || "Failed to upload file", { id: toastId });
             }
         }
+        if (filesIds.length === 0) {
+            toast.error("No se pudieron procesar los archivos");
+            return;
+        }
         if (filesIds.length === 1) {
             setFilesIds([]);
             setTimeout(() => {
