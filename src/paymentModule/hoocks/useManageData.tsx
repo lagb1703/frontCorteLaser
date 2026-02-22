@@ -1,10 +1,10 @@
-import { useGetAcceptanceTokens, usePostPayment, useGetPaymentMethods } from "./"
+import { useGetAcceptanceTokens, usePostPayment, useGetPaymentMethods, useGetDepartaments, useGetCitiesByDepartamentId } from "./"
 import {paymentTypeSchema} from "../validators/paymentValidators";
 import type { PaymentType, ReferenceType } from "../validators/paymentValidators"
 import { useCallback } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router"
 import { toast } from "sonner"
 
@@ -14,6 +14,10 @@ interface InputData {
 }
 
 export function useManageData({ items, onClose }: InputData) {
+    const { data: departaments } = useGetDepartaments();
+    const [departamentId, setDepartamentId] = useState<number | undefined>();
+    const { data: cities } = useGetCitiesByDepartamentId(departamentId);
+    const [cityId, setCityId] = useState<number | undefined>();
     const navigate = useNavigate();
     const {
         data: paymentMethods, 
@@ -81,6 +85,13 @@ export function useManageData({ items, onClose }: InputData) {
         try {
             if(!data.payment_method?.installments)
                 data.payment_method.installments = 1;
+            if(data.address !== ""){
+                data.address = `
+                    ${cities?.find(c => c.id === cityId)?.name ?? ""}, 
+                    ${departaments?.find(d => d.id === departamentId)?.name ?? ""}
+                    ${data.address}
+                `;
+            }
             const toastId = toast.loading("Procesando el pago...");
             try{
                 await paymentMutation.mutateAsync({
@@ -120,5 +131,11 @@ export function useManageData({ items, onClose }: InputData) {
         paymentMethods,
         isLoadingPaymentMethods,
         submitHandler: submitHandler,
+        departaments,
+        cities,
+        departamentId,
+        setDepartamentId,
+        cityId,
+        setCityId,
     }
 }

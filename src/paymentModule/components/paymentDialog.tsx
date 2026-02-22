@@ -18,7 +18,7 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Checkbox } from "@/components/ui/checkbox"
-import { useManageData, useGetDepartaments, useGetCitiesByDepartamentId } from "../hoocks"
+import { useManageData } from "../hoocks"
 import PaymentChoice from "./paymentChoise"
 import { Label } from "@/components/ui/label"
 import type { ReferenceType } from "../validators/paymentValidators"
@@ -41,10 +41,6 @@ type PaymentDialogProps = {
 }
 
 export default function PaymentDialog({ isOpen, onClose, items }: PaymentDialogProps) {
-    const { data: departaments } = useGetDepartaments();
-    const [departamentId, setDepartamentId] = useState<number | undefined>();
-    const { data: cities } = useGetCitiesByDepartamentId(departamentId);
-    const [cityId, setCityId] = useState<number | undefined>();
     const {
         form,
         control,
@@ -56,6 +52,12 @@ export default function PaymentDialog({ isOpen, onClose, items }: PaymentDialogP
         paymentMethods,
         isLoadingPaymentMethods,
         submitHandler,
+        departaments,
+        cities,
+        departamentId,
+        setDepartamentId,
+        cityId,
+        setCityId,
     } = useManageData({ items, onClose });
     const [isDirectionDisabled, setIsDirectionDisabled] = useState<boolean>(false);
     useEffect(() => {
@@ -64,6 +66,7 @@ export default function PaymentDialog({ isOpen, onClose, items }: PaymentDialogP
     }, [isDirectionDisabled])
     const acceptance_token = useWatch({ control, name: "acceptance_token" }) as string
     const accept_personal_auth = useWatch({ control, name: "accept_personal_auth" }) as string
+    const address = useWatch({ control, name: "address" }) as string;
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <DialogContent
@@ -246,7 +249,7 @@ export default function PaymentDialog({ isOpen, onClose, items }: PaymentDialogP
                             onClick={form.handleSubmit(submitHandler)}
                             disabled={
                                 !form.formState.isValid ||
-                                (form.getValues("address") === "" && !isDirectionDisabled) ||
+                                (address === "" && !isDirectionDisabled) ||
                                 form.formState.isSubmitting}
                         >
                             Enviar pago
