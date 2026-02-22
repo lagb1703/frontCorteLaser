@@ -114,8 +114,8 @@ export default function HomePage() {
         <div>
             <main className="w-full h-screen flex items-center">
                 <h1 className={`text-9xl font-bold w-full flex justify-center items-center flex-wrap`} >
-                    <span className='basis-full lg:basis-auto text-center transition-colors duration-750' style={{ color }}>Corte</span>
-                    <span className='basis-full lg:basis-auto text-center'>Laser</span>
+                    <span className='basis-full lg:basis-auto text-center transition-colors duration-750' style={{ color }}>Metal</span>
+                    <span className='basis-full lg:basis-auto text-center'>Cortes</span>
                 </h1>
             </main>
             <section
