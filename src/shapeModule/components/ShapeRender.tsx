@@ -74,7 +74,16 @@ function InputShape({ parameter, scope, name }: InputShapeProps) {
         );
     }
     return (
-        <Input type="number" value={value} onChange={onChange} onClick={onClick} />
+        <div className="relative">
+            <Input
+                type="number"
+                value={String(value)}
+                onChange={onChange}
+                onClick={onClick}
+                className="pr-10"
+            />
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">mm</span>
+        </div>
     );
 }
 

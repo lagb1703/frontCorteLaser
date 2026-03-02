@@ -4,12 +4,12 @@ import { Link } from "react-router";
 export default function Shapes() {
     const { shapes } = useGetShape();
     return (
-        <section className="flex w-full flex-row flex-wrap justify-start items-start gap-4">
+        <section className="flex w-full flex-row flex-wrap justify-center md:justify-between gap-1">
             {shapes?.map((shape) => {
                 return (
                     <article
                         key={shape.shape.id}
-                        className="group relative overflow-hidden p-5 min-w-[300px] max-w-[1/4] rounded-xl border border-slate-200/80 bg-gradient-to-br from-white via-white to-slate-50 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-sky-200 hover:bg-sky-50/70 hover:shadow-lg"
+                        className="mb-3 md:mb-5 relative overflow-hidden p-5 min-w-[300px] max-w-[1/4] rounded-xl border border-slate-200/80 bg-linear-to-br from-white via-white to-slate-50 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-sky-200 hover:bg-sky-50/70 hover:shadow-lg"
                     >
                         <Link
                             to={`/shapes/${shape.shape.id}`}
