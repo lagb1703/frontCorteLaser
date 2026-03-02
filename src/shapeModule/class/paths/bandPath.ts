@@ -184,11 +184,11 @@ export class GapParameter extends Parameters {
         }
     }
 
-    min(scope?: paper.PaperScope): number {
+    min(_?: paper.PaperScope): number {
         return 0;
     }
 
-    max(scope?: paper.PaperScope): number {
+    max(_?: paper.PaperScope): number {
         return Infinity;
     }
 
