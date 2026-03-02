@@ -23,7 +23,8 @@ function DropDownMenuHeader({ user, token }: DropDownMenuHeaderProps) {
     const { logOut } = useLogOut();
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger asChild
+                className="hidden sm:block">
                 <Button size="sm" variant="outline">
                     Opciones
                 </Button>
@@ -66,17 +67,15 @@ export default function Header({ user, token }: Props) {
 
     return (
         <header className="w-full border-b bg-background">
-            <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-0 md:gap-4">
                 <div className="flex items-center gap-4">
-                    {user && token &&
-                        <div className="sm:hidden">
-                            <Button variant="ghost" size="sm" onClick={() => setOpen(true)} aria-label="Abrir menú">
-                                <Menu className="size-5" />
-                            </Button>
-                        </div>
-                    }
+                    <div className="sm:hidden">
+                        <Button variant="ghost" size="sm" onClick={() => setOpen(true)} aria-label="Abrir menú">
+                            <Menu className="size-5" />
+                        </Button>
+                    </div>
                     <Button variant="ghost" asChild>
-                        <Link to="/" className="w-full max-w-[200px] text-lg font-semibold">
+                        <Link to="/" className="w-full max-w-[100px] md:max-w-[200px] text-lg font-semibold">
                             <img
                                 src="/Logo-hd-rgb.svg"
                                 alt="Logo"
@@ -112,11 +111,23 @@ export default function Header({ user, token }: Props) {
                 <div className="flex items-center gap-2">
                     {(user && token) ? (
                         <>
-                            <Badge variant="secondary">{user.names ?? user.email}</Badge>
+                            <Badge
+                                className="hidden sm:block"
+                                variant="secondary">{user.names ?? user.email}</Badge>
                             <DropDownMenuHeader
                                 user={user}
                                 token={token}
                             />
+                            <Button
+                                className="block sm:hidden"
+                                variant="ghost" size="sm" asChild>
+                                <Link to="/files">Mis archivos</Link>
+                            </Button>
+                            <Button
+                                className="block sm:hidden"
+                                variant="ghost" size="sm" asChild>
+                                <Link to="/shapes">Fabicar</Link>
+                            </Button>
                         </>
                     ) : (
                         <div className="flex items-center gap-2">
@@ -138,7 +149,7 @@ export default function Header({ user, token }: Props) {
                         <div className="flex items-center justify-between mb-4">
                             <Button variant="ghost" size="sm" asChild>
                                 <Link to="/" onClick={close} className="text-lg font-semibold">
-                                    <img src="/Logo-hd-rgb.svg" alt="Logo" className="w-6 h-6 mr-2" />
+                                    <img src="/Logo-hd-rgb.svg" alt="Logo" className="w-20 h-20 mr-2" />
                                 </Link>
                             </Button>
                             <Button variant="ghost" size="sm" onClick={close} aria-label="Cerrar menú">
@@ -150,13 +161,19 @@ export default function Header({ user, token }: Props) {
                             {(user && token) && (
                                 <>
                                     <Button variant="ghost" size="sm" asChild>
+                                        <Link to="/user" onClick={close}>Perfil</Link>
+                                    </Button>
+                                    <Button variant="ghost" size="sm" asChild>
+                                        <Link to="/payments" onClick={close}>Mis pagos</Link>
+                                    </Button>
+                                    <Button variant="ghost" size="sm" asChild>
                                         <Link to="/update" onClick={close}>Subir archivo</Link>
                                     </Button>
                                     <Button variant="ghost" size="sm" asChild>
                                         <Link to="/files" onClick={close}>Mis archivos</Link>
                                     </Button>
                                     <Button variant="ghost" size="sm" asChild>
-                                        <Link to="/draw" onClick={close}>Fabicar</Link>
+                                        <Link to="/shapes" onClick={close}>Fabicar</Link>
                                     </Button>
                                 </>
                             )}
