@@ -154,6 +154,7 @@ function CarouselSection() {
 export default function AboutUs() {
     const color = useChangeColor();
     const textRef = useRef<HTMLParagraphElement>(null);
+    const SITE_URL = import.meta.env.VITE_SITE_URL ?? 'https://metal-cortes.example';
     useEffect(() => {
         const typed = new Typed(textRef.current, {
             strings: ['<i>transformamos</i> metal.', 'creamos ideas.'],
@@ -185,13 +186,13 @@ export default function AboutUs() {
                 <meta name="description" content="Metal Cortes: Más de 20 años en corte láser, mecanizado y transformación de metales. Calidad y tecnología para tus proyectos." />
                 <meta property="og:title" content="Metal Cortes — Nosotros" />
                 <meta property="og:description" content="Servicios de corte láser, cizalla, doblado, rolado y mecanizado. Asesoría experta y maquinaria de alta tecnología." />
-                <link rel="canonical" href="https://metal-cortes.example/nosotros" />
+                <link rel="canonical" href={`${SITE_URL}/nosotros`} />
                 <script type="application/ld+json">
                     {`{
                         "@context": "https://schema.org",
                         "@type": "Organization",
                         "name": "Metal Cortes",
-                        "url": "https://metal-cortes.example",
+                        "url": "${SITE_URL}",
                         "description": "Corte láser y transformación de metales"
                     }`}
                 </script>

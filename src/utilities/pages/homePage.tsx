@@ -111,6 +111,7 @@ export default function HomePage() {
         }
     }, [search, navigate]);
     const color = useChangeColor();
+    const SITE_URL = import.meta.env.VITE_SITE_URL ?? 'https://metal-cortes.example';
     return (
         <div>
             <Helmet>
@@ -118,7 +119,7 @@ export default function HomePage() {
                 <meta name="description" content="Metal Cortes: Corte láser de precisión, prototipado y producción. Servicios rápidos y de alta calidad para tus proyectos." />
                 <meta property="og:title" content="Metal Cortes — Inicio" />
                 <meta property="og:description" content="Corte láser de precisión, prototipado y producción. Servicios rápidos y de alta calidad." />
-                <link rel="canonical" href="https://metal-cortes.example/" />
+                <link rel="canonical" href={`${SITE_URL}/`} />
             </Helmet>
             <main className="w-full h-screen flex items-center">
                 <h1 className={`text-9xl font-bold w-full flex justify-center items-center flex-wrap`} >
