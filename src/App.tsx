@@ -14,7 +14,7 @@ const queryClient = new QueryClient()
 function App() {
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="system">
+    <ThemeProvider attribute="class" defaultTheme="light" forcedTheme="light">
       <QueryClientProvider client={queryClient}>
         <MultifileProvider>
           <AppRouter />
