@@ -97,7 +97,7 @@ export default function Header({ user, token }: Props) {
                                     <Link to="/draw">Dibujar</Link>
                                 </Button>
                                 <Button variant="ghost" size="sm" asChild>
-                                    <Link to="/shapes" onClick={close}>Fabicar</Link>
+                                    <Link to="/shapes" onClick={close}>Fabricar</Link>
                                 </Button>
                             </>
                         ) : (
@@ -126,7 +126,7 @@ export default function Header({ user, token }: Props) {
                             <Button
                                 className="block sm:hidden"
                                 variant="ghost" size="sm" asChild>
-                                <Link to="/shapes">Fabicar</Link>
+                                <Link to="/shapes">Fabricar</Link>
                             </Button>
                         </>
                     ) : (
@@ -173,7 +173,7 @@ export default function Header({ user, token }: Props) {
                                         <Link to="/files" onClick={close}>Mis archivos</Link>
                                     </Button>
                                     <Button variant="ghost" size="sm" asChild>
-                                        <Link to="/shapes" onClick={close}>Fabicar</Link>
+                                        <Link to="/shapes" onClick={close}>Fabricar</Link>
                                     </Button>
                                 </>
                             )}
