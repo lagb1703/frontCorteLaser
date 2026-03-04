@@ -4,6 +4,7 @@ import {
     CarouselContent,
     CarouselItem
 } from "@/components/ui/carousel"
+import { Helmet } from 'react-helmet-async'
 import { Card, CardContent } from "@/components/ui/card"
 import AutoPlay from "embla-carousel-autoplay"
 import { useRef, useState, useEffect } from 'react'
@@ -112,6 +113,13 @@ export default function HomePage() {
     const color = useChangeColor();
     return (
         <div>
+            <Helmet>
+                <title>Metal Cortes — Inicio</title>
+                <meta name="description" content="Metal Cortes: Corte láser de precisión, prototipado y producción. Servicios rápidos y de alta calidad para tus proyectos." />
+                <meta property="og:title" content="Metal Cortes — Inicio" />
+                <meta property="og:description" content="Corte láser de precisión, prototipado y producción. Servicios rápidos y de alta calidad." />
+                <link rel="canonical" href="https://metal-cortes.example/" />
+            </Helmet>
             <main className="w-full h-screen flex items-center">
                 <h1 className={`text-9xl font-bold w-full flex justify-center items-center flex-wrap`} >
                     <span className='basis-full lg:basis-auto text-center transition-colors duration-750' style={{ color }}>Metal</span>

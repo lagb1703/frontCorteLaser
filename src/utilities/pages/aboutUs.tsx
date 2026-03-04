@@ -4,6 +4,7 @@ import {
     CardContent,
     CardHeader
 } from "@/components/ui/card";
+import { Helmet } from 'react-helmet-async';
 import { useChangeColor } from '@/utilities/hooks/useChangeColor';
 import {
     Flag,
@@ -179,6 +180,22 @@ export default function AboutUs() {
     }, []);
     return (
         <TooltipProvider>
+            <Helmet>
+                <title>Metal Cortes — Nosotros</title>
+                <meta name="description" content="Metal Cortes: Más de 20 años en corte láser, mecanizado y transformación de metales. Calidad y tecnología para tus proyectos." />
+                <meta property="og:title" content="Metal Cortes — Nosotros" />
+                <meta property="og:description" content="Servicios de corte láser, cizalla, doblado, rolado y mecanizado. Asesoría experta y maquinaria de alta tecnología." />
+                <link rel="canonical" href="https://metal-cortes.example/nosotros" />
+                <script type="application/ld+json">
+                    {`{
+                        "@context": "https://schema.org",
+                        "@type": "Organization",
+                        "name": "Metal Cortes",
+                        "url": "https://metal-cortes.example",
+                        "description": "Corte láser y transformación de metales"
+                    }`}
+                </script>
+            </Helmet>
             <main
                 className="
                     w-full md:p-5 
