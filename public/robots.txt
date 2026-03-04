@@ -1,0 +1,16 @@
+# robots.txt for Metal Cortes
+# Block crawlers from admin routes
+
+User-agent: *
+Disallow: /material
+Disallow: /thickness
+Disallow: /mt
+Disallow: /price
+Disallow: /adminFiles
+
+# Allow everything else
+Allow: /
+
+# Sitemap (si tu sitemap está en la raíz puede ser relativo)
+# Para usar URL absoluta, copia .env.example -> .env y ajusta VITE_SITE_URL
+Sitemap: /sitemap.xml
