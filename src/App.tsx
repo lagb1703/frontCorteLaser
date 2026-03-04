@@ -7,6 +7,7 @@ import {
 import { ThemeProvider } from 'next-themes'
 import { Toaster } from '@/components/ui/sonner'
 import BackgroundParticles from "./utilities/components/backgroundParticles";
+import { FloatingWhatsApp } from 'react-floating-whatsapp'
 
 const queryClient = new QueryClient()
 
@@ -21,6 +22,14 @@ function App() {
         <Toaster />
         <BackgroundParticles />
       </QueryClientProvider>
+      <FloatingWhatsApp {...{
+        phoneNumber: '+573174431932',
+        accountName: 'Metal Cortes',
+        avatar: '/whatsAppLogo.png',
+        darkMode: false,
+        statusMessage: 'Transformamos metal. Creamos ideas',
+        chatMessage: 'Hola, ¿en qué podemos ayudarte?',
+      }} />
     </ThemeProvider>
   )
 }
