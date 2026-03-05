@@ -66,6 +66,8 @@ export default function QuoterPage() {
           thicknesses={thicknesses || []}
           amount={amount!}
           price={priceData.price}
+          area={priceData.area}
+          perimeter={priceData.perimeter}
         />
       )}
       <div
