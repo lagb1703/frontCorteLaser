@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && node scripts/generate-sitemap.js",
     "generate-sitemap": "node scripts/generate-sitemap.js",
     "build:grammar": "peggy src/costModule/parser/price.peggy --format es --output src/costModule/parser/pricing-parser.js",
     "lint": "eslint .",
