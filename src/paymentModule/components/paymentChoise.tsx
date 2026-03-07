@@ -100,7 +100,15 @@ export default function PaymentChoice(
                       <FormItem>
                         <FormLabel>Mes de vencimiento</FormLabel>
                         <FormControl>
-                          <Input {...field} value={field.value ?? ""} />
+                          <Input
+                            {...field}
+                            value={field.value ?? ""}
+                            inputMode="numeric"
+                            onChange={(e) => {
+                              const v = e.target.value.replace(/\D/g, "").slice(0, 2)
+                              field.onChange(String(Math.min(Math.max(Number(v), 0), 12)))
+                            }}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -113,7 +121,15 @@ export default function PaymentChoice(
                       <FormItem>
                         <FormLabel>Año de vencimiento</FormLabel>
                         <FormControl>
-                          <Input {...field} value={field.value ?? ""} />
+                          <Input
+                            {...field}
+                            value={field.value ?? ""}
+                            inputMode="numeric"
+                            onChange={(e) => {
+                              const v = e.target.value.replace(/\D/g, "").slice(0, 2)
+                              field.onChange(v)
+                            }}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
