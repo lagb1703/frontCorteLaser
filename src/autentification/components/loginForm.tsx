@@ -95,10 +95,10 @@ export default function LoginForm() {
                 {/* {loginGoogleQuery.isError && (
                         <p className="text-sm text-red-600">Error Google: {String(loginGoogleQuery.error?.message)}</p>
                     )} */}
-                <div>
+                {/* <div>
                     <p
                         className="text-xs">Google icon by Icons8</p>
-                </div>
+                </div> */}
             </form>
         </Form>
     )
