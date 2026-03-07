@@ -10,7 +10,7 @@ import AutoPlay from "embla-carousel-autoplay"
 import { useRef, useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router';
 import { FetchWapper } from '../fecth';
-
+// import CarouselProducts from '../components/carouselProducts';
 
 const carouselItems = [
     {
@@ -127,6 +127,16 @@ export default function HomePage() {
                     <span className='basis-full lg:basis-auto text-center'>Cortes</span>
                 </h1>
             </main>
+            {/* <section
+                className='w-full flex flex-wrap flex-row p-5 justify-around items-center my-6 lg:my-0 lg:mb-10'>
+                <video width={"300px"} className="rounded" autoPlay muted controls={false} loop>
+                    <source src="/carouselProductos/Secuencia 01.mp4" type="video/mp4"></source>
+                </video>
+                <article
+                    className='basis-2/4 h-full'>
+                    <CarouselProducts/>
+                </article>
+            </section> */}
             <section
                 className="w-full flex flex-wrap flex-row p-5 justify-around items-center my-6 lg:my-0 lg:mb-10">
                 <div
