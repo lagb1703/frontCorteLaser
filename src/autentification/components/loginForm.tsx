@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { useNavigate } from "react-router"
-import { Link } from "react-router"
+// import { Link } from "react-router"
 
 export default function LoginForm() {
     const navigate = useNavigate()
@@ -87,11 +87,11 @@ export default function LoginForm() {
 
                 <hr className="my-3" />
 
-                <Link to={`${import.meta.env.VITE_API_BASE_URL}/auth/login/google`} className="flex flex-col sm:flex-row sm:justify-between gap-2">
+                {/* <Link to={`${import.meta.env.VITE_API_BASE_URL}/auth/login/google`} className="flex flex-col sm:flex-row sm:justify-between gap-2">
                     <Button type="button" className="basis-full h-8 py-5 text-sm w-full sm:w-auto">
                         <img src="/googleIcon/google-48.png" alt="Google Icon" className="w-5 h-5 mr-2 inline-block align-middle" />
                     </Button>
-                </Link>
+                </Link> */}
                 {/* {loginGoogleQuery.isError && (
                         <p className="text-sm text-red-600">Error Google: {String(loginGoogleQuery.error?.message)}</p>
                     )} */}
