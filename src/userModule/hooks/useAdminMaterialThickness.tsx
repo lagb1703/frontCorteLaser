@@ -35,7 +35,7 @@ export function useAdminMaterialThickness() {
     const handleAddThickness = useCallback(async (thickness: Thickness | string) => {
         if (materialId !== null) {
             const thicknessId = typeof thickness === 'string' ? JSON.parse(thickness).thicknessId : thickness.thicknessId;
-            await addMaterialThickness.mutateAsync({ materialId, thicknessId: thicknessId, speed: 0 });
+            await addMaterialThickness.mutateAsync({ materialId, thicknessId: thicknessId, speed: 0, price: 0 });
             setTimeout(() => {
                 refetchLinked();
                 refetchUnlinked();
