@@ -42,8 +42,12 @@ export const variables: CollapsibleItem[] = [{
   symbol: "amount",
 },
 {
-  title: "speed",
+  title: "velocidad",
   symbol: "speed",
+},
+{
+  title: "precio Material glosor",
+  symbol: "mtPrice",
 },
 {
   title: "number",

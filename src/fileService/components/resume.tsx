@@ -59,17 +59,20 @@ export default function Resume({ materialId, thicknessId, materials, thicknesses
                         </div>
                     </div>
                     <div>
-                        <p className="text-sm text-muted-foreground">Area</p>
-                        <p className="font-medium">{area?fmt(area):"No especificado"}</p>
-                        <div className="mt-2">
-                            <p className="text-sm text-muted-foreground">Perimetro</p>
-                            <Badge variant="secondary">{perimeter!=null?fmt(perimeter):"No especificado"}</Badge>
+                        <p className="text-sm text-muted-foreground">Precio material espesura</p>
+                        <p className="font-medium">{thickness?.mtPrice ?? "No especificado"}</p>
+                        <div>
+                            <p className="text-sm text-muted-foreground">Cantidad</p>
+                            <p className="font-medium">{amount ?? "No especificado"}</p>
                         </div>
                     </div>
-
                     <div>
-                        <p className="text-sm text-muted-foreground">Cantidad</p>
-                        <p className="font-medium">{amount ?? "No especificado"}</p>
+                        <p className="text-sm text-muted-foreground">Area</p>
+                        <p className="font-medium">{area ? fmt(area) : "No especificado"}</p>
+                        <div className="mt-2">
+                            <p className="text-sm text-muted-foreground">Perimetro</p>
+                            <Badge variant="secondary">{perimeter != null ? fmt(perimeter) : "No especificado"}</Badge>
+                        </div>
                     </div>
                 </div>
 
