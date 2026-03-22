@@ -139,6 +139,17 @@ export class MaterialService {
         return;
     }
 
+    public async changePriceMaterialThickness(materialId: string | number, thicknessId: string | number, price: number): Promise<void>{
+        const result = await this.fetchWrapper.send(`/material/mt/${materialId}/${thicknessId}/price?price=${price}`, {
+            method: 'PATCH'
+        });
+        if (result.status !== 200 && result.status !== 204) {
+            const text = await result.json().catch(() => '');
+            throw new Error(`Error updating material-thickness speed: ${result.status} ${text}`);
+        }
+        return;
+    }
+
     public async deleteMaterialThickness(materialId: string | number, thicknessId: string | number): Promise<void>{
         const result = await this.fetchWrapper.send(`/material/mt/${materialId}/${thicknessId}`, {
             method: 'DELETE'

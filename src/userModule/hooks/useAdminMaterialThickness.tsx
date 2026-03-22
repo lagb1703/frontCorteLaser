@@ -3,7 +3,8 @@ import {
     useGetThicknessNoLinkedToMaterialId,
     useAddMaterialThickness,
     useDeleteMaterialThickness,
-    useChangeSpeedMaterialThickness
+    useChangeSpeedMaterialThickness,
+    useChangePriceMaterialThickness
 } from "@/materialModule/hooks";
 import { useState, useEffect, useCallback } from "react";
 import { type Thickness } from "@/materialModule/validators/thicknessValidators";
@@ -18,6 +19,7 @@ export function useAdminMaterialThickness() {
     const { data: thicknessesLinked, refetch: refetchLinked } = useGetThicknessByMaterialId(materialId ?? 0);
     const { data: thicknessesUnlinked, refetch: refetchUnlinked } = useGetThicknessNoLinkedToMaterialId(materialId ?? 0);
     const changeSpeedMaterialThickness = useChangeSpeedMaterialThickness();
+    const changePriceMaterialThickness = useChangePriceMaterialThickness();
     useEffect(() => {
         if (thicknessesLinked) {
             const linked = thicknessesLinked.map(thickness => JSON.stringify(thickness));
@@ -47,7 +49,6 @@ export function useAdminMaterialThickness() {
             toast.error("La velocidad debe ser mayor a 0");
             return;
         }
-        console.log("Changing speed for materialId:", materialId, "thicknessId:", thicknessId, "to speed:", speed);
         const id = toast.loading("Cambiando velocidad...");
         try {
             await changeSpeedMaterialThickness.mutateAsync({ materialId, thicknessId, speed });
@@ -56,6 +57,21 @@ export function useAdminMaterialThickness() {
             toast.error("Error al cambiar la velocidad", { id });
         }
     }, [changeSpeedMaterialThickness, materialId]);
+    const handleChangePrice = useCallback(async (thicknessId: string | number, price: number) => {
+        if (materialId === null)
+            return
+        if(price <= 0){
+            toast.error("La velocidad debe ser mayor a 0");
+            return;
+        }
+        const id = toast.loading("Cambiando velocidad...");
+        try {
+            await changePriceMaterialThickness.mutateAsync({ materialId, thicknessId, price });
+            toast.success("Precio cambiado correctamente", { id });
+        } catch (e) {
+            toast.error("Error al cambiar el Precio", { id });
+        }
+    }, [changePriceMaterialThickness, materialId]);
     const handleDeleteThickness = useCallback(async (thickness: Thickness | string) => {
         if (materialId !== null) {
             const thicknessId = typeof thickness === 'string' ? JSON.parse(thickness).thicknessId : thickness.thicknessId;
@@ -74,5 +90,6 @@ export function useAdminMaterialThickness() {
         handleAddThickness,
         handleDeleteThickness,
         handleChangeSpeed,
+        handleChangePrice
     };
 }

@@ -31,18 +31,20 @@ import { Input } from "@/components/ui/input";
 interface ItemProps {
     id: string | number;
     changeSpeed?: (thicknessId: string | number, speed: number) => void;
+    changePrice?: (thicknessId: string | number, speed: number) => void;
 }
 
-const Item = React.memo(function Item({ id, changeSpeed }: ItemProps) {
+const Item = React.memo(function Item({ id, changeSpeed, changePrice }: ItemProps) {
     const thickness = useMemo(() => JSON.parse(id as string) as Thickness, [id]);
     const [speed, setSpeed] = useState<number>(thickness.speed ?? 1);
+    const [price, setPrice] = useState<number>(thickness.mtPrice ?? 1);
     return (
         <Card>
             <CardHeader className="text-center w-full">
                 {thickness.name}
             </CardHeader>
             {
-                changeSpeed ? (
+                (changeSpeed && changePrice) ? (
                     <>
                         <CardContent className="flex flex-col gap-2">
                             <div>Velocidad: </div>
@@ -56,12 +58,25 @@ const Item = React.memo(function Item({ id, changeSpeed }: ItemProps) {
                                 }}
                             />
                         </CardContent>
+                        <CardContent className="flex flex-col gap-2">
+                            <div>Precio: </div>
+                            <Input
+                                type="number"
+                                value={price}
+                                onChange={(e) => {
+                                    const newPrice = Number(e.target.value);
+                                    if(newPrice <= 0) return;
+                                    setPrice(newPrice);
+                                }}
+                            />
+                        </CardContent>
                         <CardFooter className="text-center w-full">
                             <Button 
                                 variant="default" 
                                 className="w-full"
                                 onClick={() => {
                                     changeSpeed(thickness.thicknessId!, speed);
+                                    changePrice(thickness.thicknessId!, price);
                                 }}
                                 >
                                 Guardar
@@ -77,9 +92,10 @@ const Item = React.memo(function Item({ id, changeSpeed }: ItemProps) {
 interface SortableItemProps {
     id: string;
     changeSpeed?: (thicknessId: string | number, speed: number) => void;
+    changePrice?: (thicknessId: string | number, speed: number) => void;
 }
 
-const SortableItem = React.memo(function SortableItem({ id, changeSpeed }: SortableItemProps) {
+const SortableItem = React.memo(function SortableItem({ id, changeSpeed, changePrice }: SortableItemProps) {
     const {
         attributes,
         listeners,
@@ -95,7 +111,7 @@ const SortableItem = React.memo(function SortableItem({ id, changeSpeed }: Sorta
 
     return (
         <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-            <Item id={id} changeSpeed={changeSpeed} />
+            <Item id={id} changeSpeed={changeSpeed} changePrice={changePrice}/>
         </div>
     );
 });
@@ -104,9 +120,10 @@ interface ContainerProps {
     id: string;
     items: string[];
     changeSpeed?: (thicknessId: string | number, speed: number) => void;
+    changePrice?: (thicknessId: string | number, speed: number) => void;
 }
 
-function Container({ id, items, changeSpeed }: ContainerProps) {
+function Container({ id, items, changeSpeed, changePrice }: ContainerProps) {
     const { setNodeRef } = useDroppable({ id });
     return (
         <SortableContext id={id} items={items} strategy={verticalListSortingStrategy}>
@@ -119,7 +136,7 @@ function Container({ id, items, changeSpeed }: ContainerProps) {
                 </CardHeader>
                 <CardContent ref={setNodeRef} className="bg-[#fafafa] p-2">
                     {items.map((itemId) => (
-                        <SortableItem key={itemId} id={itemId} changeSpeed={changeSpeed} />
+                        <SortableItem key={itemId} id={itemId} changeSpeed={changeSpeed} changePrice={changePrice} />
                     ))}
                 </CardContent>
             </Card>
@@ -140,6 +157,7 @@ export default function ThicknessMaterialList() {
         unlinkedThicknesses,
         handleAddThickness,
         handleChangeSpeed,
+        handleChangePrice,
         handleDeleteThickness
     } = useAdminMaterialThickness();
     useEffect(() => {
@@ -197,7 +215,7 @@ export default function ThicknessMaterialList() {
                         </CardContent>
                     </Card>
                 </div>
-                <Container id={"mt"} items={items["mt"]} changeSpeed={handleChangeSpeed} />
+                <Container id={"mt"} items={items["mt"]} changeSpeed={handleChangeSpeed} changePrice={handleChangePrice}/>
                 <Container id={"thickness"} items={items["thickness"]} />
                 <DragOverlay>{activeId ? <Item id={activeId} /> : null}</DragOverlay>
             </DndContext>

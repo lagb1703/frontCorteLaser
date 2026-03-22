@@ -12,3 +12,4 @@ export * from "./useDeleteMaterialThickness";
 export * from "./useAddMaterialThickness";
 export * from "./useGetThicknessNoLinkedToMaterialId";
 export * from "./useChangeSpeedMaterialThickness";
+export * from "./useChangePriceMaterialThickness"

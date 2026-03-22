@@ -5,6 +5,7 @@ export const thicknessSchema = z.object({
     name: z.string(),
     price: z.number().int().min(0),
     speed: z.number().int().min(0).optional().nullable(),
+    mtPrice: z.number().int().min(0).optional().nullable(),
     lastModification: z.string().optional().nullable(),
 })
 
