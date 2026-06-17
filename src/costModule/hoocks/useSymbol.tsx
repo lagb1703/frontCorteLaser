@@ -2,16 +2,18 @@ import { useState, useEffect, type Dispatch, type SetStateAction } from "react";
 import { Leaf } from "../class/tree";
 import type { Node } from "../interfaces";
 
-
-export function useSymbol(item: Leaf, root: Node, setRoot: Dispatch<SetStateAction<Node | null>>) {
-    const [symbol, setSymbol] = useState<string>(item.symbol);
-    useEffect(() => {
-        if(!root) return;
-        // eslint-disable-next-line react-hooks/immutability
-        item.symbol = symbol;
-        const newRoot = Object.create(Object.getPrototypeOf(root));
-        Object.assign(newRoot, root);
-        setRoot(newRoot);
-    }, [symbol, item]);
-    return { symbol, setSymbol };
+export function useSymbol(
+  item: Leaf,
+  root: Node,
+  setRoot: Dispatch<SetStateAction<Node | null>>,
+) {
+  const [symbol, setSymbol] = useState<string>(item.symbol);
+  useEffect(() => {
+    if (!root) return;
+    Object.assign(item, { symbol });
+    const newRoot = Object.create(Object.getPrototypeOf(root));
+    Object.assign(newRoot, root);
+    setRoot(newRoot);
+  }, [symbol, item, root, setRoot]);
+  return { symbol, setSymbol };
 }
