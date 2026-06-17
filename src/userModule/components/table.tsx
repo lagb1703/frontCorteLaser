@@ -222,7 +222,7 @@ export function ItemTable<T extends FieldValues>({ data, idName, form, spanishNa
             ),
         },
         ...keys.map((k) => {
-            let key = String(k);
+            const key = String(k);
             if (key === idName) return null;
             return {
                 accessorKey: key,

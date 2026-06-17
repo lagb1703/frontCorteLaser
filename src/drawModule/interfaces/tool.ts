@@ -1,4 +1,3 @@
-import _ from 'paper';
 import { DrawService } from '../service/drawService';
 
 export interface ToolInterface {

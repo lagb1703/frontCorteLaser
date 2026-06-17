@@ -7,6 +7,7 @@ export function useSymbol(item: Leaf, root: Node, setRoot: Dispatch<SetStateActi
     const [symbol, setSymbol] = useState<string>(item.symbol);
     useEffect(() => {
         if(!root) return;
+        // eslint-disable-next-line react-hooks/immutability
         item.symbol = symbol;
         const newRoot = Object.create(Object.getPrototypeOf(root));
         Object.assign(newRoot, root);

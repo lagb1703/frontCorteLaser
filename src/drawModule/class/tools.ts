@@ -139,7 +139,7 @@ export class RectangleTool implements ToolInterface {
             }
         };
 
-        this.tool.onMouseUp = (_: paper.ToolEvent) => {
+        this.tool.onMouseUp = () => {
             this.path = null;
         };
     }
@@ -251,7 +251,7 @@ export class CircleTool implements ToolInterface {
             }
         };
 
-        this.tool.onMouseUp = (_: paper.ToolEvent) => {
+        this.tool.onMouseUp = () => {
             this.path = null;
         };
     }

@@ -99,7 +99,7 @@ export function useDraw() {
                 // a.click();
                 // a.remove();
                 // window.URL.revokeObjectURL(url);
-            } catch (error) {
+            } catch {
                 toast.error('Error al exportar el DXF.', { id });
             }
         }

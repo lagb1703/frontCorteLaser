@@ -1,5 +1,5 @@
 import type { Parameters } from "./../class/paths/parameters";
-import _ from "paper";
+
 
 export interface Path {
     id: string;

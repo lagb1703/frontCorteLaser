@@ -52,7 +52,7 @@ export function useAdminMaterialThickness() {
         try {
             await changeSpeedMaterialThickness.mutateAsync({ materialId, thicknessId, speed });
             toast.success("Velocidad cambiada correctamente", { id });
-        } catch (e) {
+        } catch {
             toast.error("Error al cambiar la velocidad", { id });
         }
     }, [changeSpeedMaterialThickness, materialId]);

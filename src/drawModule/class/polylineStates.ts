@@ -43,7 +43,7 @@ export class InitPolylineState implements ToolState {
                     });
                     polylineTool.path = new paper.Path({
                         segments: [closestPoint],
-                        strokeColor: drawService.getLayer() ? drawService.getLayer().strokeColor : 'black',
+                        strokeColor: drawService.getLayer()?.strokeColor ?? 'black',
                         selected: true
                     });
                     return;
@@ -58,7 +58,7 @@ export class InitPolylineState implements ToolState {
         });
         polylineTool.path = new paper.Path({
             segments: [event.point],
-            strokeColor: drawService.getLayer() ? drawService.getLayer().strokeColor : 'black',
+            strokeColor: drawService.getLayer()?.strokeColor ?? 'black',
             selected: true
         });
         return;
@@ -205,7 +205,7 @@ export class EndPolylineState implements ToolState {
                 }
                 if (closestSegment) {
                     polylineTool.ghostPath = new paper.Path({
-                        segments: [polylineTool.path?.lastSegment.point!, closestSegment.point],
+                        segments: [polylineTool.path?.lastSegment.point, closestSegment.point].filter((p): p is paper.Point => p != null),
                         strokeColor: 'gray',
                         dashArray: [4, 4],
                         selected: false
@@ -217,9 +217,9 @@ export class EndPolylineState implements ToolState {
         let ghostPath = polylineTool.ghostPath;
         ghostPath?.remove();
         const startPoint = polylineTool.path?.firstSegment.point;
-        if (startPoint && event.point.getDistance(startPoint) < 20 && polylineTool.path!.segments.length > 2) {
+        if (startPoint && event.point.getDistance(startPoint) < 20 && (polylineTool.path?.segments.length ?? 0) > 2) {
             ghostPath = new paper.Path({
-                segments: [polylineTool.path?.lastSegment.point!, startPoint],
+                segments: [polylineTool.path?.lastSegment.point, startPoint].filter((p): p is paper.Point => p != null),
                 strokeColor: 'gray',
                 dashArray: [4, 4],
                 selected: true
@@ -228,7 +228,7 @@ export class EndPolylineState implements ToolState {
             return;
         }
         ghostPath = new paper.Path({
-            segments: [polylineTool.path?.lastSegment.point!, event.point],
+            segments: [polylineTool.path?.lastSegment.point, event.point].filter((p): p is paper.Point => p != null),
             strokeColor: 'gray',
             dashArray: [4, 4],
             selected: true

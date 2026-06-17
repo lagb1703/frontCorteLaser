@@ -95,12 +95,12 @@ export class SecondClickSemiCircleState implements ToolState {
             context.selectedItem = null;
         }
     }
-    onMouseDown(event: paper.ToolEvent, _: DrawService): void {
+    onMouseDown(event: paper.ToolEvent, _drawService: DrawService): void {
         const semicircleTool = this.context as SemicircleTool;
         semicircleTool.points[1] = event.point;
     }
 
-    onMouseMove(_: paper.ToolEvent, __: DrawService): void {
+    onMouseMove(_event: paper.ToolEvent, _drawService: DrawService): void {
         
     }
 

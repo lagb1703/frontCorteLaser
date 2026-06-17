@@ -1,7 +1,7 @@
 import type { Path } from "@/shapeModule/interfaces";
 import { BasicPath } from "./basicPath";
 import { Parameters } from "../paths/parameters";
-import _ from "paper";
+
 
 export class CircumferencePath extends BasicPath {
     constructor(id: string, cords: (number | "start" | "center" | "end")[], radius: number, parent: BasicPath | null = null) {
@@ -41,7 +41,7 @@ export class RadiusParameter extends Parameters {
         super(value, path);
     }
 
-    min(_?: paper.PaperScope): number {
+    min(_scope?: paper.PaperScope): number {
         return 1;
     }
 

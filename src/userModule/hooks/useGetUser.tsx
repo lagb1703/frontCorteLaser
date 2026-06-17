@@ -13,7 +13,7 @@ export function useGetUser(): UseQueryResult<User | null, Error> {
         queryFn: () => {
             try{
                 return userService.current.getUser();
-            }catch (error){
+            }catch {
                 return null;
             }
         },
