@@ -8,12 +8,13 @@ import {
   DragOverlay,
   type DragStartEvent,
   type DragEndEvent,
-  pointerWithin
+  pointerWithin,
 } from "@dnd-kit/core";
-import {
-  sortableKeyboardCoordinates,
-} from "@dnd-kit/sortable";
-import SelectionList, { ItemCard, variables, operations } from "./selectionList";
+import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import SelectionList, {
+  ItemCard,
+} from "./selectionList";
+import { variables, operations } from "../constants";
 import Container, { Variable, OperatorOverlay } from "./container";
 import { useSematicalTree, useGetSemanticalTree } from "../hoocks";
 import type { CollapsibleItem, Node } from "../interfaces";
@@ -33,9 +34,16 @@ function AstToNode(ast: ASTNode): Node {
     return AstToNode(newNode);
   }
   switch (ast.type) {
-    case "BinaryExpression":
-      const nridad = ast.operator === "/" || ast.operator === "**" || ast.operator === "%" || ast.operator === "//" ? 2 : "*";
+    case "BinaryExpression": {
+      const nridad =
+        ast.operator === "/" ||
+        ast.operator === "**" ||
+        ast.operator === "%" ||
+        ast.operator === "//"
+          ? 2
+          : "*";
       return new Composite(ast.operator, ast.operator, nridad);
+    }
     case "UnaryExpression":
       return new Composite(ast.operator, ast.operator, 1);
     case "CallExpression":
@@ -48,9 +56,11 @@ function AstToNode(ast: ASTNode): Node {
 }
 
 export default function PriceCalculatorChange() {
-  const [activeSidebarItem, setActiveSidebarItem] = useState<CollapsibleItem | null>(null);
+  const [activeSidebarItem, setActiveSidebarItem] =
+    useState<CollapsibleItem | null>(null);
   const [activeNode, setActiveNode] = useState<Node | null>(null);
-  const { root, setRoot, addNewNode, moveNode, deleteNode, getSematicalTree } = useSematicalTree();
+  const { root, setRoot, addNewNode, moveNode, deleteNode, getSematicalTree } =
+    useSematicalTree();
   const { data: priceCalculator } = useGetPriceCalculator();
   const { root: semanticalRoot } = useGetSemanticalTree(priceCalculator || "");
   const { isOpen, open, close } = useOpenClose();
@@ -103,7 +113,7 @@ export default function PriceCalculatorChange() {
       }
     }
     setRoot(newRoot);
-  }, [semanticalRoot]);
+  }, [semanticalRoot, setRoot]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -112,15 +122,17 @@ export default function PriceCalculatorChange() {
       },
     }),
     useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates
-    })
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
   );
 
   function handleDragStart(event: DragStartEvent) {
     const { active } = event;
     const activeId = active.id as string;
 
-    const sidebarItem = [...variables, ...operations].find(i => i.title === activeId);
+    const sidebarItem = [...variables, ...operations].find(
+      (i) => i.title === activeId,
+    );
     if (sidebarItem) {
       setActiveSidebarItem(sidebarItem);
       setActiveNode(null);
@@ -149,9 +161,17 @@ export default function PriceCalculatorChange() {
       return;
     }
     const overId = over.id as string;
-    const sidebarItem = [...variables, ...operations].find(i => i.title === activeId);
+    const sidebarItem = [...variables, ...operations].find(
+      (i) => i.title === activeId,
+    );
     if (sidebarItem) {
-      const newNode = sidebarItem.nridad ? new Composite(sidebarItem.symbol, sidebarItem.title, sidebarItem.nridad!) : new Leaf(sidebarItem.symbol, sidebarItem.title);
+      const newNode = sidebarItem.nridad
+        ? new Composite(
+            sidebarItem.symbol,
+            sidebarItem.title,
+            sidebarItem.nridad!,
+          )
+        : new Leaf(sidebarItem.symbol, sidebarItem.title);
 
       if (overId === "canvas-area") {
         addNewNode(newNode, "");
@@ -183,24 +203,40 @@ export default function PriceCalculatorChange() {
             <SelectionList />
           </div>
           <div className="basis-full lg:basis-[70%]">
-            <Container id="canvas-area" item={root} setRoot={setRoot}/>
+            <Container id="canvas-area" item={root} setRoot={setRoot} />
           </div>
         </section>
         <DragOverlay>
           {activeSidebarItem ? <ItemCard item={activeSidebarItem} /> : null}
           {activeNode && root ? (
-            activeNode instanceof Leaf ? <Variable item={activeNode} root={root} setRoot={setRoot} /> : <OperatorOverlay item={activeNode} root={root} setRoot={setRoot} />
+            activeNode instanceof Leaf ? (
+              <Variable item={activeNode} root={root} setRoot={setRoot} />
+            ) : (
+              <OperatorOverlay
+                item={activeNode}
+                root={root}
+                setRoot={setRoot}
+              />
+            )
           ) : null}
         </DragOverlay>
       </DndContext>
-      <div
-        className="w-full flex justify-center lg:justify-end lg:p-10">
-        <Button className="mt-4 p-7" onClick={() => {
-          console.log("New Expression:", getSematicalTree());
-          open();
-        }}>Guardar Cambios</Button>
+      <div className="w-full flex justify-center lg:justify-end lg:p-10">
+        <Button
+          className="mt-4 p-7"
+          onClick={() => {
+            console.log("New Expression:", getSematicalTree());
+            open();
+          }}
+        >
+          Guardar Cambios
+        </Button>
       </div>
-      <ConfirmDialog isOpen={isOpen} onClose={close} newExpression={getSematicalTree()} />
+      <ConfirmDialog
+        isOpen={isOpen}
+        onClose={close}
+        newExpression={getSematicalTree()}
+      />
     </div>
   );
 }
