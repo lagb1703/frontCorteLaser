@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/carousel"
 import { Card, CardContent } from "@/components/ui/card"
 import AutoPlay from "embla-carousel-autoplay"
-import { useRef, useState, useEffect } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router';
 import { FetchWapper } from '../fecth';
 
@@ -30,9 +30,9 @@ const carouselItems = [
 ]
 
 function CarouselSection() {
-    const plugin = useRef(
-        new (AutoPlay as any)({ delay: 3000, stopOnInteraction: true })
-    )
+    const plugin = useMemo(
+        () => AutoPlay({ delay: 3000, stopOnInteraction: true })
+    , [])
     const [api, setApi] = useState<any>(null)
     const [current, setCurrent] = useState(0)
     const [count, setCount] = useState(0)
@@ -58,7 +58,7 @@ function CarouselSection() {
                     slidesToScroll: 1,
                 }}
                 setApi={setApi}
-                plugins={[plugin.current]}
+                plugins={[plugin]}
                 className="w-full lg:max-w-[800px] lg:h-[550px]"
             >
                 <CarouselContent>
