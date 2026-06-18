@@ -28,6 +28,13 @@ export default defineConfig([
           caughtErrorsIgnorePattern: "^_",
         },
       ],
+      "react-hooks/incompatible-library": "off",
+    },
+  },
+  {
+    files: ["**/index.ts", "**/index.tsx"],
+    rules: {
+      "react-refresh/only-export-components": "off",
     },
   },
 ]);

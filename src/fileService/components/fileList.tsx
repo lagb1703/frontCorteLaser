@@ -81,14 +81,10 @@ export default function FileList({
                   (r.original as unknown as { id: string | number })["id"],
                 ),
               );
-            if (value) selectedIds.push(String((row.original as any)["id"]));
+            if (value) selectedIds.push(String(row.original["id"]));
             else
               selectedIds.splice(
-                selectedIds.indexOf(
-                  String(
-                    (row.original as any as { id: string | number })["id"],
-                  ),
-                ),
+                selectedIds.indexOf(String(row.original["id"])),
                 1,
               );
             setFilesIds(selectedIds);
@@ -118,7 +114,7 @@ export default function FileList({
       id: "see",
       enableHiding: false,
       cell: ({ row }) => {
-        const id = (row.original as any)["id"] as string;
+        const id = String(row.original["id"]);
         return (
           <Button size="sm" variant="ghost" onClick={() => setFileId(id)}>
             Ver
@@ -130,7 +126,7 @@ export default function FileList({
       id: "delete",
       enableHiding: false,
       cell: ({ row }) => {
-        const id = (row.original as any)["id"] as string;
+        const id = String(row.original["id"]);
         return (
           <Button
             size="sm"
@@ -236,9 +232,7 @@ export default function FileList({
                         key={row.id}
                         data-state={row.getIsSelected() && "selected"}
                         className={
-                          (row.original as any)["id"] == fileId
-                            ? "bg-muted"
-                            : ""
+                          row.original["id"] == fileId ? "bg-muted" : ""
                         }
                       >
                         {row.getVisibleCells().map((cell) => (

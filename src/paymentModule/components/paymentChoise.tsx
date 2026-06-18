@@ -1,6 +1,9 @@
-import type { Control, UseFormSetValue, UseFormReset } from "react-hook-form"
-import { useWatch } from "react-hook-form"
-import type { PaymentType, PaymentMethodType } from "../validators/paymentValidators"
+import type { Control, UseFormSetValue, UseFormReset } from "react-hook-form";
+import { useWatch } from "react-hook-form";
+import type {
+  PaymentType,
+  PaymentMethodType,
+} from "../validators/paymentValidators";
 import {
   FormControl,
   FormDescription,
@@ -8,35 +11,35 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { useState } from "react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "@radix-ui/react-label"
+} from "@/components/ui/form";
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@radix-ui/react-label";
 interface Props {
-  reset: UseFormReset<PaymentType>
-  control: Control<PaymentType>
-  setValue: UseFormSetValue<PaymentType>
-  paymentMethods: Array<PaymentMethodType> | undefined
-  isLoadingPaymentMethods: boolean
+  reset: UseFormReset<PaymentType>;
+  control: Control<PaymentType>;
+  setValue: UseFormSetValue<PaymentType>;
+  paymentMethods: Array<PaymentMethodType> | undefined;
+  isLoadingPaymentMethods: boolean;
 }
 
-export default function PaymentChoice(
-  {
-    reset,
-    control,
-    setValue,
-    paymentMethods,
-    isLoadingPaymentMethods
-  }: Props
-) {
-  const [isCreditCard, setIsCreditCard] = useState<boolean>(false) // null = unknown
-  const selectedType = useWatch({ control, name: "payment_method.type" }) as string | undefined
+export default function PaymentChoice({
+  reset,
+  control,
+  setValue,
+  paymentMethods,
+  isLoadingPaymentMethods,
+}: Props) {
+  const [isCreditCard, setIsCreditCard] = useState<boolean>(false); // null = unknown
+  const selectedType = useWatch({ control, name: "payment_method.type" }) as
+    | string
+    | undefined;
   if (isLoadingPaymentMethods) {
-    return <div>Cargando métodos de pago...</div>
+    return <div>Cargando métodos de pago...</div>;
   }
-  const paymentMethodsList = paymentMethods || []
+  const paymentMethodsList = paymentMethods || [];
 
   return (
     <>
@@ -44,14 +47,16 @@ export default function PaymentChoice(
         control={control}
         name="payment_method.type"
         render={({ field }) => (
-            <FormItem className="space-y-3">
+          <FormItem className="space-y-3">
             <FormLabel>Seleccionar método de pago</FormLabel>
             <FormControl>
               <div className="flex gap-2">
                 {paymentMethodsList.map((method: PaymentMethodType) => (
                   <Button
                     key={method.id}
-                    variant={field.value === method.name ? "default" : "outline"}
+                    variant={
+                      field.value === method.name ? "default" : "outline"
+                    }
                     className="justify-start"
                     onClick={() => {
                       reset();
@@ -156,8 +161,7 @@ export default function PaymentChoice(
               </FormItem>
             )}
           />
-          <div
-            className="flex justify-between items-center">
+          <div className="flex justify-between items-center">
             <div>
               <Checkbox
                 id="checkbox-credit-card"
@@ -191,8 +195,11 @@ export default function PaymentChoice(
                       step={1}
                       value={field.value ?? ""}
                       onChange={(e) => {
-                        const v = e.target.value === "" ? undefined : Number(e.target.value)
-                        field.onChange(v as any)
+                        const v =
+                          e.target.value === ""
+                            ? undefined
+                            : Number(e.target.value);
+                        field.onChange(v);
                       }}
                     />
                   </FormControl>
@@ -204,5 +211,5 @@ export default function PaymentChoice(
         </>
       )}
     </>
-  )
+  );
 }

@@ -1,55 +1,68 @@
-import { useGetAllUserFile, useDeleteFile, useGetFile, useGetFileMetadata } from "./";
+import {
+  useGetAllUserFile,
+  useDeleteFile,
+  useGetFile,
+  useGetFileMetadata,
+} from "./";
 import { useState, useCallback } from "react";
 import { toast } from "sonner";
 
-
 export function useChoiseFile() {
-    const [fileId, setFileId] = useState<string | number | null>(null);
-    const { refetch: refetchFileMetadata } = useGetFileMetadata(fileId!);
-    const { data: files, isLoading: isLoadingFiles, refetch: refetchUserFiles } = useGetAllUserFile();
-    const choiseFile = useCallback((id: string | number) => {
-        setFileId(id);
-    }, []);
-    const file = files?.find(f => f.id === fileId) || null;
-    const deleteMutation = useDeleteFile();
-    const handleDeleteFile = useCallback(async (fileId: string | number | null) => {
-        if (fileId === null) return;
-        if (file?.id == fileId) {
-            setFileId(null);
-        }
-        await deleteMutation.mutateAsync(fileId);
-        await refetchUserFiles();
-    }, [deleteMutation, refetchUserFiles, file]);
-    const { refetch } = useGetFile(fileId!);
-    const downloadFile = useCallback(async () => {
-        if (fileId === null) return;
-        const toastId = toast.loading("Descargando archivo...");
-        try {
-
-            const result = await refetch();
-            if (!result.data) return;
-            const metadata = await refetchFileMetadata();
-            if (!metadata.data) return;
-            const url = window.URL.createObjectURL(result.data);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = metadata.data.name || `${fileId}.dxf`;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            window.URL.revokeObjectURL(url);
-            toast.success("Archivo descargado", { id: toastId });
-        } catch (error: any) {
-            toast.error(error.message || "Error al descargar el archivo", { id: toastId });
-        }
-    }, [fileId, refetch, refetchFileMetadata]);
-    return {
-        fileId,
-        files,
-        choiseFile,
-        file,
-        handleDeleteFile,
-        isLoadingFiles,
-        downloadFile,
-    };
+  const [fileId, setFileId] = useState<string | number | null>(null);
+  const { refetch: refetchFileMetadata } = useGetFileMetadata(fileId!);
+  const {
+    data: files,
+    isLoading: isLoadingFiles,
+    refetch: refetchUserFiles,
+  } = useGetAllUserFile();
+  const choiseFile = useCallback((id: string | number) => {
+    setFileId(id);
+  }, []);
+  const file = files?.find((f) => f.id === fileId) || null;
+  const deleteMutation = useDeleteFile();
+  const handleDeleteFile = useCallback(
+    async (fileId: string | number | null) => {
+      if (fileId === null) return;
+      if (file?.id == fileId) {
+        setFileId(null);
+      }
+      await deleteMutation.mutateAsync(fileId);
+      await refetchUserFiles();
+    },
+    [deleteMutation, refetchUserFiles, file],
+  );
+  const { refetch } = useGetFile(fileId!);
+  const downloadFile = useCallback(async () => {
+    if (fileId === null) return;
+    const toastId = toast.loading("Descargando archivo...");
+    try {
+      const result = await refetch();
+      if (!result.data) return;
+      const metadata = await refetchFileMetadata();
+      if (!metadata.data) return;
+      const url = window.URL.createObjectURL(result.data);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = metadata.data.name || `${fileId}.dxf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+      toast.success("Archivo descargado", { id: toastId });
+    } catch (error: unknown) {
+      if (error instanceof Error)
+        toast.error(error.message || "Error al descargar el archivo", {
+          id: toastId,
+        });
+    }
+  }, [fileId, refetch, refetchFileMetadata]);
+  return {
+    fileId,
+    files,
+    choiseFile,
+    file,
+    handleDeleteFile,
+    isLoadingFiles,
+    downloadFile,
+  };
 }
