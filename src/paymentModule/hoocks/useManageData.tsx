@@ -105,53 +105,36 @@ export function useManageData({ items, onClose }: InputData) {
   const submitHandler = useCallback(
     async (data: PaymentType) => {
       try {
-        if (!data.payment_method?.installments)
-          data.payment_method.installments = 1;
+        if(!data.payment_method?.installments)
+            data.payment_method.installments = 1;
+        if(data.address !== ""){
+            data.address = `
+                ${cities?.find(c => c.id === cityId)?.name ?? ""}, 
+                ${departaments?.find(d => d.id === departamentId)?.name ?? ""}
+                ${data.address}
+            `;
+        }
         const toastId = toast.loading("Procesando el pago...");
         try{
-            if(!data.payment_method?.installments)
-                data.payment_method.installments = 1;
-            if(data.address !== ""){
-                data.address = `
-                    ${cities?.find(c => c.id === cityId)?.name ?? ""}, 
-                    ${departaments?.find(d => d.id === departamentId)?.name ?? ""}
-                    ${data.address}
-                `;
-            }
-            const toastId = toast.loading("Procesando el pago...");
-            try{
-                await paymentMutation.mutateAsync({
-                    ...data
-                });
-                toast.success("Pago realizado con éxito", { id: toastId });
-                onClose();
-                navigate("/payments");
-            }catch(e){
-                console.error("Payment error:", e);
-                toast.error("Error al procesar el pago", { id: toastId });
-            }
-        } catch (error) {
-            console.error("Payment submission error:", error);
-        }finally {
-            refetchAcceptanceTokens();
-            setValue("acceptance_token", "", { shouldValidate: true, shouldDirty: true });
-            setValue("accept_personal_auth", "", { shouldValidate: true, shouldDirty: true });
+            await paymentMutation.mutateAsync({
+                ...data
+            });
+            toast.success("Pago realizado con éxito", { id: toastId });
+            onClose();
+            navigate("/payments");
+        }catch(e){
+            console.error("Payment error:", e);
+            toast.error("Error al procesar el pago", { id: toastId });
         }
       } catch (error) {
         console.error("Payment submission error:", error);
       } finally {
         refetchAcceptanceTokens();
-        setValue("acceptance_token", "", {
-          shouldValidate: true,
-          shouldDirty: true,
-        });
-        setValue("accept_personal_auth", "", {
-          shouldValidate: true,
-          shouldDirty: true,
-        });
+        setValue("acceptance_token", "", { shouldValidate: true, shouldDirty: true });
+        setValue("accept_personal_auth", "", { shouldValidate: true, shouldDirty: true });
       }
     },
-    [paymentMutation, onClose, refetchAcceptanceTokens, navigate, setValue],
+    [paymentMutation, onClose, refetchAcceptanceTokens, navigate, setValue, cities, departaments, cityId, departamentId],
   );
 
   useEffect(() => {

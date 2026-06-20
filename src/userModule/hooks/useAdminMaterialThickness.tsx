@@ -6,7 +6,7 @@ import {
     useChangeSpeedMaterialThickness,
     useChangePriceMaterialThickness
 } from "@/materialModule/hooks";
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { type Thickness } from "@/materialModule/validators/thicknessValidators";
 import { toast } from "sonner";
 

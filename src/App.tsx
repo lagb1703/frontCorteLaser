@@ -1,5 +1,5 @@
 import { AppRouter } from "./core/routing";
-import { MultifileProvider } from "./utilities/global/multifileContext";
+import { MultifileProvider } from "./utilities/global/multifileProvider";
 import {
   QueryClient,
   QueryClientProvider,
