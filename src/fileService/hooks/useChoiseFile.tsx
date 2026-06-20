@@ -18,7 +18,7 @@ export function useChoiseFile() {
   const choiseFile = useCallback((id: string | number) => {
     setFileId(id);
   }, []);
-  const file = files?.find((f) => f.id === fileId) || null;
+  const file = files?.find((f) => f.id == fileId) || null;
   const deleteMutation = useDeleteFile();
   const handleDeleteFile = useCallback(
     async (fileId: string | number | null) => {
