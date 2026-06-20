@@ -10,7 +10,7 @@ export function useLogOut() {
         try {
             queryClient.getQueryCache().clear();
             queryClient.getMutationCache().clear();
-        } catch (e) {
+        } catch {
             // In case those methods are unavailable, ensure queries are removed
         }
         queryClient.removeQueries();

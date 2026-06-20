@@ -1,100 +1,102 @@
-import { useChangeColor } from '@/utilities/hooks/useChangeColor';
+import { useChangeColor } from "@/utilities/hooks/useChangeColor";
 import {
     Carousel,
     CarouselContent,
-    CarouselItem
+    CarouselItem,
+    type CarouselApi,
 } from "@/components/ui/carousel"
 import { Helmet } from 'react-helmet-async'
 import { Card, CardContent } from "@/components/ui/card"
 import AutoPlay from "embla-carousel-autoplay"
-import { useRef, useState, useEffect } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router';
 import { FetchWapper } from '../fecth';
 // import CarouselProducts from '../components/carouselProducts';
 
 const carouselItems = [
-    {
-        imageSrc: "/carousel/image1.webp",
-        altText: "Imagen de calidad",
-        text: "Acelere su proyecto. Proceso fluido, precisión incomparable, velocidad inmejorable. Convierta su diseño en realidad comenzando su viaje con nosotros hoy."
-    },
-    {
-        imageSrc: "/carousel/image2.webp",
-        altText: "Imagen de precisión",
-        text: "Corte láser de precisión. Nuestro equipo de expertos utiliza tecnología de vanguardia para ofrecer resultados precisos y de alta calidad."
-    },
-    {
-        imageSrc: "/carousel/image3.webp",
-        altText: "Imagen de velocidad",
-        text: "Corte láser de alta velocidad. Nuestro equipo de última generación nos permite ofrecer resultados rápidos sin comprometer la calidad."
-    }
-]
+  {
+    imageSrc: "/carousel/image1.webp",
+    altText: "Imagen de calidad",
+    text: "Acelere su proyecto. Proceso fluido, precisión incomparable, velocidad inmejorable. Convierta su diseño en realidad comenzando su viaje con nosotros hoy.",
+  },
+  {
+    imageSrc: "/carousel/image2.webp",
+    altText: "Imagen de precisión",
+    text: "Corte láser de precisión. Nuestro equipo de expertos utiliza tecnología de vanguardia para ofrecer resultados precisos y de alta calidad.",
+  },
+  {
+    imageSrc: "/carousel/image3.webp",
+    altText: "Imagen de velocidad",
+    text: "Corte láser de alta velocidad. Nuestro equipo de última generación nos permite ofrecer resultados rápidos sin comprometer la calidad.",
+  },
+];
 
 function CarouselSection() {
-    const plugin = useRef(
-        new (AutoPlay as any)({ delay: 3000, stopOnInteraction: true })
-    )
-    const [api, setApi] = useState<any>(null)
-    const [current, setCurrent] = useState(0)
-    const [count, setCount] = useState(0)
+  const plugin = useMemo(
+    () => AutoPlay({ delay: 3000, stopOnInteraction: true }),
+    [],
+  );
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+  const count = api?.scrollSnapList().length ?? 0;
 
-    useEffect(() => {
-        if (!api) {
-            return
-        }
+  useEffect(() => {
+    if (!api) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCurrent(api.selectedScrollSnap());
 
-        setCount(api.scrollSnapList().length)
-        setCurrent(api.selectedScrollSnap())
-
-        api.on("select", () => {
-            setCurrent(api.selectedScrollSnap())
-        })
-    }, [api])
-    return (
-        <div className="flex justify-center w-full flex-col items-center gap-4">
-            <Carousel
-                opts={{
-                    align: "center",
-                    loop: true,
-                    slidesToScroll: 1,
-                }}
-                setApi={setApi}
-                plugins={[plugin.current]}
-                className="w-full lg:max-w-[800px] lg:h-[550px]"
-            >
-                <CarouselContent>
-                    {carouselItems.map((item, index) => (
-                        <CarouselItem key={index}>
-                            <Card className="lg:w-[800px] lg:h-[550px]">
-                                <CardContent className='w-full h-full'>
-                                    <div className='w-full h-full flex justify-center items-center relative'>
-                                        <img
-                                            className='lg:max-h-[500px] object-contain brightness-50'
-                                            src={item.imageSrc}
-                                            alt={item.altText} />
-                                        <p className='absolute text-center text-[2vw] px-10 font-bold uppercase text-white'>
-                                            {item.text}
-                                        </p>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </CarouselItem>
-                    ))}
-                </CarouselContent>
-            </Carousel>
-            <div className="flex gap-2 justify-center">
-                {Array.from({ length: count }).map((_, index) => (
-                    <button
-                        key={index}
-                        className={`h-2 rounded-full transition-all ${index === current ? 'w-8 bg-red-600' : 'w-2 bg-gray-400'
-                            }`}
-                        onClick={() => api?.scrollTo(index)}
-                        aria-label={`Go to slide ${index + 1}`}
+    const handleSelect = () => {
+      setCurrent(api.selectedScrollSnap());
+    };
+    api.on("select", handleSelect);
+  }, [api]);
+  return (
+    <div className="flex justify-center w-full flex-col items-center gap-4">
+      <Carousel
+        opts={{
+          align: "center",
+          loop: true,
+          slidesToScroll: 1,
+        }}
+        setApi={setApi}
+        plugins={[plugin]}
+        className="w-full lg:max-w-[800px] lg:h-[550px]"
+      >
+        <CarouselContent>
+          {carouselItems.map((item, index) => (
+            <CarouselItem key={index}>
+              <Card className="lg:w-[800px] lg:h-[550px]">
+                <CardContent className="w-full h-full">
+                  <div className="w-full h-full flex justify-center items-center relative">
+                    <img
+                      className="lg:max-h-[500px] object-contain brightness-50"
+                      src={item.imageSrc}
+                      alt={item.altText}
                     />
-                ))}
-            </div>
-        </div>
-    )
+                    <p className="absolute text-center text-[2vw] px-10 font-bold uppercase text-white">
+                      {item.text}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+      </Carousel>
+      <div className="flex gap-2 justify-center">
+        {Array.from({ length: count }).map((_, index) => (
+          <button
+            key={index}
+            className={`h-2 rounded-full transition-all ${
+              index === current ? "w-8 bg-red-600" : "w-2 bg-gray-400"
+            }`}
+            onClick={() => api?.scrollTo(index)}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export default function HomePage() {

@@ -9,8 +9,8 @@ import { useNavigate } from "react-router"
 import { toast } from "sonner"
 
 interface InputData {
-    items: ReferenceType[]
-    onClose: () => void
+  items: ReferenceType[];
+  onClose: () => void;
 }
 
 export function useManageData({ items, onClose }: InputData) {
@@ -60,32 +60,55 @@ export function useManageData({ items, onClose }: InputData) {
     
     const { setValue, clearErrors, control } = form;
 
-    const setAcceptUserPolicy = useCallback((value: boolean) => {
-        if(!acceptancesTokens)
-            return;
-        if(value) {
-            setValue("acceptance_token", acceptancesTokens.presigned_acceptance.acceptance_token, { shouldValidate: true, shouldDirty: true })
-            return;
-        }
-        setValue("acceptance_token", "", { shouldValidate: true, shouldDirty: true });
-        clearErrors("acceptance_token")
-    }, [acceptancesTokens]);
+  const setAcceptUserPolicy = useCallback(
+    (value: boolean) => {
+      if (!acceptancesTokens) return;
+      if (value) {
+        setValue(
+          "acceptance_token",
+          acceptancesTokens.presigned_acceptance.acceptance_token,
+          { shouldValidate: true, shouldDirty: true },
+        );
+        return;
+      }
+      setValue("acceptance_token", "", {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+      clearErrors("acceptance_token");
+    },
+    [acceptancesTokens, clearErrors, setValue],
+  );
 
-    const setAcceptancePersonalDataAuth = useCallback((value: boolean) => {
-        if(!acceptancesTokens)
-            return;
-        if(value) {
-            setValue("accept_personal_auth", acceptancesTokens.presigned_personal_data_auth.acceptance_token, { shouldValidate: true, shouldDirty: true })
-            return;
-        }
-        setValue("accept_personal_auth", "", { shouldValidate: true, shouldDirty: true });
-        clearErrors("accept_personal_auth")
-    }, [acceptancesTokens]);
-    
-    const paymentMutation = usePostPayment();
+  const setAcceptancePersonalDataAuth = useCallback(
+    (value: boolean) => {
+      if (!acceptancesTokens) return;
+      if (value) {
+        setValue(
+          "accept_personal_auth",
+          acceptancesTokens.presigned_personal_data_auth.acceptance_token,
+          { shouldValidate: true, shouldDirty: true },
+        );
+        return;
+      }
+      setValue("accept_personal_auth", "", {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+      clearErrors("accept_personal_auth");
+    },
+    [acceptancesTokens, clearErrors, setValue],
+  );
 
-    const submitHandler = useCallback(async (data: PaymentType) => {
-        try {
+  const paymentMutation = usePostPayment();
+
+  const submitHandler = useCallback(
+    async (data: PaymentType) => {
+      try {
+        if (!data.payment_method?.installments)
+          data.payment_method.installments = 1;
+        const toastId = toast.loading("Procesando el pago...");
+        try{
             if(!data.payment_method?.installments)
                 data.payment_method.installments = 1;
             if(data.address !== ""){
@@ -114,14 +137,35 @@ export function useManageData({ items, onClose }: InputData) {
             setValue("acceptance_token", "", { shouldValidate: true, shouldDirty: true });
             setValue("accept_personal_auth", "", { shouldValidate: true, shouldDirty: true });
         }
-    }, [paymentMutation, onClose, refetchAcceptanceTokens]);
+      } catch (error) {
+        console.error("Payment submission error:", error);
+      } finally {
+        refetchAcceptanceTokens();
+        setValue("acceptance_token", "", {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+        setValue("accept_personal_auth", "", {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+      }
+    },
+    [paymentMutation, onClose, refetchAcceptanceTokens, navigate, setValue],
+  );
 
-    useEffect(() => {
-        if (!paymentMethods || paymentMethods.length === 0) return;
-        const first = paymentMethods[0];
-        setValue("paymentMethodId", first.id ?? 1, { shouldValidate: true, shouldDirty: true });
-        setValue("payment_method.type", first.name ?? "NEQUI", { shouldValidate: true, shouldDirty: true });
-    }, [paymentMethods, setValue]);
+  useEffect(() => {
+    if (!paymentMethods || paymentMethods.length === 0) return;
+    const first = paymentMethods[0];
+    setValue("paymentMethodId", first.id ?? 1, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+    setValue("payment_method.type", first.name ?? "NEQUI", {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+  }, [paymentMethods, setValue]);
 
     return {
         form,

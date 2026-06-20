@@ -40,7 +40,7 @@ export function useInfo() {
             try {
                 changeAddressMutation.mutate(data.address)
                 toast.success("Datos actualizados con éxito", { id: toastId });
-            } catch (error) {
+            } catch {
                 toast.error("Error al actualizar los datos");
             }
         },

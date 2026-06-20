@@ -1,6 +1,6 @@
 import { useSaveFile } from "../hooks";
 import { useNavigate } from "react-router";
-import { toast } from "sonner"
+import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { File as FileIcon } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";

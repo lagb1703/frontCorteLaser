@@ -19,7 +19,7 @@ export default function ConfirmDialog({ isOpen, onClose, newExpression }: { isOp
       toast.success("Calculadora de precios actualizada con éxito");
       refetch();
       onClose();
-    } catch (error) {
+    } catch {
       toast.error("Error al actualizar la calculadora de precios");
     }
   };

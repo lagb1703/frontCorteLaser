@@ -59,7 +59,7 @@ interface AlertDialogProps<T extends FieldValues> {
     close: () => void;
     toggle: () => void;
     setIsOpen: (isOpen: boolean) => void;
-    form?: UseFormReturn<T, any, T>;
+    form?: UseFormReturn<T, unknown, T>;
     excemptColumns?: (keyof T)[];
     spanishNames?: Record<string, string>;
     rowData?: Partial<T>;
@@ -67,7 +67,7 @@ interface AlertDialogProps<T extends FieldValues> {
     onConfirm: (() => Promise<void>) | ((data: Partial<T>) => Promise<void>);
     icon?: React.ReactNode;
     variant?: "default" | "destructive" | "outline" | "ghost";
-    status: any;
+    status: { isLoading?: boolean };
 }
 
 function DeleteAlertDialog<T extends FieldValues>({ isOpen, rowData, buttonName, icon, variant, close, toggle, onConfirm, status }: AlertDialogProps<T>) {
@@ -116,7 +116,7 @@ function SaveAlertDialog<T extends FieldValues>({ isOpen, excemptColumns, spanis
         if (isOpen && form && rowData) {
             keys.forEach((k) => {
                 const key = String(k);
-                form.setValue(key as Path<T>, rowData[key as keyof T] as any);
+                form.setValue(key as Path<T>, rowData[key as keyof T] as T[Path<T>]);
             })
         }
     }, [isOpen, form, rowData, keys]);
@@ -195,17 +195,135 @@ function SaveAlertDialog<T extends FieldValues>({ isOpen, excemptColumns, spanis
     );
 }
 
+function SaveCell<T extends FieldValues>({
+    row,
+    idName,
+    onEdit,
+    form,
+    excemptColumns,
+    spanishNames,
+}: {
+    row: { original: T };
+    idName: string;
+    onEdit: (id: number | null, data: T) => Promise<void>;
+    form?: UseFormReturn<T, unknown, T>;
+    excemptColumns?: (keyof T)[];
+    spanishNames?: Record<string, string>;
+}) {
+    const { isOpen, open, setIsOpen, toggle, close } = useOpenClose();
+    const data = row.original;
+    const onConfirm = useCallback(async (formData: Partial<T>) => {
+        await onEdit(data[idName as keyof T] as unknown as number, formData as T);
+    }, [data, idName, onEdit]);
+    return (
+        <div className="flex justify-end">
+            <SaveAlertDialog<T>
+                buttonName="Editar"
+                isOpen={isOpen}
+                form={form}
+                open={open}
+                setIsOpen={setIsOpen}
+                toggle={toggle}
+                close={close}
+                rowData={data}
+                excemptColumns={excemptColumns}
+                onConfirm={onConfirm}
+                spanishNames={spanishNames}
+                status={{ isLoading: false }}
+            />
+        </div>
+    );
+}
+
+function DeleteCell<T extends FieldValues>({
+    row,
+    idName,
+    onDelete,
+}: {
+    row: { original: T };
+    idName: string;
+    onDelete: (id: number | null) => Promise<void>;
+}) {
+    const { isOpen, open, toggle, setIsOpen, close } = useOpenClose();
+    const id = (row.original[idName as keyof T] as unknown as number) ?? null;
+    return (
+        <div className="flex justify-end">
+            <DeleteAlertDialog
+                buttonName="Eliminar"
+                isOpen={isOpen}
+                open={open}
+                setIsOpen={setIsOpen}
+                toggle={toggle}
+                close={close}
+                onConfirm={async () => {
+                    await onDelete(id);
+                }}
+                status={{ isLoading: false }}
+            />
+        </div>
+    );
+}
+
+function SaveNewHeader<T extends FieldValues>({
+    data,
+    onSave,
+    form,
+    excemptColumns,
+    spanishNames,
+}: {
+    data: T[];
+    onSave: (data: T) => Promise<void>;
+    form?: UseFormReturn<T, unknown, T>;
+    excemptColumns?: (keyof T)[];
+    spanishNames?: Record<string, string>;
+}) {
+    const { isOpen, open, toggle, setIsOpen, close } = useOpenClose();
+    const onConfirm = useCallback(async (formData: Partial<T>) => {
+        await onSave(formData as T);
+    }, [onSave]);
+    const keys = Object.keys(data[0] || {}) as (keyof T)[];
+    const d = {} as T;
+    keys.forEach((k) => {
+        const key = String(k);
+        if (typeof data[0][key] === "string") {
+            (d as Record<string, unknown>)[key] = "";
+            return;
+        }
+        (d as Record<string, unknown>)[key] = 0;
+    });
+    return (
+        <div className="flex justify-end">
+            <SaveAlertDialog<T>
+                buttonName=""
+                isOpen={isOpen}
+                open={open}
+                form={form}
+                setIsOpen={setIsOpen}
+                toggle={toggle}
+                close={close}
+                onConfirm={onConfirm}
+                excemptColumns={excemptColumns}
+                rowData={d}
+                icon={<Plus />}
+                variant="ghost"
+                spanishNames={spanishNames}
+                status={{ isLoading: false }}
+            />
+        </div>
+    );
+}
+
 interface TableProps<T extends FieldValues> {
     data: T[];
     idName: string;
-    form?: UseFormReturn<T, any, T>;
+    form?: UseFormReturn<T, unknown, T>;
     spanishNames?: Record<string, string>;
     excemptColumns?: (keyof T)[];
     useAdminData: (refect?: (() => void) | undefined) => {
         onSave: (data: T) => Promise<void>;
         onEdit: (id: number | null, data: T) => Promise<void>;
         onDelete: (id: number | null) => Promise<void>;
-        status: any;
+        status: { isLoading?: boolean };
     };
     refetch?: (() => void) | undefined;
 }
@@ -222,7 +340,7 @@ export function ItemTable<T extends FieldValues>({ data, idName, form, spanishNa
             ),
         },
         ...keys.map((k) => {
-            let key = String(k);
+            const key = String(k);
             if (key === idName) return null;
             return {
                 accessorKey: key,
@@ -241,95 +359,17 @@ export function ItemTable<T extends FieldValues>({ data, idName, form, spanishNa
     columns.push({
         id: "save",
         enableHiding: false,
-        cell: ({ row }: CellContext<T, unknown>) => {
-            const { isOpen, open, setIsOpen, toggle, close } = useOpenClose();
-            const data = row.original as any;
-            const onConfirm = useCallback(async (formData: Partial<T>) => {
-                await onEdit(data[idName], formData as T);
-            }, [data, idName]);
-            return (
-                <div className="flex justify-end">
-                    <SaveAlertDialog<T>
-                        buttonName="Editar"
-                        isOpen={isOpen}
-                        form={form}
-                        open={open}
-                        setIsOpen={setIsOpen}
-                        toggle={toggle}
-                        close={close}
-                        rowData={data}
-                        excemptColumns={excemptColumns}
-                        onConfirm={onConfirm}
-                        spanishNames={spanishNames}
-                        status={{ isLoading: false }}
-                    />
-                </div>
-            )
-        },
+        cell: ({ row }) => <SaveCell row={row} idName={idName} onEdit={onEdit} form={form} excemptColumns={excemptColumns} spanishNames={spanishNames} />,
     })
     columns.push({
         id: "delete",
         enableHiding: false,
-        cell: ({ row }) => {
-            const { isOpen, open, toggle, setIsOpen, close } = useOpenClose();
-            const id = (row.original as any)[idName] as number | null;
-            return (
-                <div className="flex justify-end">
-                    <DeleteAlertDialog
-                        buttonName="Eliminar"
-                        isOpen={isOpen}
-                        open={open}
-                        setIsOpen={setIsOpen}
-                        toggle={toggle}
-                        close={close}
-                        onConfirm={async () => {
-                            await onDelete(id);
-                        }}
-                        status={{ isLoading: false }}
-                    />
-                </div>
-            )
-        },
+        cell: ({ row }) => <DeleteCell row={row} idName={idName} onDelete={onDelete} />,
     });
     columns.push({
         id: "saveNew",
         enableHiding: false,
-        header: () => {
-            const { isOpen, open, toggle, setIsOpen, close } = useOpenClose();
-            const onConfirm = useCallback(async (data: Partial<T>) => {
-                await onSave(data as T);
-            }, []);
-            const keys = Object.keys(data[0] || {}) as (keyof T)[];
-            const d = {} as T;
-            keys.forEach((k) => {
-                const key = String(k);
-                if (typeof data[0][key] === "string") {
-                    (d as any)[key] = "";
-                    return;
-                }
-                (d as any)[key] = 0;
-            });
-            return (
-                <div className="flex justify-end">
-                    <SaveAlertDialog<T>
-                        buttonName=""
-                        isOpen={isOpen}
-                        open={open}
-                        form={form}
-                        setIsOpen={setIsOpen}
-                        toggle={toggle}
-                        close={close}
-                        onConfirm={onConfirm}
-                        excemptColumns={excemptColumns}
-                        rowData={d}
-                        icon={<Plus />}
-                        variant="ghost"
-                        spanishNames={spanishNames}
-                        status={{ isLoading: false }}
-                    />
-                </div>
-            )
-        },
+        header: () => <SaveNewHeader data={data} onSave={onSave} form={form} excemptColumns={excemptColumns} spanishNames={spanishNames} />,
         cell: () => null,
     });
     const [sorting, setSorting] = useState<SortingState>([])

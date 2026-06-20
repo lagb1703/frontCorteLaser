@@ -1,10 +1,9 @@
 import { DrawService } from "../service/drawService";
-import { useRef, useEffect, useCallback, useState } from "react";
+import { useRef, useEffect, useCallback, useState, useMemo } from "react";
 import { useSaveFile } from "@/fileService/hooks";
 import { useNavigate } from "react-router";
 import { toast } from 'sonner';
 import { v4 } from "uuid";
-import type { ToolInterface } from "../interfaces";
 import {
     ZoomTool,
     PanTool,
@@ -21,7 +20,7 @@ export function useDraw() {
     const navigate = useNavigate();
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const drawService = useRef<DrawService | null>(null);
-    const toolsRef = useRef<Record<string, ToolInterface>>({
+    const tools = useMemo(() => ({
         zoom: new ZoomTool(),
         pan: new PanTool(),
         rectangle: new RectangleTool(),
@@ -31,7 +30,7 @@ export function useDraw() {
         polyline: new PolylineTool(),
         semicircle: new SemicircleTool(),
         eraser: new EraserTool()
-    });
+    }), []);
     const [toolName, setToolName] = useState("");
     const [showGrid, setShowGrid] = useState(false);
     const saveFile = useSaveFile();
@@ -39,7 +38,7 @@ export function useDraw() {
         let resizeObserver: ResizeObserver;
         if (canvasRef.current) {
             drawService.current = new DrawService(canvasRef.current);
-            drawService.current.setUp(toolsRef.current);
+            drawService.current.setUp(tools);
             const handleResize = () => {
                 const canvas = canvasRef.current;
                 const service = drawService.current;
@@ -71,7 +70,7 @@ export function useDraw() {
                 drawService.current.destroy();
             }
         };
-    }, [canvasRef]);
+    }, [canvasRef, tools]);
     useEffect(() => {
         if (drawService.current && toolName) {
             drawService.current.setTool(toolName);
@@ -99,11 +98,11 @@ export function useDraw() {
                 // a.click();
                 // a.remove();
                 // window.URL.revokeObjectURL(url);
-            } catch (error) {
+            } catch {
                 toast.error('Error al exportar el DXF.', { id });
             }
         }
-    }, [drawService, saveFile]);
+    }, [drawService, saveFile, navigate]);
 
     const toggleGrid = useCallback((checked: boolean) => {
         setShowGrid(checked);
@@ -117,7 +116,7 @@ export function useDraw() {
         toolName,
         setToolName,
         save,
-        tools: toolsRef.current,
+        tools,
         drawService,
         showGrid,
         toggleGrid

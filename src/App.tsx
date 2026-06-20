@@ -10,10 +10,9 @@ import { Toaster } from '@/components/ui/sonner'
 import BackgroundParticles from "./utilities/components/backgroundParticles";
 import { FloatingWhatsApp } from 'react-floating-whatsapp'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 
 function App() {
-
   return (
     <HelmetProvider>
       <ThemeProvider attribute="class" defaultTheme="light" forcedTheme="light">
@@ -37,4 +36,4 @@ function App() {
   )
 }
 
-export default App
+export default App;

@@ -1,5 +1,7 @@
+/// <reference types="vitest" />
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import react, { reactCompilerPreset } from '@vitejs/plugin-react'
+import babel from '@rolldown/plugin-babel'
 import path from "path"
 import tailwindcss from '@tailwindcss/vite'
 
@@ -7,15 +9,24 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [
     tailwindcss(),
-    react({
-      babel: {
-        plugins: [['babel-plugin-react-compiler']],
-      },
+    react(),
+    babel({
+      presets: [reactCompilerPreset()],
     }),
   ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/setupTests.ts',
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html', 'lcov'],
+      exclude: ['node_modules/', 'src/setupTests.ts', '**/*.d.ts', '**/*.config.*'],
     },
   },
 })

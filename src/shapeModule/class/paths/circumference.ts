@@ -1,7 +1,7 @@
 import type { Path } from "@/shapeModule/interfaces";
 import { BasicPath } from "./basicPath";
 import { Parameters } from "../paths/parameters";
-import _ from "paper";
+
 
 export class CircumferencePath extends BasicPath {
     redLine: paper.Path | null = null;

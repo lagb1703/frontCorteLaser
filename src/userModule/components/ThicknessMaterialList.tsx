@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import {
     DndContext,
     KeyboardSensor,
@@ -145,10 +145,6 @@ function Container({ id, items, changeSpeed, changePrice }: ContainerProps) {
 }
 
 export default function ThicknessMaterialList() {
-    const [items, setItems] = useState<Record<string, string[]>>({
-        mt: [],
-        thickness: [],
-    });
     const { data: materials, isLoading } = useGetMaterials();
     const {
         materialId,
@@ -160,11 +156,21 @@ export default function ThicknessMaterialList() {
         handleChangePrice,
         handleDeleteThickness
     } = useAdminMaterialThickness();
+    const [items, setItems] = useState<Record<string, string[]>>({
+        mt: linkedThicknesses,
+        thickness: unlinkedThicknesses,
+    });
+    const prevLinkedRef = useRef(linkedThicknesses);
+    const prevUnlinkedRef = useRef(unlinkedThicknesses);
     useEffect(() => {
-        setItems({
-            mt: linkedThicknesses,
-            thickness: unlinkedThicknesses,
-        });
+        if (linkedThicknesses !== prevLinkedRef.current || unlinkedThicknesses !== prevUnlinkedRef.current) {
+            prevLinkedRef.current = linkedThicknesses;
+            prevUnlinkedRef.current = unlinkedThicknesses;
+            setItems({
+                mt: linkedThicknesses,
+                thickness: unlinkedThicknesses,
+            });
+        }
     }, [linkedThicknesses, unlinkedThicknesses]);
     const [activeId, setActiveId] = useState<string | null>(null);
     const sensors = useSensors(
@@ -239,7 +245,7 @@ export default function ThicknessMaterialList() {
 
     function handleDragOver(event: DragOverEvent) {
         const { active, over } = event;
-        const draggingRect = (event as any).draggingRect as { top?: number } | undefined;
+        const draggingRect = (event as unknown as { draggingRect?: { top?: number } }).draggingRect;
         const id = active.id as string;
         const overId = over?.id as string | undefined;
 

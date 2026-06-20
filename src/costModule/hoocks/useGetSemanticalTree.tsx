@@ -1,20 +1,13 @@
-import { useState, useEffect } from "react";
-import type { ASTNode } from "../parser/ast";
-import {parse} from "./../parser/pricing-parser"
+import { useMemo } from "react";
+import { parse } from "./../parser/pricing-parser";
 export function useGetSemanticalTree(expresion: string) {
-    const [root, setRoot] = useState<ASTNode | null>(null);
-    const [error, setError] = useState<string | null>(null);
+  const { root, error } = useMemo(() => {
+    try {
+      return { root: parse(expresion), error: null };
+    } catch (e) {
+      return { root: null, error: (e as Error).message };
+    }
+  }, [expresion]);
 
-    useEffect(() => {
-        try {
-            const ast = parse(expresion);
-            setRoot(ast);
-            setError(null);
-        } catch (e) {
-            setError((e as Error).message);
-            setRoot(null);
-        }
-    }, [expresion]);
-
-    return { root, error };
+  return { root, error };
 }

@@ -2,7 +2,7 @@ import type { Path } from "@/shapeModule/interfaces";
 import { Parameters } from "./parameters";
 
 function getPosition(currentCords: (number | "start" | "center" | "end")[], width: number, height: number): number[] {
-    let x = 0;
+    let x;
     switch (currentCords[0]) {
         case "start":
             x = 0;
@@ -16,7 +16,7 @@ function getPosition(currentCords: (number | "start" | "center" | "end")[], widt
         default:
             x = currentCords[0];
     }
-    let y = 0;
+    let y;
     switch (currentCords[1]) {
         case "start":
             y = 0;

@@ -1,5 +1,5 @@
 import type { Path } from "./path";
-import _ from "paper";
+
 
 export interface Shape {
     id: string;

@@ -4,10 +4,10 @@ import { type LoginInput } from "../validators/userValidators";
 import { useRef } from "react";
 
 export function useLogin(): UseMutationResult<boolean, Error, LoginInput> {
-    const authService = useRef(AuthService.getInstance());
-    return useMutation({
-        mutationFn: ({ email, password }: LoginInput) => {
-            return authService.current.login(email, password);
-        },
-    });
+  const authService = useRef(AuthService.getInstance());
+  return useMutation({
+    mutationFn: ({ email, password }: LoginInput) => {
+      return authService.current.login(email, password);
+    },
+  });
 }

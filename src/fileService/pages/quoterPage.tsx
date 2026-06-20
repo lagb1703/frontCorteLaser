@@ -5,7 +5,7 @@ import Resume from "../components/resume";
 import ImageVisualizer from "../components/imageVisualizer";
 import {
   useGetMaterials,
-  useGetThicknessByMaterialId
+  useGetThicknessByMaterialId,
 } from "@/materialModule/hooks";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -15,12 +15,19 @@ export default function QuoterPage() {
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
   const { fileId } = useParams<{ fileId: string }>();
   const { data: imageData } = useGetImage(fileId!);
-  const { materialId, thicknessId, setMaterialId, setThicknessId, amount, setAmount } = useQuoter();
+  const {
+    materialId,
+    thicknessId,
+    setMaterialId,
+    setThicknessId,
+    amount,
+    setAmount,
+  } = useQuoter();
   const { data: priceData, refetch } = useGetPrice(
     fileId!,
     materialId,
     thicknessId,
-    amount
+    amount,
   );
   const { data: materials } = useGetMaterials();
   const { data: thicknesses } = useGetThicknessByMaterialId(materialId);
@@ -37,17 +44,14 @@ export default function QuoterPage() {
       return;
     }
     refetch();
-  }, [materialId, thicknessId, amount, refetch, thicknesses]);
+  }, [materialId, thicknessId, amount, refetch, thicknesses, setThicknessId]);
   return (
-    <div
-      className="h-full">
-      {
-        imageData &&
-        <div
-          className="">
+    <div className="h-full">
+      {imageData && (
+        <div className="">
           <ImageVisualizer image={imageData} />
         </div>
-      }
+      )}
       <Quoter
         materials={materials || []}
         materialId={materialId!}
@@ -70,28 +74,29 @@ export default function QuoterPage() {
           perimeter={priceData.perimeter}
         />
       )}
-      <div
-        className="w-full flex justify-center p-4">
+      <div className="w-full flex justify-center p-4">
         <Button
           className="basis-full md:basis-auto lg:basis-[32%] lg:py-6 m-4"
           onClick={() => setIsPaymentOpen(true)}
-          disabled={!priceData}>
+          disabled={!priceData}
+        >
           Pagar
         </Button>
       </div>
       {priceData && (
         <PaymentDialog
-          items= {[
+          items={[
             {
               materialId: materialId!,
               thicknessId: thicknessId!,
               fileId: fileId!,
               amount: amount!,
-            }
+            },
           ]}
           isOpen={isPaymentOpen}
           onClose={() => setIsPaymentOpen(false)}
-        />)}
+        />
+      )}
     </div>
   );
 }

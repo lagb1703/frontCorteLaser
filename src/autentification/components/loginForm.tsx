@@ -37,8 +37,8 @@ export default function LoginForm() {
             setTimeout(() => {
                 navigate("/")
             }, 1000)
-        } catch (error: any) {
-            toast.error(error.message || "Error al iniciar sesión", { id: toastId });
+        } catch (error: unknown) {
+            toast.error(error instanceof Error ? error.message : "Error al iniciar sesión", { id: toastId });
         }
     }
 

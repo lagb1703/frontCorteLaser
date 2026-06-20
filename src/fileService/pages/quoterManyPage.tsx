@@ -17,12 +17,8 @@ export default function QuoterManyPage() {
     const { filesIds } = useContext(MultifileContext);
     const [prices, setPrices] = useState<PriceInterface[]>(filesIds.map((id) => ({ fileId: id, materialId: 0, thicknessId: 0, amount: 0, price: 0 })));
     useEffect(() => {
-        setPrices(prices.map((p)=>{
-            return{
-                ...p,
-                price: 0
-            }
-        }))
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setPrices(prev => prev.map((p) => ({ ...p, price: 0 })));
     }, [materialId]);
     const setPrice = useCallback((prices: PriceInterface) => {
         setPrices((prevPrices) => {

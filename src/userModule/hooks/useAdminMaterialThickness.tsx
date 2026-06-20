@@ -6,7 +6,7 @@ import {
     useChangeSpeedMaterialThickness,
     useChangePriceMaterialThickness
 } from "@/materialModule/hooks";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { type Thickness } from "@/materialModule/validators/thicknessValidators";
 import { toast } from "sonner";
 
@@ -14,22 +14,18 @@ const refectTimeOut = 100; // 5 seconds
 
 export function useAdminMaterialThickness() {
     const [materialId, setMaterialId] = useState<number | null>(null);
-    const [linkedThicknesses, setLinkedThicknesses] = useState<string[]>([]);
-    const [unlinkedThicknesses, setUnlinkedThicknesses] = useState<string[]>([]);
     const { data: thicknessesLinked, refetch: refetchLinked } = useGetThicknessByMaterialId(materialId ?? 0);
     const { data: thicknessesUnlinked, refetch: refetchUnlinked } = useGetThicknessNoLinkedToMaterialId(materialId ?? 0);
+    const linkedThicknesses = useMemo(() =>
+        thicknessesLinked?.map(thickness => JSON.stringify(thickness)) ?? [],
+        [thicknessesLinked]
+    );
+    const unlinkedThicknesses = useMemo(() =>
+        thicknessesUnlinked?.map(thickness => JSON.stringify(thickness)) ?? [],
+        [thicknessesUnlinked]
+    );
     const changeSpeedMaterialThickness = useChangeSpeedMaterialThickness();
     const changePriceMaterialThickness = useChangePriceMaterialThickness();
-    useEffect(() => {
-        if (thicknessesLinked) {
-            const linked = thicknessesLinked.map(thickness => JSON.stringify(thickness));
-            setLinkedThicknesses(linked);
-        }
-        if (thicknessesUnlinked) {
-            const unlinked = thicknessesUnlinked.map(thickness => JSON.stringify(thickness));
-            setUnlinkedThicknesses(unlinked);
-        }
-    }, [materialId, thicknessesLinked, thicknessesUnlinked]);
     const addMaterialThickness = useAddMaterialThickness();
     const deleteMaterialThickness = useDeleteMaterialThickness();
     const handleAddThickness = useCallback(async (thickness: Thickness | string) => {
@@ -53,7 +49,7 @@ export function useAdminMaterialThickness() {
         try {
             await changeSpeedMaterialThickness.mutateAsync({ materialId, thicknessId, speed });
             toast.success("Velocidad cambiada correctamente", { id });
-        } catch (e) {
+        } catch {
             toast.error("Error al cambiar la velocidad", { id });
         }
     }, [changeSpeedMaterialThickness, materialId]);

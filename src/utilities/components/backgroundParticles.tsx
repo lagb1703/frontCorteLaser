@@ -1,20 +1,14 @@
-import { useEffect, useState } from "react";
-import Particles, { initParticlesEngine } from "@tsparticles/react";
+import Particles, { ParticlesProvider } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
+import type { Engine } from "@tsparticles/engine";
+
+async function initParticles(engine: Engine) {
+    await loadSlim(engine);
+}
 
 export default function BackgroundParticles() {
-    const [isMounted, setIsMounted] = useState(false);
-
-    useEffect(() => {
-        initParticlesEngine(async (engine) => {
-            await loadSlim(engine);
-        }).then(() => {
-            setIsMounted(true);
-        });
-    }, []);
-
     return (
-        isMounted && (
+        <ParticlesProvider init={initParticles}>
             <Particles
                 id="tsparticles"
                 options={{
@@ -91,6 +85,6 @@ export default function BackgroundParticles() {
                     detectRetina: true,
                 }}
             />
-        )
+        </ParticlesProvider>
     )
 }

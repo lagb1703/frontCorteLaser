@@ -14,11 +14,11 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@radix-ui/react-label"
 interface Props {
-  reset: UseFormReset<PaymentType>
-  control: Control<PaymentType>
-  setValue: UseFormSetValue<PaymentType>
-  paymentMethods: Array<PaymentMethodType> | undefined
-  isLoadingPaymentMethods: boolean
+  reset: UseFormReset<PaymentType>;
+  control: Control<PaymentType>;
+  setValue: UseFormSetValue<PaymentType>;
+  paymentMethods: Array<PaymentMethodType> | undefined;
+  isLoadingPaymentMethods: boolean;
 }
 
 export default function PaymentChoice(
@@ -31,9 +31,9 @@ export default function PaymentChoice(
 ) {
   const [isCreditCard, setIsCreditCard] = useState<boolean>(false)
   if (isLoadingPaymentMethods) {
-    return <div>Cargando métodos de pago...</div>
+    return <div>Cargando métodos de pago...</div>;
   }
-  const paymentMethodsList = paymentMethods || []
+  const paymentMethodsList = paymentMethods || [];
 
   return (
     <>
@@ -215,5 +215,5 @@ export default function PaymentChoice(
         )}
       />
     </>
-  )
+  );
 }

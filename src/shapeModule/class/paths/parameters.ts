@@ -1,5 +1,5 @@
 import type { Path } from "@/shapeModule/interfaces";
-import _ from "paper";
+
 
 export abstract class Parameters {
     protected value: number | string;

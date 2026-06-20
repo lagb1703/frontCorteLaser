@@ -18,7 +18,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useGetShape, useRender } from "../hooks";
 import type { Parameters } from "../class/paths/parameters";
 import { Input } from "@/components/ui/input";
-import _ from "paper";
+
 
 interface InputShapeProps {
     parameter: Parameters;
