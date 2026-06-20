@@ -1,8 +1,8 @@
 import { useParams } from "react-router";
-import { useGetImage, useGetPrice, useQuoter } from "../hooks";
+import { useGetOBJ, useGetPrice, useQuoter } from "../hooks";
 import Quoter from "../components/quoter";
 import Resume from "../components/resume";
-import ImageVisualizer from "../components/imageVisualizer";
+import Render3D from "../components/render3d";
 import {
   useGetMaterials,
   useGetThicknessByMaterialId,
@@ -14,7 +14,7 @@ import PaymentDialog from "@/paymentModule/components/paymentDialog";
 export default function QuoterPage() {
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
   const { fileId } = useParams<{ fileId: string }>();
-  const { data: imageData } = useGetImage(fileId!);
+  const { data: OBJData } = useGetOBJ(fileId!);
   const {
     materialId,
     thicknessId,
@@ -46,10 +46,10 @@ export default function QuoterPage() {
     refetch();
   }, [materialId, thicknessId, amount, refetch, thicknesses, setThicknessId]);
   return (
-    <div className="h-full">
-      {imageData && (
-        <div className="">
-          <ImageVisualizer image={imageData} />
+    <div className="h-full flex flex-col">
+      {OBJData && (
+        <div className="flex-1 min-h-0">
+          <Render3D file={OBJData} />
         </div>
       )}
       <Quoter

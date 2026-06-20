@@ -3,94 +3,114 @@ import { type FileDb } from "../validators/fileValidator";
 import { type PriceResponse } from "../validators/priceValidator";
 
 export class FileService {
-    private fetchWrapper: FetchWapper;
+  private fetchWrapper: FetchWapper;
 
-    private static instance: FileService;
+  private static instance: FileService;
 
-    public static getInstance(): FileService {
-        if (!FileService.instance) {
-            FileService.instance = new FileService();
-        }
-        return FileService.instance;
+  public static getInstance(): FileService {
+    if (!FileService.instance) {
+      FileService.instance = new FileService();
     }
+    return FileService.instance;
+  }
 
-    constructor() {
-        this.fetchWrapper = FetchWapper.getInstance();
-    }
+  constructor() {
+    this.fetchWrapper = FetchWapper.getInstance();
+  }
 
-    public async getAllUserInfoFiles(): Promise<Array<FileDb>> {
-        const result = await this.fetchWrapper.send(`/file/`, {
-            method: "GET",
-        });
-        if (result.status !== 200) {
-            throw new Error("Error al obtener los archivos del usuario");
-        }
-        return await result.json();
+  public async getAllUserInfoFiles(): Promise<Array<FileDb>> {
+    const result = await this.fetchWrapper.send(`/file/`, {
+      method: "GET",
+    });
+    if (result.status !== 200) {
+      throw new Error("Error al obtener los archivos del usuario");
     }
-    public async saveFile(formData: FormData): Promise<string | number> {
-        const result = await this.fetchWrapper.send(`/file/save`, {
-            method: 'POST',
-            body: formData,
-        });
-        return await result.text();
+    return await result.json();
+  }
+  public async saveFile(formData: FormData): Promise<string | number> {
+    const result = await this.fetchWrapper.send(`/file/save`, {
+      method: "POST",
+      body: formData,
+    });
+    return await result.text();
+  }
+  public async getFile(id: string | number): Promise<Blob> {
+    const result = await this.fetchWrapper.send(`/file/donwload?id=${id}`, {
+      method: "GET",
+    });
+    if (result.status !== 200) {
+      throw new Error("Error al descargar el archivo");
     }
-    public async getFile(id: string | number): Promise<Blob> {
-        const result = await this.fetchWrapper.send(`/file/donwload?id=${id}`, {
-            method: "GET",
-        })
-        if (result.status !== 200) {
-            throw new Error("Error al descargar el archivo");
-        }
-        return await result.blob();
+    return await result.blob();
+  }
+  public async getFileMetadata(id: string | number): Promise<FileDb> {
+    const result = await this.fetchWrapper.send(`/file/metadata?id=${id}`, {
+      method: "GET",
+    });
+    if (result.status !== 200) {
+      throw new Error("Error al descargar el archivo");
     }
-    public async getFileMetadata(id: string | number): Promise<FileDb> {
-        const result = await this.fetchWrapper.send(`/file/metadata?id=${id}`, {
-            method: "GET",
-        })
-        if (result.status !== 200) {
-            throw new Error("Error al descargar el archivo");
-        }
-        return await result.json();
+    return await result.json();
+  }
+  public async deleteFile(id: string | number): Promise<void> {
+    const result = await this.fetchWrapper.send(`/file?id=${id}`, {
+      method: "DELETE",
+    });
+    if (result.status !== 200) {
+      throw new Error("Error al eliminar el archivo");
     }
-    public async deleteFile(id: string | number): Promise<void> {
-        const result = await this.fetchWrapper.send(`/file?id=${id}`, {
-            method: "DELETE",
-        })
-        if (result.status !== 200) {
-            throw new Error("Error al eliminar el archivo");
-        }
+  }
+  public async getImage(id: string | number): Promise<Blob> {
+    const result = await this.fetchWrapper.send(`/file/image?id=${id}`, {
+      method: "GET",
+    });
+    if (result.status !== 200) {
+      throw new Error("Error al obtener la imagen del archivo");
     }
-    public async getImage(id: string | number): Promise<Blob> {
-        const result = await this.fetchWrapper.send(`/file/image?id=${id}`, {
-            method: "GET",
-        });
-        if (result.status !== 200) {
-            throw new Error("Error al obtener la imagen del archivo");
-        }
-        return await result.blob();
+    return await result.blob();
+  }
+  public async getOBJ(id: string | number): Promise<Blob> {
+    const result = await this.fetchWrapper.send(`/file/OBJ?id=${id}`, {
+      method: "GET",
+    });
+    if (result.status !== 200) {
+      throw new Error("Error al obtener la imagen del archivo");
     }
-    public async getPrice(id: string | number, mateiralId: string | number, thicknessId: string | number, amount: number): Promise<PriceResponse> {
-        const result = await this.fetchWrapper.send(`/file/price?id=${id}&materialId=${mateiralId}&thicknessId=${thicknessId}&amount=${amount}`, {
-            method: "GET",
-        });
-        if (result.status !== 200) {
-            throw new Error("Error al obtener el precio del archivo");
-        }
-        return await result.json();
+    return await result.blob();
+  }
+  public async getPrice(
+    id: string | number,
+    mateiralId: string | number,
+    thicknessId: string | number,
+    amount: number,
+  ): Promise<PriceResponse> {
+    const result = await this.fetchWrapper.send(
+      `/file/price?id=${id}&materialId=${mateiralId}&thicknessId=${thicknessId}&amount=${amount}`,
+      {
+        method: "GET",
+      },
+    );
+    if (result.status !== 200) {
+      throw new Error("Error al obtener el precio del archivo");
     }
-    public async setPriceCalculator(expresion: string): Promise<string | number> {
-        const result = await this.fetchWrapper.send(`/file/price?exp=${encodeURIComponent(expresion)}`, {
-            method: 'POST',
-        });
-        return await result.text();
+    return await result.json();
+  }
+  public async setPriceCalculator(expresion: string): Promise<string | number> {
+    const result = await this.fetchWrapper.send(
+      `/file/price?exp=${encodeURIComponent(expresion)}`,
+      {
+        method: "POST",
+      },
+    );
+    return await result.text();
+  }
+  public async getPriceEstimate(): Promise<string> {
+    const result = await this.fetchWrapper.send(`/file/price/estimate`, {
+      method: "GET",
+    });
+    if (result.status !== 200) {
+      throw new Error("Error al obtener el precio del archivo");
     }
-    public async getPriceEstimate(): Promise<string> {
-        const result = await this.fetchWrapper.send(`/file/price/estimate`, {
-            method: "GET",
-        });
-        if (result.status !== 200) {
-            throw new Error("Error al obtener el precio del archivo");
-        }
-        return await result.json();
-    }
+    return await result.json();
+  }
 }
