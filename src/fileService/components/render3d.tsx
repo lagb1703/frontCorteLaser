@@ -1,11 +1,35 @@
 import { useRef, useEffect, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
+import { OrbitControls, Html } from "@react-three/drei";
 import * as THREE from "three";
 import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
 
 interface props {
   file: Blob;
+}
+
+function GridFloor() {
+  return (
+    <gridHelper args={[20, 20, 0x888888, 0x444444]} position={[0, -2, 0]} />
+  );
+}
+
+function LoadingIndicator() {
+  const ref = useRef<THREE.Mesh>(null!);
+
+  useFrame((_, delta) => {
+    if (ref.current) {
+      ref.current.rotation.x += delta * 2;
+      ref.current.rotation.y += delta * 2;
+    }
+  });
+
+  return (
+    <mesh ref={ref}>
+      <octahedronGeometry args={[0.5, 0]} />
+      <meshStandardMaterial color="#22d3ee" wireframe />
+    </mesh>
+  );
 }
 
 function OBJModel({ blob }: { blob: Blob }) {
@@ -32,6 +56,17 @@ function OBJModel({ blob }: { blob: Blob }) {
           const maxDim = Math.max(size.x, size.y, size.z);
           const scale = maxDim > 0 ? 5 / maxDim : 1;
           obj.scale.setScalar(scale);
+
+          obj.traverse((child) => {
+            if (child instanceof THREE.Mesh) {
+              child.material = new THREE.MeshStandardMaterial({
+                color: 0x22d3ee,
+                metalness: 0.3,
+                roughness: 0.7,
+              });
+            }
+          });
+
           setModel(obj);
           setLoading(false);
         } catch {
@@ -53,23 +88,17 @@ function OBJModel({ blob }: { blob: Blob }) {
     };
   }, [blob]);
 
-  useFrame(() => {});
-
   if (loading) {
-    return (
-      <mesh>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color="gray" wireframe />
-      </mesh>
-    );
+    return <LoadingIndicator />;
   }
 
   if (error) {
     return (
-      <mesh>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color="red" wireframe />
-      </mesh>
+      <Html center>
+        <div className="bg-destructive/10 text-destructive px-4 py-2 rounded-md text-sm">
+          {error}
+        </div>
+      </Html>
     );
   }
 
@@ -79,29 +108,48 @@ function OBJModel({ blob }: { blob: Blob }) {
 
 export default function Render3D({ file }: props) {
   return (
-    <Canvas
-      className="
-      w-full 
-      h-full
-      bg-muted 
-      flex items-center justify-center 
-      overflow-hidden rounded-md
-      "
-      camera={{ position: [0, 0, 5], fov: 50 }}
-    >
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[5, 5, 5]} />
-      <OBJModel blob={file} />
-      <OrbitControls
-        makeDefault
-        mouseButtons={{
-          LEFT: THREE.MOUSE.ROTATE,
-          MIDDLE: THREE.MOUSE.PAN,
-          RIGHT: THREE.MOUSE.DOLLY,
-        }}
-        enableDamping
-        dampingFactor={0.1}
-      />
-    </Canvas>
+    <div className="relative w-full h-full">
+      <Canvas
+        className="w-full h-full bg-muted overflow-hidden rounded-md"
+        camera={{ position: [5, 3, 5], fov: 50 }}
+        shadows
+      >
+        <color attach="background" args={["#1a1a2e"]} />
+
+        <ambientLight intensity={0.4} />
+        <directionalLight
+          position={[5, 8, 5]}
+          intensity={1}
+          castShadow
+          shadow-mapSize-width={1024}
+          shadow-mapSize-height={1024}
+        />
+        <pointLight position={[-5, 5, -5]} intensity={0.3} />
+
+        <GridFloor />
+        <OBJModel blob={file} />
+
+        <OrbitControls
+          makeDefault
+          mouseButtons={{
+            LEFT: THREE.MOUSE.ROTATE,
+            MIDDLE: THREE.MOUSE.PAN,
+            RIGHT: THREE.MOUSE.DOLLY,
+          }}
+          enableDamping
+          dampingFactor={0.1}
+          minDistance={2}
+          maxDistance={20}
+        />
+      </Canvas>
+
+      <div className="absolute bottom-3 left-3 bg-black/60 text-white/80 px-3 py-2 rounded-md text-xs space-y-1 pointer-events-none">
+        <p className="font-semibold mb-1">Controles</p>
+        <p>click izquierdo: rotar</p>
+        <p>click del medio: mover</p>
+        <p>click derecho: zoom</p>
+        <p>Scroll: Zoom</p>
+      </div>
+    </div>
   );
 }
