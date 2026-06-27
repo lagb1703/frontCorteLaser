@@ -6,6 +6,7 @@ import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
 
 interface props {
   file: Blob;
+  thickness: number;
 }
 
 function GridFloor() {
@@ -32,7 +33,7 @@ function LoadingIndicator() {
   );
 }
 
-function OBJModel({ blob }: { blob: Blob }) {
+function OBJModel({ blob, thickness }: { blob: Blob; thickness: number }) {
   const [model, setModel] = useState<THREE.Group | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -56,7 +57,6 @@ function OBJModel({ blob }: { blob: Blob }) {
           const maxDim = Math.max(size.x, size.y, size.z);
           const scale = maxDim > 0 ? 5 / maxDim : 1;
           obj.scale.setScalar(scale);
-
           obj.traverse((child) => {
             if (child instanceof THREE.Mesh) {
               child.material = new THREE.MeshStandardMaterial({
@@ -66,7 +66,6 @@ function OBJModel({ blob }: { blob: Blob }) {
               });
             }
           });
-
           setModel(obj);
           setLoading(false);
         } catch {
@@ -88,6 +87,11 @@ function OBJModel({ blob }: { blob: Blob }) {
     };
   }, [blob]);
 
+  useEffect(() => {
+    if (model == null) return;
+    model.scale.z = thickness;
+  }, [model, thickness]);
+
   if (loading) {
     return <LoadingIndicator />;
   }
@@ -106,7 +110,7 @@ function OBJModel({ blob }: { blob: Blob }) {
   return <primitive ref={ref} object={model} />;
 }
 
-export default function Render3D({ file }: props) {
+export default function Render3D({ file, thickness }: props) {
   return (
     <div className="relative w-full h-full">
       <Canvas
@@ -127,7 +131,7 @@ export default function Render3D({ file }: props) {
         <pointLight position={[-5, 5, -5]} intensity={0.3} />
 
         <GridFloor />
-        <OBJModel blob={file} />
+        <OBJModel blob={file} thickness={thickness} />
 
         <OrbitControls
           makeDefault

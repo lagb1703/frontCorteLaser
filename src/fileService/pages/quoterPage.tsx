@@ -49,7 +49,7 @@ export default function QuoterPage() {
     <div className="h-full flex flex-col">
       {OBJData && (
         <div className="flex-1 min-h-0">
-          <Render3D file={OBJData} />
+          <Render3D file={OBJData} thickness={10.0} />
         </div>
       )}
       <Quoter
