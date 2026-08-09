@@ -1,5 +1,5 @@
 import { useParams } from "react-router";
-import { useGetOBJ, useGetPrice, useQuoter } from "../hooks";
+import { useGetGlb, useGetPrice, useQuoter } from "../hooks";
 import Quoter from "../components/quoter";
 import Resume from "../components/resume";
 import Render3D from "../components/render3d";
@@ -14,7 +14,7 @@ import PaymentDialog from "@/paymentModule/components/paymentDialog";
 export default function QuoterPage() {
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
   const { fileId } = useParams<{ fileId: string }>();
-  const { data: OBJData } = useGetOBJ(fileId!);
+  const { data: GlbData } = useGetGlb(fileId!);
   const {
     materialId,
     thicknessId,
@@ -47,9 +47,9 @@ export default function QuoterPage() {
   }, [materialId, thicknessId, amount, refetch, thicknesses, setThicknessId]);
   return (
     <div className="h-full flex flex-col">
-      {OBJData && (
+      {GlbData && (
         <div className="flex-1 min-h-0">
-          <Render3D file={OBJData} thickness={10.0} />
+          <Render3D file={GlbData} thickness={10.0} />
         </div>
       )}
       <Quoter

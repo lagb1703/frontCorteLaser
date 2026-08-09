@@ -78,6 +78,15 @@ export class FileService {
     }
     return await result.blob();
   }
+  public async getGlb(id: string | number): Promise<Blob> {
+    const result = await this.fetchWrapper.send(`/file/OBJ?id=${id}`, {
+      method: "GET",
+    });
+    if (result.status !== 200) {
+      throw new Error("Error al obtener la imagen del archivo");
+    }
+    return await result.blob();
+  }
   public async getPrice(
     id: string | number,
     mateiralId: string | number,

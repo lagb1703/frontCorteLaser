@@ -1,4 +1,5 @@
 export * from "./useDeleteFile";
+export * from "./useGetGlb";
 export * from "./useGetFile";
 export * from "./useGetImage";
 export * from "./useSaveFile";

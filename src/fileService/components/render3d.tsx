@@ -3,6 +3,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Html } from "@react-three/drei";
 import * as THREE from "three";
 import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 interface props {
   file: Blob;
@@ -59,13 +60,90 @@ function OBJModel({ blob, thickness }: { blob: Blob; thickness: number }) {
           obj.scale.setScalar(scale);
           obj.traverse((child) => {
             if (child instanceof THREE.Mesh) {
-              child.material = new THREE.MeshStandardMaterial({
-                color: 0x22d3ee,
-                metalness: 0.3,
-                roughness: 0.7,
-              });
+              const positionAttribute = child.geometry.attributes.position;
+              const localVertex = new THREE.Vector3();
+              const worldVertex = new THREE.Vector3();
+              if (positionAttribute.count != 6) {
+                return;
+              }
+              for (let i = 0; i < positionAttribute.count; i++) {
+                positionAttribute.setZ(i, 0.1);
+                localVertex.fromBufferAttribute(positionAttribute, i);
+                worldVertex.copy(localVertex).applyMatrix4(child.matrixWorld);
+                console.log(`Vertex ${i}:`, worldVertex);
+              }
+              positionAttribute.needsUpdate = true;
             }
           });
+          setModel(obj);
+          setLoading(false);
+        } catch {
+          setError("Error processing 3D model");
+          setLoading(false);
+        }
+        URL.revokeObjectURL(url);
+      },
+      undefined,
+      () => {
+        setError("Error loading 3D model");
+        setLoading(false);
+        URL.revokeObjectURL(url);
+      },
+    );
+
+    return () => {
+      URL.revokeObjectURL(url);
+    };
+  }, [blob]);
+
+  useEffect(() => {
+    if (model == null) return;
+    model.scale.z = thickness;
+  }, [model, thickness]);
+
+  if (loading) {
+    return <LoadingIndicator />;
+  }
+
+  if (error) {
+    return (
+      <Html center>
+        <div className="bg-destructive/10 text-destructive px-4 py-2 rounded-md text-sm">
+          {error}
+        </div>
+      </Html>
+    );
+  }
+
+  if (!model) return null;
+  return <primitive ref={ref} object={model} />;
+}
+
+function GLBModel({ blob, thickness }: { blob: Blob; thickness: number }) {
+  const [model, setModel] = useState<THREE.Group | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const ref = useRef<THREE.Group>(null!);
+
+  useEffect(() => {
+    const url = URL.createObjectURL(blob);
+    const loader = new GLTFLoader();
+
+    setLoading(true);
+    setError(null);
+
+    loader.load(
+      url,
+      (gltf) => {
+        try {
+          const obj = gltf.scene;
+          const box = new THREE.Box3().setFromObject(obj);
+          const center = box.getCenter(new THREE.Vector3());
+          const size = box.getSize(new THREE.Vector3());
+          obj.position.sub(center);
+          const maxDim = Math.max(size.x, size.y, size.z);
+          const scale = maxDim > 0 ? 5 / maxDim : 1;
+          obj.scale.setScalar(scale);
           setModel(obj);
           setLoading(false);
         } catch {
@@ -131,7 +209,7 @@ export default function Render3D({ file, thickness }: props) {
         <pointLight position={[-5, 5, -5]} intensity={0.3} />
 
         <GridFloor />
-        <OBJModel blob={file} thickness={thickness} />
+        <GLBModel blob={file} thickness={thickness} />
 
         <OrbitControls
           makeDefault
