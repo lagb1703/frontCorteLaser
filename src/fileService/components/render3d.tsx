@@ -127,6 +127,7 @@ function GLBModel({ blob, thickness }: { blob: Blob; thickness: number }) {
 
   useEffect(() => {
     const url = URL.createObjectURL(blob);
+    console.log(url);
     const loader = new GLTFLoader();
 
     setLoading(true);
@@ -146,14 +147,16 @@ function GLBModel({ blob, thickness }: { blob: Blob; thickness: number }) {
           obj.scale.setScalar(scale);
           setModel(obj);
           setLoading(false);
-        } catch {
+        } catch (e: unknown) {
+          if(e instanceof Error) console.log(e.message);
           setError("Error processing 3D model");
           setLoading(false);
         }
         URL.revokeObjectURL(url);
       },
       undefined,
-      () => {
+      (e: unknown) => {
+        if (e instanceof Error) console.log(e.message);
         setError("Error loading 3D model");
         setLoading(false);
         URL.revokeObjectURL(url);
