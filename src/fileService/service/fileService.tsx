@@ -69,30 +69,12 @@ export class FileService {
     }
     return await result.blob();
   }
-  public async getOBJ(id: string | number): Promise<Blob> {
-    const result = await this.fetchWrapper.send(`/file/OBJ?id=${id}`, {
-      method: "GET",
-    });
-    if (result.status !== 200) {
-      throw new Error("Error al obtener la imagen del archivo");
-    }
-    return await result.blob();
-  }
   public async getGlb(id: string | number): Promise<Blob> {
     const result = await this.fetchWrapper.send(`/file/Gbl?id=${id}`, {
       method: "GET",
     });
     if (result.status !== 200) {
       throw new Error("Error al obtener el modelo 3D");
-    }
-    return await result.blob();
-  }
-  public async getGlbRigged(id: string | number): Promise<Blob> {
-    const result = await this.fetchWrapper.send(`/file/glb-rigged?id=${id}`, {
-      method: "GET",
-    });
-    if (result.status !== 200) {
-      throw new Error("Error al obtener el modelo 3D rigged");
     }
     return await result.blob();
   }

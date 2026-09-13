@@ -4,6 +4,7 @@ import { OrbitControls, Html } from "@react-three/drei";
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import {
+  applyBendRotation,
   findBendJoints,
   toSignedDegrees,
   type BendControlValue,
@@ -41,18 +42,24 @@ function LoadingIndicator() {
   );
 }
 
-function addBendLineHelpers(root: THREE.Object3D, joints: readonly BendJoint[]) {
-  joints.forEach((joint) => {
-    const points = [
-      new THREE.Vector3(...joint.metadata.start),
-      new THREE.Vector3(...joint.metadata.end),
-    ];
-    const geometry = new THREE.BufferGeometry().setFromPoints(points);
-    const material = new THREE.LineBasicMaterial({ color: 0x22d3ee });
-    const helper = new THREE.Line(geometry, material);
-    helper.name = `${joint.node.name}_helper`;
-    root.add(helper);
-  });
+/**
+ * Centre and scale the loaded scene inside a wrapper so the normalisation never
+ * touches the model's own transforms, which carry the bend pivots.
+ */
+function normalizeModel(scene: THREE.Group): THREE.Group {
+  const box = new THREE.Box3().setFromObject(scene);
+  const center = box.getCenter(new THREE.Vector3());
+  const size = box.getSize(new THREE.Vector3());
+  const maxDim = Math.max(size.x, size.y, size.z);
+
+  scene.position.copy(center).negate();
+
+  const wrapper = new THREE.Group();
+  wrapper.add(scene);
+  wrapper.scale.setScalar(maxDim > 0 ? 5 / maxDim : 1);
+  // the exporter works in the XY plane and extrudes along +Z, so lay it flat
+  wrapper.rotation.x = -Math.PI / 2;
+  return wrapper;
 }
 
 function GLBModel({
@@ -68,18 +75,20 @@ function GLBModel({
 }) {
   const [model, setModel] = useState<THREE.Group | null>(null);
   const [bendJoints, setBendJoints] = useState<BendJoint[]>([]);
-  const [isRiggedModel, setIsRiggedModel] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const ref = useRef<THREE.Group>(null!);
   const modelRef = useRef<THREE.Group | null>(null);
+  const onBendJointsChangeRef = useRef(onBendJointsChange);
+
+  useEffect(() => {
+    onBendJointsChangeRef.current = onBendJointsChange;
+  }, [onBendJointsChange]);
 
   useEffect(() => {
     const url = URL.createObjectURL(blob);
     const loader = new GLTFLoader();
     let cancelled = false;
-
-    onBendJointsChange([]);
 
     loader.load(
       url,
@@ -87,48 +96,29 @@ function GLBModel({
         if (cancelled) return;
 
         try {
-          const obj = gltf.scene;
-          const box = new THREE.Box3().setFromObject(obj);
-          const center = box.getCenter(new THREE.Vector3());
-          const size = box.getSize(new THREE.Vector3());
-          obj.position.sub(center);
-          const maxDim = Math.max(size.x, size.y, size.z);
-          const scale = maxDim > 0 ? 5 / maxDim : 1;
-          obj.scale.setScalar(scale);
-
-          const joints = findBendJoints(obj);
-          let hasSkinnedMesh = false;
-          obj.traverse((child) => {
-            if (child instanceof THREE.SkinnedMesh) {
-              hasSkinnedMesh = true;
-            }
-          });
-          addBendLineHelpers(obj, joints);
-          modelRef.current = obj;
-          setIsRiggedModel(hasSkinnedMesh);
+          const joints = findBendJoints(gltf.scene);
           setBendJoints(joints);
-          onBendJointsChange(joints);
+          onBendJointsChangeRef.current(joints);
           setError(null);
-          setModel(obj);
+          const normalized = normalizeModel(gltf.scene);
+          modelRef.current = normalized;
+          setModel(normalized);
           setLoading(false);
         } catch {
           setBendJoints([]);
-          onBendJointsChange([]);
+          onBendJointsChangeRef.current([]);
           setError("Error processing 3D model");
           setLoading(false);
         }
-        URL.revokeObjectURL(url);
       },
       undefined,
       () => {
         if (cancelled) return;
 
-        setIsRiggedModel(false);
         setBendJoints([]);
-        onBendJointsChange([]);
+        onBendJointsChangeRef.current([]);
         setError("Error loading 3D model");
         setLoading(false);
-        URL.revokeObjectURL(url);
       },
     );
 
@@ -136,23 +126,20 @@ function GLBModel({
       cancelled = true;
       URL.revokeObjectURL(url);
     };
-  }, [blob, onBendJointsChange]);
+  }, [blob]);
 
   useEffect(() => {
-    const currentModel = modelRef.current;
-    if (currentModel == null) return;
-    currentModel.scale.z = isRiggedModel ? 1 : thickness;
-  }, [isRiggedModel, model, thickness]);
+    const current = modelRef.current;
+    if (current == null) return;
+    // A non-uniform scale on an ancestor shears anything that rotates under it,
+    // so it is only safe on a flat part with no folds.
+    current.scale.z = bendJoints.length > 0 ? current.scale.x : thickness;
+  }, [model, bendJoints, thickness]);
 
   useEffect(() => {
-    console.log('bendJoints', bendJoints);
-    console.log('bendValues', bendValues);
     bendJoints.forEach((joint) => {
       const value = bendValues[joint.key];
-      const signedDegrees = value == null ? 0 : toSignedDegrees(value);
-      console.log(signedDegrees);
-      joint.node.rotation.x = THREE.MathUtils.degToRad(signedDegrees);
-      console.log(joint.node);
+      applyBendRotation(joint, value == null ? 0 : toSignedDegrees(value));
     });
   }, [bendJoints, bendValues]);
 

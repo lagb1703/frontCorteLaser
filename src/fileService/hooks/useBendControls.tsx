@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type {
   BendControlValue,
   BendDirection,
@@ -7,10 +7,20 @@ import type {
 import { createDefaultBendValue } from "../utils/bendJoints";
 
 export function useBendControls(joints: readonly BendJoint[]) {
-  const [values, setValues] = useState<Record<string, BendControlValue>>({});
+  const [store, setStore] = useState<Record<string, BendControlValue>>({});
+
+  // Seed a default per joint and drop values left over from a previous model.
+  // Keys come from the exporter, so reloading the same file keeps its angles.
+  const values = useMemo(() => {
+    const current: Record<string, BendControlValue> = {};
+    joints.forEach((joint) => {
+      current[joint.key] = store[joint.key] ?? createDefaultBendValue();
+    });
+    return current;
+  }, [joints, store]);
 
   function setDirection(key: string, direction: BendDirection) {
-    setValues((previous) => ({
+    setStore((previous) => ({
       ...previous,
       [key]: {
         ...(previous[key] ?? createDefaultBendValue()),
@@ -24,7 +34,7 @@ export function useBendControls(joints: readonly BendJoint[]) {
       ? Math.min(180, Math.max(0, angle))
       : 0;
 
-    setValues((previous) => ({
+    setStore((previous) => ({
       ...previous,
       [key]: {
         ...(previous[key] ?? createDefaultBendValue()),
@@ -34,13 +44,7 @@ export function useBendControls(joints: readonly BendJoint[]) {
   }
 
   function reset() {
-    const resetValues: Record<string, BendControlValue> = {};
-
-    joints.forEach((joint) => {
-      resetValues[joint.key] = createDefaultBendValue();
-    });
-
-    setValues(resetValues);
+    setStore({});
   }
 
   return { values, setDirection, setAngle, reset };

@@ -1,7 +1,7 @@
 import { useParams } from "react-router";
 import {
   useBendControls,
-  useGetGlbRigged,
+  useGetGlb,
   useGetPrice,
   useQuoter,
 } from "../hooks";
@@ -22,7 +22,7 @@ export default function QuoterPage() {
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
   const [bendJoints, setBendJoints] = useState<BendJoint[]>([]);
   const { fileId } = useParams<{ fileId: string }>();
-  const { data: GlbData } = useGetGlbRigged(fileId!);
+  const { data: GlbData } = useGetGlb(fileId!);
   const bendControls = useBendControls(bendJoints);
   const {
     materialId,
